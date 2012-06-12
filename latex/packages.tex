@@ -1,0 +1,161 @@
+% The input files (tex files) are encoded with the latin-1 encoding 
+% (ISO-8859-1 works). Change the latin1-option if you use UTF8 
+% (at some point LaTeX did not work with UTF8, but I'm not sure
+% what the current situation is) 
+\usepackage[latin1]{inputenc}
+% OT1 font encoding seems to work better than T1. Check the rendered
+% PDF file to see if the fonts are encoded properly as vectors (instead
+% of rendered bitmaps). You can do this by zooming very close to any letter 
+% - if the letter is shown pixelated, you should change this setting 
+% (try commenting out the entire line, for example).  
+\usepackage[OT1]{fontenc}
+% The babel package provides hyphenating instructions for LaTeX. Give
+% the languages you wish to use in your thesis as options to the babel
+% package (as shown below). You can remove any language you are not
+% going to use.
+% Examples of valid language codes: english (or USenglish), british, 
+% finnish, swedish; and so on.
+\usepackage[finnish,swedish,english]{babel}
+
+
+% Font selection
+% ------------------------------------------------------------------
+% The default LaTeX font is a very good font for rendering your 
+% thesis. It is a very professional font, which will always be 
+% accepted. 
+% If you, however, wish to spicen up your thesis, you can try out
+% these font variants by uncommenting one of the following lines
+% (or by finding another font package). The fonts shown here are 
+% all fonts that you could use in your thesis (not too silly). 
+% Changing the font causes the layouts to shift a bit; you many
+% need to manually adjust some layouts. Check the warning messages
+% LaTeX gives you.
+% ------------------------------------------------------------------
+% To find another font, check out the font catalogue from
+% http://www.tug.dk/FontCatalogue/mathfonts.html
+% This link points to the list of fonts that support maths, but
+% that's a fairly important point for master's theses.
+% ------------------------------------------------------------------
+% <rant>
+% Remember, there is no excuse to use Comic Sans, ever, in any
+% situation! (Well, maybe in speech bubbles in comics, but there 
+% are better options for those too)
+% </rant>
+
+% \usepackage{palatino}
+% \usepackage{tgpagella}
+
+% Optional packages
+% ------------------------------------------------------------------
+% Select those packages that you need for your thesis. You may delete
+% or comment the rest.
+
+% Natbib allows you to select the format of the bibliography references.
+% The first example uses numbered citations: 
+\usepackage[square,sort&compress,numbers]{natbib}
+% The second example uses author-year citations.
+% If you use author-year citations, change the bibliography style (below); 
+% acm style does not work with author-year citations.
+% Also, you should use \citet (cite in text) when you wish to refer
+% to the author directly (\citet{blaablaa} said blaa blaa), and 
+% \citep when you wish to refer similarly than with numbered citations
+% (It has been said that blaa blaa~\citep{blaablaa}).
+% \usepackage[square]{natbib}
+
+% The alltt package provides an all-teletype environment that acts
+% like verbatim but you can use LaTeX commands in it. Uncomment if 
+% you want to use this environment. 
+% \usepackage{alltt}
+
+% The eurosym package provides a euro symbol. Use with \euro{}
+\usepackage{eurosym} 
+
+% Verbatim provides a standard teletype environment that renderes
+% the text exactly as written in the tex file. Useful for code
+% snippets (although you can also use the listings package to get
+% automatic code formatting). 
+\usepackage{verbatim}
+
+% The listing package provides automatic code formatting utilities
+% so that you can copy-paste code examples and have them rendered
+% nicely. See the package documentation for details.
+% \usepackage{listings}
+
+% The fancuvrb package provides fancier verbatim environments 
+% (you can, for example, put borders around the verbatim text area
+% and so on). See package for details.
+% \usepackage{fancyvrb}
+
+% Supertabular provides a tabular environment that can span multiple 
+% pages. 
+%\usepackage{supertabular}
+% Longtable provides a tabular environment that can span multiple 
+% pages. This is used in the example acronyms file. 
+\usepackage{longtable}
+
+% The fancyhdr package allows you to set your the page headers 
+% manually, and allows you to add separator lines and so on. 
+% Check the package documentation. 
+% \usepackage{fancyhdr}
+
+% Subfigure package allows you to use subfigures (i.e. many subfigures
+% within one figure environment). These can have different labels and
+% they are numbered automatically. Check the package documentation. 
+\usepackage{subfigure}
+
+% The titlesec package can be used to alter the look of the titles 
+% of sections, chapters, and so on. This example uses the ``medium'' 
+% package option which sets the titles to a medium size, making them
+% a bit smaller than what is the default. You can fine-tune the 
+% title fonts and sizes by using the package options. See the package
+% documentation.
+\usepackage[medium]{titlesec}
+
+% The TikZ package allows you to create professional technical figures.
+% The learning curve is quite steep, but it is definitely worth it if 
+% you wish to have really good-looking technical figures. 
+\usepackage{tikz}
+% You also need to specify which TikZ libraries you use
+\usetikzlibrary{positioning}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.pathmorphing,decorations.markings}
+\usetikzlibrary{shapes}
+\usetikzlibrary{patterns}
+
+
+% The aalto-thesis package provides typesetting instructions for the
+% standard master's thesis parts (abstracts, front page, and so on)
+% Load this package second-to-last, just before the hyperref package.
+% Options that you can use: 
+%   mydraft - renders the thesis in draft mode. 
+%             Do not use for the final version. 
+%   doublenumbering - [optional] number the first pages of the thesis
+%                     with roman numerals (i, ii, iii, ...); and start
+%                     arabic numbering (1, 2, 3, ...) only on the 
+%                     first page of the first chapter
+%   twoinstructors  - changes the title of instructors to plural form
+%   twosupervisors  - changes the title of supervisors to plural form
+\usepackage[mydraft,twosupervisors]{aalto-thesis}
+%\usepackage[mydraft,doublenumbering]{aalto-thesis}
+%\usepackage{aalto-thesis}
+
+
+% Hyperref
+% ------------------------------------------------------------------
+% Hyperref creates links from URLs, for references, and creates a
+% TOC in the PDF file.
+% This package must be the last one you include, because it has
+% compatibility issues with many other packages and it fixes
+% those issues when it is loaded.   
+\RequirePackage[pdftex]{hyperref}
+% Setup hyperref so that links are clickable but do not look 
+% different
+\hypersetup{colorlinks=false,raiselinks=false,breaklinks=true}
+\hypersetup{pdfborder={0 0 0}}
+\hypersetup{bookmarksnumbered=true}
+% The following line suggests the PDF reader that it should show the 
+% first level of bookmarks opened in the hierarchical bookmark view. 
+\hypersetup{bookmarksopen=true,bookmarksopenlevel=1}
+% Hyperref can also set up the PDF metadata fields. These are
+% set a bit later on, after the thesis setup.   
