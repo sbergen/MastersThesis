@@ -20,11 +20,13 @@ produce an interactive sonic experience.
 
 \section{Conducting Gestures}
 
+\fixme{Summarize what a modern conductor does}
+
 While some forms of musical conducting have been around for hundreds of years
-[Green 1961, look up from heller 2005],
+[Green 1961, look up from gallops 2005],
 the developments that lead to the modern form of conducting
 were driven by the increasing size and complexity of symphonic scores
-in the late nineteenth century. [heller 2005, where's the original?]
+in the late nineteenth century. \cite{gallops2005}
 Studying conducting from a scientific, data based approach,
 is an even more recent development.
 Sousa \cite{sousa1988} was among the first,
@@ -41,8 +43,29 @@ were recognised by over 70\% of the subjects,
 with the recognition rate having a strong correlation
 with the experience level of the musicians.
 
-\fixme{More recent studies heller, konttinen, rehearsing, etc...}
-
+While some conducting gestures can be easily analysed,
+and do have a commonly recognised meaning,
+to really understand how the communication between
+conductors and musicians works,
+one has to study the whole life cycle of a conducted performance -
+preparations made by the conductor before rehearsing with the musicians,
+rehearsal with musicians,
+and finally the actual performance.
+Konttinen \cite{konttinen2008} studied
+conducting as a practical and sociological activity
+in her dissertation \textit{Conducting Gestures}.
+She came to the conclusion that the main purpose of all
+conducting gestures become apparent in a social situation -
+a rehearsal, performance or conducting class -
+where the communicational situation includes both the gesture
+and the social context in which it is used.
+Therefore the meaning of conducting gestures are
+heavily influenced by their social context -
+the musicians affecting the way the conductor performs,
+and the conductor affecting the way the musicians interpret the gestures.
+Especially the rehearsal situation,
+where the conductor needs to make the meaning of his gestures obvious,
+is crucial for founding the basis for successful gestural communication.
 
 \section{Gesture-Based Human-Computer Interaction}
 
@@ -57,7 +80,7 @@ have made gestures as a form of human-computer interaction
 a part of everyday life for an increasing amount of people.
 
 Depth sensor equipped motion sensing input devices,
-such as the Mictosoft Kinect \cite{},
+such as the Mictosoft Kinect \cite{kinect_overview},
 represent a recent trend of incorporating gesture based interaction
 into consumer electronics.
 Interaction with applications using these devices
@@ -81,15 +104,32 @@ but are rather based on the time-frequency properties of the signal.
 Various studies have been made on the relation between
 descriptive and emotional adjectives,
 and the time-frequency properties of sound.
-The studies have covered both the timbre of individual notes [moravec] 
-and the variation timing on the notational level [friberg?].
-Expression in virtual instruments is another field of study
-that has had a lot of coverage. [citation needed]
+The studies have covered both musical cues,
+such as tempo, loudness and articulation \cite{juslin2000cue},
+and the timbre of individual notes \cite{moravec2005}.
 
+The majority of motion based expressive sound synthesis implementations
+have been novel approaches which do not model any existing form of musical expression.
+Some have concentrated on using emotional data
+extracted from the motion of the user,
+to control music in a way that the
+emotional features of the music would match those of the user \cite{friberg2004},
+while others have provided means create mappings
+between arbitrary motion data and sound features \cite{kia2004}.
+\fixme{Mention virtual instruments}
 
+Because bringing out expressive features of music is a crucial part of conducting,
+a conductor follower is a rather natural candidate for
+an expressive sound synthesis system.
 
 
 \section{Conductor Follower Systems}
+
+Over the years, several performance, educational and research systems
+have been designed and implemented,
+which follow conductor gestures and produce or modify music based on the input.
+\fixme{History covered in detail in several other papers, just a quick overview here}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Methods}
