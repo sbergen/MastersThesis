@@ -25,5 +25,7 @@
 *.maf
 *.mtc
 *.mtc0
+*.bcf
+*.run.xml
 
 /latex/thesis.pdf
