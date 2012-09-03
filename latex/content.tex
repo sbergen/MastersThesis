@@ -133,20 +133,60 @@ which follow conductor gestures and produce or modify music based on the input.
 \chapter{Methods}
 \label{chapter:methods}
 
-\fixme{Write something}
+\fixme{Write some more}
 
-\section{Motion Tracking}
+\section{Motion Capture}
 
-Motion tracking is a relatively mature field of study,
-and is not in the main focus of this thesis.
+Motion capture in the context of the conductor follower system,
+consists of tracking the hands.
+\fixme{Will this still change?}
+The methods used for this are fairly mature,
+and not in the main focus of this thesis.
 Since sufficient methods and implementations for
-motion tracking using depth sensor devices
+motion capture using depth sensor devices
 are commonly available,
 there is no need to cover the details of those here.
 
-\fixme{Write more}
+\fixme{Write more, once the implementation is more final}
 
 \subsection{Feature Extraction}
+
+Luck and Toiviainen have studied the gestures of conductors
+both from a beat synchronization \cite{luck2006}
+and expressive \cite{luck2010} point of view.
+Both studies used Savitzky-Golay filtering \cite{savitzky1964}
+for data smoothing and differentiation.
+As the results of these studies are utilized,
+it is logical to use the same methods in the implementation.
+
+\subsection{Beat Detection}
+
+\fixme{General method, not specific patterns}
+
+Luck and Toiviainen \cite{luck2006}
+conducted a beat synchronization study,
+which was novel in the sense that it studied
+the subject in a real orchestral rehearsal situation.
+Previous studies have been made primarily in laboratory settings,
+and thus do not present a good foundation
+for emulating the behavior of an orchestra.
+The study analyzed the motion of the baton
+in four excerpts of conducting,
+collected from one rehearsal situation.
+Since the study represented the conducting style of only one conductor,
+and the response of only one orchestra,
+it does not present universally valid results.
+However, looking at both laboratory and rehearsal situation based studies showed
+that two features stood out as good candidates for beat detection:
+vertical position and velocity.
+Both have been shown to have a
+rather strong correlation with beat induction \cite{add citations}.
+Luck and Toiviainen's study showed that when the conductor's gestures were well articulated,
+the lowest vertical position preceded the beat by circa 230 milliseconds,
+while the highest vertical velocity preceded the beat by circa 90 milliseconds,
+both having a high correlation at that lag.
+
+
 
 \section{Sound Synthesis}
 
@@ -188,7 +228,7 @@ The parameters used for describing the patches are:
 \item[Weight] The \textit{musical weight} of the note, i.e. an accented note would have a large weight.
 \end{description}
 By using this information,
-together with the current motion tracking and score state,
+together with the current motion capture and score state,
 the system is capable of selecting
 the most appropriate patch for each note.
 
@@ -223,8 +263,8 @@ In addition to track instrument assignment,
 the system should also be aware of events in the score.
 \fixme{Write about score events}
 
-
 \subsection{Tempo Following}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
