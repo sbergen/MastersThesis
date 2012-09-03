@@ -2,11 +2,6 @@
 \chapter{Introduction}
 \label{chapter:intro}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Background}
-\label{chapter:background} 
-
 The interaction between conductors and musicians
 is a sophisticated form of non-verbal communication.
 While the expressions used in conducting have no strict rules,
@@ -122,7 +117,6 @@ Because bringing out expressive features of music is a crucial part of conductin
 a conductor follower is a rather natural candidate for
 an expressive sound synthesis system.
 
-
 \section{Conductor Follower Systems}
 
 Over the years, several performance, educational and research systems
@@ -130,18 +124,108 @@ have been designed and implemented,
 which follow conductor gestures and produce or modify music based on the input.
 \fixme{History covered in detail in several other papers, just a quick overview here}
 
+\fixme{Summarize what we are doing and why}
+
+\section{Thesis Overview}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Methods}
 \label{chapter:methods}
 
-\section{Motion Tracking and Feature Extraction}
+\fixme{Write something}
+
+\section{Motion Tracking}
+
+Motion tracking is a relatively mature field of study,
+and is not in the main focus of this thesis.
+Since sufficient methods and implementations for
+motion tracking using depth sensor devices
+are commonly available,
+there is no need to cover the details of those here.
+
+\fixme{Write more}
+
+\subsection{Feature Extraction}
 
 \section{Sound Synthesis}
 
-\subsection{Tempo Following}
+Since the objective of the system is to emulate an orchestra,
+also the sound synthesis system should be able to
+provide realistic synthesis of an entire orchestra.
+It should be able to reproduce a musical composition
+at varying tempi and articulations.
 
 \subsection{Expressive Synthesis}
+\label{subsec:expressive_synth}
+
+There are several commercial orchestral synthesizers available,
+the majority of which use some form of sampling or concatenative synthesis.
+Based on the feature set provided and
+subjective evaluation of sound quality,
+Vienna Symphonic Library (VSL) \cite{vsl} was chosen for the task.
+VSL uses a form of concatenative synthesis,
+using a vast library of samples played at
+various velocities and articulations \cite{schwartz2006}.
+
+Each instrument in VSL contains a set of \textit{patches},
+which represent a certain articulation and/or playing style.
+Each patch is capable of synthesizing
+the whole scale of the given instrument at several velocities.
+Some patches (such as \textit{staccato} articulations)
+have a limited note length,
+while others allow stretching out the note infinitely.
+Switching between patches can be accomplished with \textit{keyswitch} events
+(notes outside of the scale of the instrument).
+
+In order to control the switching of patches,
+the synthesis system must have some knowledge of
+the available instruments and their patches.
+The parameters used for describing the patches are:
+\begin{description}
+\item[Length] The maximum note length allowed by the patch.
+\item[Attack] The sharpness of the attack portion of the notes.
+\item[Weight] The \textit{musical weight} of the note, i.e. an accented note would have a large weight.
+\end{description}
+By using this information,
+together with the current motion tracking and score state,
+the system is capable of selecting
+the most appropriate patch for each note.
+
+\fixme{Write more on patch selection (e.g. distance function)}
+
+\subsection{Score Data Format}
+
+Regardless of its limitations and age,
+MIDI (Musical Instrument Digital Interface)
+is still one of the most used standards
+for the digital representation of of musical events.
+MIDI is also the built-in way to communicate musical events
+in the Virtual Studio Technology (VST) plugin format,
+which is used by VSL.
+Thus using MIDI as the score format was a natural choice.
+
+A MIDI score does contain
+note, time signature and tempo information.
+It may also contain \textit{program change} events,
+as specified in the General Midi specification \cite{},
+to indicate the instrument to be used for each track.
+However, practical experience with MIDI files showed,
+that using program changes to deduce the instrument to use,
+was not sufficient.
+Often scores would use the
+\textit{String ensemble} patch for all strings,
+even though the string instruments were separated to individual tracks.
+In cases like this it is necessary to be able to manually
+define the instrument to be used with each track.
+
+In addition to track instrument assignment,
+the system should also be aware of events in the score.
+\fixme{Write about score events}
+
+
+\subsection{Tempo Following}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Implementation}
