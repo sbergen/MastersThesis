@@ -385,6 +385,85 @@ but merely had a supporting role during system development.
 
 \section{Time Handling}
 
+Handling time in a multirate, multi-threaded system,
+is not a trivial task.
+The motion capture thread will be in
+a blocking state most of the time,
+waking up at a 30Hz frequency to process data
+provided by the motion capture system.
+The plugin, however, needs to provide MIDI data
+based on the host's audio settings,
+a typical configuration running the
+plugin at around 100 Hz (an audio block length of 10ms).
+Additionally, the thread in which the plugin runs
+is controlled by the host,
+and the code has to be absolutely lock-free.
+
+Considering the implications of needing to run lock-free code on
+a modern multi-core system running a general purpose
+operating system (OS),
+no assumptions about causality or parallelism between
+motion capture and plugin code execution can be made --
+scheduling latencies and parallel execution forces the use
+of a reliable timestamping mechanism for synchronization between
+the audio and motion capture threads.
+The Boost Chrono library provides a steady clock,
+which measures time since the latest system boot-up.
+Acquiring the current timestamp was verified to be lock-free
+at least on Windows and OS X as of Boost version 1.49.0.
+These timestamps are using for measuring the interval between
+events happening in the motion capture and plugin threads.
+Timestamping events in the motion capture thread is straightforward,
+each event simply being timestamped with
+the current timestamp returned by the system.
+The plugin thread will, however,
+require jitter correction to prevent timing problems.
+
+\subsection{Jitter Correction}
+
+The plugin thread needs to know not only
+the timestamp corresponding to the beginning of the current audio block,
+but also an estimate for the end of the block.
+Let the audio block be defined by its beginning and end:
+\begin{equation}
+T_b = [t_{b,b}, t_{b,e}).
+\end{equation}
+Using the information provided to the plugin,
+the theoretical block length
+\begin{equation}
+\Delta t'_b = \frac{N_b}{f_s},
+\end{equation}
+where $N_b$ is the block size in samples and $f_s$ the samplerate.
+This length is then used for estimating the end of each block
+\begin{equation}
+t_{b,e} = t_c + \Delta t_b,
+\end{equation}
+where $t_c$ is the current timestamp.
+Due to scheduling latencies,
+the value of $t_c$ might differ from the
+previous block end estimate $t'_{b,e}$.
+In order to prevent gaps and overlaps between the
+time estimates of consecutive audio blocks,
+the beginning of each block is taken from the end of the previous block
+\begin{equation}
+t_{b,b} = t'_{b,e}.
+\end{equation}
+The VST specification requires
+each MIDI event to have its position defined
+as a sample offset from the beginning of the current block.
+As the actual block length
+\begin{equation}
+\Delta t_{b} = t_{b,e} - t_{b,b}
+\end{equation}
+will differ from the theoretical block length
+$\Delta t'_{b}$ most of the time,
+this difference will need to be taken into consideration
+when calculating the event sample offset
+\begin{equation}
+\Delta N_e = \frac{\Delta t'_{b}}{\Delta t_{b}} (t_e - t_{b,e}) f_s,
+\end{equation}
+where $t_e$ is the event time.
+
 \section{Feature Extraction}
 
 \section{Tempo Following}
