@@ -160,8 +160,9 @@ As the results of these studies are utilized,
 it is logical to use the same methods in the implementation.
 
 \subsection{Beat Detection}
+\label{sec:meth:beat_detection}
 
-\fixme{General method, not specific patterns}
+\fixme{Tell that we want a general method, not specific patterns}
 
 Luck and Toiviainen \cite{luck2006}
 conducted a beat synchronization study,
@@ -265,6 +266,28 @@ the system should also be aware of events in the score.
 
 \subsection{Tempo Following}
 
+The aim of the tempo following system
+is to behave like a real orchestra would,
+when reacting to a conductor.
+\fixme{quote some studies on this matter, if you find some}
+This implies that
+\begin{enumerate}
+\item The orchestra should not be confused by changes in the conducting pattern. \label{follow_point:pattern}
+\item In the absence of beats, the orchestra will continue with it's previous tempo.
+\item Extra beats in "unexpected" positions will not be acted upon. \label{follow_point:unexpected}
+\item Sudden changes in tempo will not be immediately followed.
+\end{enumerate}
+Points \ref{follow_point:pattern} and \ref{follow_point:unexpected} require
+that the tempo follower must have knowledge of all the possible
+conducting patterns for each time signature,
+and that it must be able to relate each beat to some beat in the pattern.
+\fixme{Write more}
+
+Once the beats are detected as described
+in section \ref{sec:meth:beat_detection},
+the beats have to be classified.
+The main purpose of classification
+is to calculate the offset
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -426,47 +449,62 @@ the timestamp corresponding to the beginning of the current audio block,
 but also an estimate for the end of the block.
 Let the audio block be defined by its beginning and end:
 \begin{equation}
-T_b = [t_{b,b}, t_{b,e}).
+\boldsymbol{\tau} = [\tau_b, \tau_e[.
 \end{equation}
 Using the information provided to the plugin,
 the theoretical block length
 \begin{equation}
-\Delta t'_b = \frac{N_b}{f_s},
+\label{eq:theoretical_block_len}
+\Delta \tau' = \frac{n_b}{f_s},
 \end{equation}
-where $N_b$ is the block size in samples and $f_s$ the samplerate.
+where $n_b$ is the block size in samples and $f_s$ the samplerate.
 This length is then used for estimating the end of each block
 \begin{equation}
-t_{b,e} = t_c + \Delta t_b,
+\tau_e = t_c + \Delta \tau',
 \end{equation}
 where $t_c$ is the current timestamp.
 Due to scheduling latencies,
 the value of $t_c$ might differ from the
-previous block end estimate $t'_{b,e}$.
+previous block end estimate $\tau_{e, prev}$.
 In order to prevent gaps and overlaps between the
 time estimates of consecutive audio blocks,
 the beginning of each block is taken from the end of the previous block
 \begin{equation}
-t_{b,b} = t'_{b,e}.
+\tau_b = \tau_{e_{\mathrm{prev}}}.
 \end{equation}
 The VST specification requires
 each MIDI event to have its position defined
 as a sample offset from the beginning of the current block.
 As the actual block length
 \begin{equation}
-\Delta t_{b} = t_{b,e} - t_{b,b}
+\Delta \tau = \tau_e - \tau_b
 \end{equation}
 will differ from the theoretical block length
-$\Delta t'_{b}$ most of the time,
+$\Delta \tau'$ most of the time,
 this difference will need to be taken into consideration
 when calculating the event sample offset
 \begin{equation}
-\Delta N_e = \frac{\Delta t'_{b}}{\Delta t_{b}} (t_e - t_{b,e}) f_s,
+\Delta n_e = \frac{\Delta \tau'}{\Delta \tau} (t_e - \tau_b) f_s,
 \end{equation}
-where $t_e$ is the event time.
+where $t_e$ is the event time. By using equation \ref{eq:theoretical_block_len},
+this can be simplified to
+\begin{equation}
+\Delta n_e = n_b \frac{t_e - \tau_b}{\Delta \tau}.
+\end{equation}
 
 \section{Feature Extraction}
 
+
+
+\subsection{Beat Detection}
+
+\subsection{Expressive Features}
+
 \section{Tempo Following}
+
+\subsection{Beat Classification}
+
+\subsection{Time Warping}
 
 \section{Mapping Expressions to Synthesis Parameters}
 
