@@ -271,11 +271,123 @@ the system should also be aware of events in the score.
 \chapter{Implementation}
 \label{chapter:implementation}
 
+Since the synthesis environment is a VST plugin,
+implementing the conductor follower as a VST plugin was a logical choice.
+The input for the plugin is read from a MIDI file
+and the output is MIDI events via the VST interface.
+These implementation details are, however, hidden behind
+carefully designed interfaces,
+separating the core functionality from the input/output functionality.
+
+One of the most important considerations of the implementation
+is its soft real time (RT) nature.
+In addition to having RT constraints,
+the 30Hz frame rate of the motion capture system
+makes it a multirate, multithreaded application.
+Working in such an environment requires using
+lock-free programming techniques,
+such as atomic variables, read-copy-update (RCU) constructs,
+lock-free ringbuffers and a "butler" thread.
+The multirate nature also requires having robust timestamping and synchronization mechanisms.
+
+\fixme{chapter overview}
+
+\section{Supporting Libraries}
+
+The implementation makes heavy use of several of the Boost C++ libraries \cite{boost}.
+The most noteworthy ones are described in the following list.
+Libraries included in the C++11 standard \cite{cpp11}
+are denoted with $^*$,
+while libraries not yet in the official boost distribution
+are marked with $^\dagger$.
+\begin{description}[leftmargin=14ex]
+\item[Chrono$^*$] Time library for timestamping and jitter correction.
+\item[Geometry] \fixme{Is this really used much anywhere?}
+\item[Lockfree$^\dagger$] Various lock-free constructs.
+\item[Spirit] A parsing library, used for configuration file parsing.
+\item[Thread$^*$] Threading utilities.
+\item[uBLAS] Linear algebra, used for polynomial fitting.
+\item[Units] Compile-time dimensional analysis.
+\end{description}
+
+The OpenNI Framework \cite{openni} is an open source cross-platform
+framework for Natural Interaction (NI) devices.
+PrimeSense Ltd \cite{primesense} provides a proprietary
+middleware package called NITE,
+which works with the OpenNI API,
+providing higher level functionality such as skeletal and hand tracking.
+NITE is used via the OpenNI APIs for hand tracking.
+
+Juce \cite{juce} is an open source,
+multimedia oriented cross-platform C++ library.
+It was used for its
+VST plugin wrapper, MIDI file I/O,
+and user interface (UI) functionality.
+
 \section{Architectural overview}
 
-\section{Feature Extraction Method}
+The implementation is divided into
+six well defined and loosely coupled modules:
+\begin{itemize}
+\item Common utilities
+\item Data file parsers
+\item Motion capture
+\item Expression to synthesis parameter mapper
+\item Score Follower (the core functionality)
+\item The VST plugin
+\end{itemize}
 
-\section{Tempo Following Method}
+The common utilities module contains components
+that are not specific to conductor following.
+These include utilities for
+lock-free programming,
+mathematical operations and algorithms,
+time and geometry handling,
+logging, and debugging.
+
+The data file parser module
+contains all the parser definitions
+and supporting data structures
+for all the input files used by the system.
+Its main purpose is to hide the implementation
+of parsing behind a concise API.
+
+The motion capture module provides a simple
+event-based API for motion related data.
+It includes the logic for extracting relevant events from motion data.
+It also contains all the code that uses the OpenNI APIs,
+so that the rest of the system has no dependencies on OpenNI.
+
+The expression to synthesis parameter mapper
+maps expression parameters to synthesis parameters.
+\fixme{Write more}
+
+The score follower module provides most of the core functionality,
+not including motion capture.
+This includes
+beat classification, tempo and score following, jitter correction,
+and instrument patch switching among other things.
+It also provides abstract interfaces for 
+hiding the implementation details of the score format.
+
+The VST plugin modules main purpose is to
+separate as much plugin implementation detail from the rest of the system.
+It implements the VST interface and provides the plugin UI,
+both using Juce.
+It also implements the score related interfaces,
+defined in the score follower module,
+using Juce MIDI functionality.
+
+In addition to these six modules,
+the project contains four unit test modules.
+These modules are not significant regarding the functionality,
+but merely had a supporting role during system development.
+
+\section{Time Handling}
+
+\section{Feature Extraction}
+
+\section{Tempo Following}
 
 \section{Mapping Expressions to Synthesis Parameters}
 
