@@ -187,6 +187,146 @@ the lowest vertical position preceded the beat by circa 230 milliseconds,
 while the highest vertical velocity preceded the beat by circa 90 milliseconds,
 both having a high correlation at that lag.
 
+\section{Score Following}
+
+\fixme{Write something}
+
+\subsection{Score Data Format}
+
+Regardless of its limitations and age,
+MIDI (Musical Instrument Digital Interface)
+is still one of the most used standards
+for the digital representation of of musical events.
+MIDI is also the built-in way to communicate musical events
+in the Virtual Studio Technology (VST) plugin format,
+which is used by VSL.
+Thus using MIDI as the score format was a natural choice.
+
+A MIDI score does contain
+note, time signature and tempo information.
+It may also contain \textit{program change} events,
+as specified in the General Midi specification \cite{},
+to indicate the instrument to be used for each track.
+However, practical experience with MIDI files showed,
+that using program changes to deduce the instrument to use,
+was not sufficient.
+Often scores would use the
+\textit{String ensemble} patch for all strings,
+even though the string instruments were separated to individual tracks.
+In cases like this it is necessary to be able to manually
+define the instrument to be used with each track.
+
+In addition to track instrument assignment,
+the system should also be aware of events in the score.
+\fixme{Write about score events}
+
+\subsection{Real Time and Score Positions}
+
+When modifying the playback speed of a musical score
+which has tempo variations already build into it,
+it is important to precisely define the concepts of time used.
+Wall-clock time is the monotonically progressing concept of time
+most familiar to humans.
+It is the time counted by a regular clock,
+and will be referred to as real time,
+its dimension denoted by $T$ and quantities with $t$.
+
+Score positions, on the other hand,
+are slightly more complex.
+Musical events in a fully defined score have two time bases:
+\begin{enumerate}
+\item Musical time has the base unit of beats, but also includes a time varying derived unit of bars. Any position in the score can thus be expressed as either a beat offset, or a combination of bars and beats. Its dimension is denoted with $B$ and quantities with $b$.
+\item Score time has the base unit of seconds. This is an offset from the beginning of the score if the original tempo is followed. Its dimension is denoted with $\Phi$ and quantities with $\varphi$.
+\end{enumerate}
+A score position is thus defined as
+$ P := \tuple{b, \varphi}, $
+and variables will be denoted with a $p$.
+
+Mapping between real time and score positions will be denoted with
+the mapping operator
+$ \mathcal{M} : T \rightarrow P, $
+and it's inverse
+$ \mathcal{M}^{-1} : P \rightarrow T. $
+
+The mapping operator (as well as its inverse)
+requires knowledge of
+the realized playback speed,
+and can thus be applied reliably to
+past events.
+It is also possible to use the mapping operator for
+estimating future events.
+These estimates, however,
+may produce results that differ from
+from future mapping operations,
+and may only be used in special cases.
+
+The relation between real time and score time
+is embedded in the mapping operator.
+To formalize the relation, we can
+represent the relation with a warp factor
+\begin{equation}
+w = \frac{\Delta \phi}{\Delta t},
+\end{equation}
+which is piecewise constant over time.
+ 
+
+\subsection{Tempo Following}
+
+The aim of the tempo following system
+is to behave like a real orchestra would,
+when reacting to a conductor.
+\fixme{quote some studies on this matter, if you find some}
+This implies that
+\begin{enumerate}
+\item The orchestra should not be confused by changes in the conducting pattern. \label{follow_point:pattern}
+\item In the absence of beats, the orchestra will continue with it's previous tempo.
+\item Extra beats in "unexpected" positions will not be acted upon. \label{follow_point:unexpected}
+\item Sudden changes in tempo will not be immediately followed.
+\end{enumerate}
+Points \ref{follow_point:pattern} and \ref{follow_point:unexpected} require
+that the tempo follower must have knowledge of all the possible
+conducting patterns for each time signature,
+and that it must be able to relate each beat to some beat in the pattern.
+\fixme{Write more}
+
+The formal objective of tempo following
+is to minimize the offset between
+beats conducted and
+beats played by the virtual orchestra.
+Once the beats are detected as described
+in section \ref{sec:meth:beat_detection},
+the beats have to be classified.
+A beat classification is defined as a tuple
+\begin{equation}
+C := \tuple{\Delta b, q, \tau} \mid 
+\tau \in \lbrace \mathrm{NotClassified}, \mathrm{CurrentBar}, \mathrm{NextBar} \rbrace,
+\end{equation}
+where $\Delta b$ is the offset,
+$q$ the classification quality,
+and $\tau$ the type.
+Each beat pattern has a related
+classification operation $ \mathcal{C} : B \rightarrow C, $
+which uses the relative position of the detected beat
+within the current bar,
+to produce a classification.
+Out of the set of classifications produced by the beat patterns,
+the classification with the best quality is
+selected as the final classification.
+
+The action taken based on the winning classification
+depends on the type of the classification.
+In the case of NotClassified, no action is taken for that beat.
+When the type is NextBar,
+the current bar is incremented,
+and the classification is repeated with an
+updated relative beat position.
+The type CurrentBar,
+means that the offset $\Delta b$ is used for correcting
+the current warp factor $w$.
+The 
+
+
+\fixme{offset correction}
 
 
 \section{Sound Synthesis}
@@ -234,61 +374,6 @@ the system is capable of selecting
 the most appropriate patch for each note.
 
 \fixme{Write more on patch selection (e.g. distance function)}
-
-\subsection{Score Data Format}
-
-Regardless of its limitations and age,
-MIDI (Musical Instrument Digital Interface)
-is still one of the most used standards
-for the digital representation of of musical events.
-MIDI is also the built-in way to communicate musical events
-in the Virtual Studio Technology (VST) plugin format,
-which is used by VSL.
-Thus using MIDI as the score format was a natural choice.
-
-A MIDI score does contain
-note, time signature and tempo information.
-It may also contain \textit{program change} events,
-as specified in the General Midi specification \cite{},
-to indicate the instrument to be used for each track.
-However, practical experience with MIDI files showed,
-that using program changes to deduce the instrument to use,
-was not sufficient.
-Often scores would use the
-\textit{String ensemble} patch for all strings,
-even though the string instruments were separated to individual tracks.
-In cases like this it is necessary to be able to manually
-define the instrument to be used with each track.
-
-In addition to track instrument assignment,
-the system should also be aware of events in the score.
-\fixme{Write about score events}
-
-\subsection{Tempo Following}
-
-The aim of the tempo following system
-is to behave like a real orchestra would,
-when reacting to a conductor.
-\fixme{quote some studies on this matter, if you find some}
-This implies that
-\begin{enumerate}
-\item The orchestra should not be confused by changes in the conducting pattern. \label{follow_point:pattern}
-\item In the absence of beats, the orchestra will continue with it's previous tempo.
-\item Extra beats in "unexpected" positions will not be acted upon. \label{follow_point:unexpected}
-\item Sudden changes in tempo will not be immediately followed.
-\end{enumerate}
-Points \ref{follow_point:pattern} and \ref{follow_point:unexpected} require
-that the tempo follower must have knowledge of all the possible
-conducting patterns for each time signature,
-and that it must be able to relate each beat to some beat in the pattern.
-\fixme{Write more}
-
-Once the beats are detected as described
-in section \ref{sec:meth:beat_detection},
-the beats have to be classified.
-The main purpose of classification
-is to calculate the offset
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Implementation}
@@ -434,7 +519,7 @@ The Boost Chrono library provides a steady clock,
 which measures time since the latest system boot-up.
 Acquiring the current timestamp was verified to be lock-free
 at least on Windows and OS X as of Boost version 1.49.0.
-These timestamps are using for measuring the interval between
+These timestamps are used for measuring the interval between
 events happening in the motion capture and plugin threads.
 Timestamping events in the motion capture thread is straightforward,
 each event simply being timestamped with
@@ -462,10 +547,10 @@ This length is then used for estimating the end of each block
 \begin{equation}
 \tau_e = t_c + \Delta \tau',
 \end{equation}
-where $t_c$ is the current timestamp.
+where $t_c$ is the current timestamp at the beginning of the block.
 Due to scheduling latencies,
 the value of $t_c$ might differ from the
-previous block end estimate $\tau_{e, prev}$.
+previous block end estimate $\tau_{e_{\mathrm{prev}}}$.
 In order to prevent gaps and overlaps between the
 time estimates of consecutive audio blocks,
 the beginning of each block is taken from the end of the previous block
