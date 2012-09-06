@@ -239,7 +239,7 @@ Musical events in a fully defined score have two time bases:
 \item Score time has the base unit of seconds. This is an offset from the beginning of the score if the original tempo is followed. Its dimension is denoted with $\Phi$ and quantities with $\varphi$.
 \end{enumerate}
 A score position is thus defined as
-$ P := \tuple{b, \varphi}, $
+$ \tupledef{P}{b, \varphi}, $
 and variables will be denoted with a $p$.
 
 Mapping between real time and score positions will be denoted with
@@ -296,14 +296,16 @@ beats played by the virtual orchestra.
 Once the beats are detected as described
 in section \ref{sec:meth:beat_detection},
 the beats have to be classified.
-A beat classification is defined as a tuple
-\begin{equation}
-C := \tuple{\Delta b, q, \tau} \mid 
-\tau \in \lbrace \mathrm{NotClassified}, \mathrm{CurrentBar}, \mathrm{NextBar} \rbrace,
-\end{equation}
+A beat classification is defined as the tuple
+\[
+\tupledef{C}{\Delta b, q, \tau},
+\]
 where $\Delta b$ is the offset,
 $q$ the classification quality,
-and $\tau$ the type.
+and $\tau$ the type
+\[
+\tau \in \lbrace \mathrm{NotClassified}, \mathrm{CurrentBar}, \mathrm{NextBar} \rbrace.
+\]
 Each beat pattern has a related
 classification operation $ \mathcal{C} : B \rightarrow C, $
 which uses the relative position of the detected beat
@@ -323,10 +325,30 @@ updated relative beat position.
 The type CurrentBar,
 means that the offset $\Delta b$ is used for correcting
 the current warp factor $w$.
-The 
+The factor is corrected so that after a catchup time $t_c$,
+the position will differ by $\Delta b$,
+compared to the position
+that would be reached by maintaining the current tempo.
+The correction is applied as a tempo function $\upsilon (t)$,
+whose magnitude is derived from the integral
+\begin{equation}
+\int_t^{t + t_c} \upsilon \, \mathrm{d}t = \Delta b.
+\end{equation}
 
+Given the previous beat offset $\Delta b'$ (at time $t'$),
+and current $\upsilon (t)$,
+the current offset can be estimated as
+\begin{equation}
+\Delta b(t) = \Delta b' - \int_{t'}^t \upsilon \, \mathrm{d}t.
+\end{equation}
+To get the best beat classifications,
+$ \mathcal{C} $ is used with the relative beat position
+\begin{equation}
+b' = \mathcal{M} [ t ] - p_b + \Delta b(t),
+\end{equation}
+where $t$ is the time of the beat,
+and $p_b$ the beginning of the current bar.
 
-\fixme{offset correction}
 
 
 \section{Sound Synthesis}
