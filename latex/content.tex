@@ -184,7 +184,7 @@ there is no need to cover the details of those here.
 Luck and Toiviainen have studied the gestures of conductors
 both from a beat synchronization \cite{luck2006}
 and expressive \cite{luck2010} point of view.
-Both studies used Savitzky-Golay filtering \cite{savitzky1964}
+Both studies used Savitzky-Golay filtering (polynomial fitting) \cite{savitzky1964}
 for data smoothing and differentiation.
 As the results of these studies are utilized,
 it is logical to use the same methods in the implementation.
@@ -770,7 +770,58 @@ this can be simplified to
 
 \section{Motion Capture}
 
-The motion capture 
+\subsection{The Savitzky-Golay Filter}
+
+The Savitzky-Golay filter is used for three purposes in the system:
+smoothing, differentiation and interpolation.
+The polynomial fitting part for the filter is implemented using
+matrix operations and the uBLAS library.
+Estimating the polynomial coefficients is done by the equation
+\begin{equation}
+\widehat{\mathbf{a}} = \left( \mathbf{X}^T \mathbf{X} \right)^{-1} \mathbf{X}^T \mathbf{y},
+\end{equation}
+where $\widehat{\mathbf{a}}$ are the estimated coefficients,
+$\mathbf{y}$ the observations,
+and $\mathbf{X}$ the design matrix
+\begin{equation}
+\mathbf{X} = \left[
+\begin{array}{ccccc}
+1 & x_1 & x_1^2 & \ldots & x_1^m \\
+1 & x_2 & x_2^2 & \ldots & x_2^m \\
+1 & x_3 & x_3^2 & \ldots & x_3^m \\
+\vdots & \vdots & \vdots & & \vdots \\
+1 & x_n & x_n^2 & \ldots & x_n^m \\
+\end{array}
+\right] ,
+\end{equation}
+where $x_1 \ldots x_n$ are the observation times,
+and $m$ the order of the resulting polynomial.
+It is required that $n > m$.
+Smoothing and differentiation is implemented by
+selecting an odd value for $n$
+and evaluation the polynomial at the center value
+$x_{\lfloor \frac{n}{2} \rfloor}$.
+An optimization that is easy to implement for equally sampled data,
+is to pre-calculate $\mathbf{X}$,
+with $x_{\lfloor \frac{n}{2} \rfloor} = 0$.
+The value and derivatives are calculated from the polynomial
+\begin{equation}
+\widehat{y}(x) =
+\widehat{\mathbf{a}}_m \, x^m +
+\widehat{\mathbf{a}}_{m-1} \, x^{m-1} +
+\ldots +
+\widehat{\mathbf{a}}_{2} \, x +
+\widehat{\mathbf{a}}_{1}.
+\end{equation}
+The simplified equations being
+\begin{equation}
+\widehat{y}(0) = \widehat{\mathbf{a}}_{1}
+\end{equation}
+for the value, and
+\begin{equation}
+\widehat{y}^{(n)}(0) = n! \: \widehat{\mathbf{a}}_{n + 1}
+\end{equation}
+for the $n^{\text{th}}$ derivative.
 
 \subsection{Beat Detection}
 
