@@ -140,12 +140,32 @@ which follow conductor gestures and produce or modify music based on the input.
 
 \section{Thesis Overview}
 
+\fixme{Write some}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Methods}
 \label{chapter:methods}
 
 \fixme{Write some more}
+
+\section{Make up a nice title}
+
+If the real life interaction between a conductor and musicians
+were to be modelled as closely as possible,
+it would require providing a feedback channel,
+equivalent to the verbal communication from conductor to musicians.
+This channel could then be used to teach the
+style of the specific conductor to the system.
+In other words, when the system misinterprets some gesture,
+the conductor could correct this interpretation by 
+providing the correct interpretation via the feedback channel.
+This way it would be possible for the system to
+learn the style of the conductor in question over time,
+using machine learning techniques.
+Implementing such a system would, however,
+be too large an effort for the scope of this project.
+Instead, a more general and static rule based system is
+considered and implemented.
 
 \section{Motion Capture}
 
@@ -161,8 +181,6 @@ there is no need to cover the details of those here.
 
 \fixme{Write more, once the implementation is more final}
 
-\subsection{Feature Extraction}
-
 Luck and Toiviainen have studied the gestures of conductors
 both from a beat synchronization \cite{luck2006}
 and expressive \cite{luck2010} point of view.
@@ -174,7 +192,9 @@ it is logical to use the same methods in the implementation.
 \subsection{Beat Detection}
 \label{sec:meth:beat_detection}
 
-\fixme{Tell that we want a general method, not specific patterns}
+The aim of the beat detection system is
+to work with as many conducting styles as possible.
+\fixme{Write more}
 
 Luck and Toiviainen \cite{luck2006}
 conducted a beat synchronization study,
@@ -198,6 +218,10 @@ Luck and Toiviainen's study showed that when the conductor's gestures were well 
 the lowest vertical position preceded the beat by circa 230 milliseconds,
 while the highest vertical velocity preceded the beat by circa 90 milliseconds,
 both having a high correlation at that lag.
+
+\subsection{Start Gesture Detection}
+
+\subsection{Expressive Feature Extraction}
 
 \section{Score Following}
 
@@ -428,9 +452,20 @@ The bar qualities are reset when the winning classification
 is of type $\mathrm{NextBar}$,
 and are updated at every detected beat as described above.
 
-\subsection{Start gesture detection}
+\subsection{Start Tempo Estimation}
 
+The start tempo is estimated based on
+the duration of the start gesture.
+Th duration from bottom to top position is
+assumed to be the length of one eight beat,
+and the starting tempo thus
+\begin{equation}
+v_s = \tfrac{1}{2} (t_t - t_b),
+\end{equation}
+where $t_t$ is the time at the top of the gesture,
+and $t_b$ the time at the bottom of the gesture.
 
+\fixme{Will the tempo estimation in the first bar(s) be changed?}
 
 \section{Sound Synthesis}
 
@@ -488,14 +523,29 @@ carefully designed interfaces,
 separating the core functionality from the input/output functionality.
 
 One of the most important considerations of the implementation
-is its soft real time (RT) nature.
+is its real-time (RT) constraints.
+A RT system is defined as a system where calculations
+need to be completed before a given deadline,
+and can be classified into three categories:
+\begin{description}
+\item[Hard]
+Missing a deadline is a total system failure.
+\item[Firm]
+The usefulness of a result is zero after its deadline.
+\item[Soft]
+The usefulness of a result degrades after its deadline.
+\end{description}
+An audio plugin has firm real-time constraints,
+since the result for each block of audio needs to be delivered in time.
+Missing a deadline means that block will not be played back.
+
 In addition to having RT constraints,
 the 30Hz frame rate of the motion capture system
 makes it a multirate, multithreaded application.
 Working in such an environment requires using
 lock-free programming techniques,
 such as atomic variables, read-copy-update (RCU) constructs,
-lock-free ringbuffers and a "butler" thread.
+and lock-free ringbuffers.
 The multirate nature also requires having robust timestamping and synchronization mechanisms.
 
 \fixme{chapter overview}
@@ -591,6 +641,47 @@ the project contains four unit test modules.
 These modules are not significant regarding the functionality,
 but merely had a supporting role during system development.
 
+\subsection{Thread model}
+
+The VST architecture implies using at least two threads:
+one for audio and/or MIDI processing,
+and another for the UI.
+In addition to these two threads,
+motion capture needs it's own thread,
+and one additional thread is needed for some
+lockfree programming techniques.
+To summarize, the threads are:
+\begin{enumerate}
+
+\item VST MIDI
+\begin{itemize}
+\item Provided by plugin host.
+\item Produces the MIDI events.
+\item Has firm RT requirements.
+\item Low latency required.
+\end{itemize}
+
+\item VST UI
+\begin{itemize}
+\item Provided by plugin host.
+\item Renders the plugin UI.
+\end{itemize}
+
+\item Motion Capture
+\begin{itemize}
+\item Runs the motion capture device.
+\item Has firm RT requirements.
+\item Higher latency than the MIDI thread (30 Hz).
+\end{itemize}
+
+\item Butler
+\begin{itemize}
+\item Runs asynchronous tasks for the RT threads.
+\end{itemize}
+
+\end{enumerate}
+
+
 \section{Time Handling}
 
 Handling time in a multirate, multi-threaded system,
@@ -677,9 +768,9 @@ this can be simplified to
 \Delta n_e = n_b \frac{t_e - \tau_b}{\Delta \tau}.
 \end{equation}
 
-\section{Feature Extraction}
+\section{Motion Capture}
 
-
+The motion capture 
 
 \subsection{Beat Detection}
 
@@ -691,6 +782,10 @@ this can be simplified to
 
 \subsection{Time Warping}
 
+
+
+% Use \textofpdfstring when the title is final,
+% to add a nice line break
 \section{Mapping Expressions to Synthesis Parameters}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
