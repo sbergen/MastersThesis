@@ -79,8 +79,8 @@ Early gesture systems were based on input from
 a camera or a specially made input device,
 such as a light-pen and screen combination \cite{turk2002}.
 Recent developments in technology,
-such as popularization of touchscreen smartphones,
-have made gestures as a form of human-computer interaction
+such as the popularization of touchscreen smartphones,
+have made gestures as a form of HCI
 a part of everyday life for an increasing amount of people.
 Judging by the over 600 IEEE conference publications related to gestures in 2011,
 it is obvious that gestures based systems are an active field of research.
@@ -91,13 +91,12 @@ represent a recent trend of incorporating gesture based interaction
 into consumer electronics.
 Interaction with applications using these devices
 does not require touching or wearing any equipment,
-and thus the applications have the potential to provide
+and thus applications have the potential to provide
 a very natural gestural user interface.
-However, the complexity of the matter lies in extracting
+However, the complexity of the subject lies in extracting
 meaningful information out of the raw motion data provided by these devices.
-\fixme{quote some studies and methods used,
-maybe make some differentiation between continuous state and
-and specific, individual gestures}
+For surveys on related literature,
+see \cite{Moeslund2006} and \cite{Weinland2011}.
 
 \section{Expressive Sound Synthesis}
 
@@ -194,7 +193,17 @@ it is logical to use the same methods in the implementation.
 
 The aim of the beat detection system is
 to work with as many conducting styles as possible.
-\fixme{Write more}
+The approach taken here will thus not be
+based on specific beat patterns or gestures.
+Many previous systems have been based on
+using machine learning techniques with
+predefined beat patterns \cite{},
+but such systems would easily get confused with
+the large variance present in the style of
+many orchestral conductors.
+Instead, the approach is based on beat induction
+from the motion features of the conductors hands.
+\fixme{Write more, cite some beat induction stuff}
 
 Luck and Toiviainen \cite{luck2006}
 conducted a beat synchronization study,
@@ -209,11 +218,15 @@ collected from one rehearsal situation.
 Since the study represented the conducting style of only one conductor,
 and the response of only one orchestra,
 it does not present universally valid results.
-However, looking at both laboratory and rehearsal situation based studies showed
-that two features stood out as good candidates for beat detection:
-vertical position and velocity.
-Both have been shown to have a
-rather strong correlation with beat induction \cite{add citations}.
+
+\fixme{
+This part needs more research.
+Low position, y-acceleration and acceleration along trajectory
+are the stuff we want to look into.
+New Perspectives on Music and Gesture
+has an article by Luck, which at least has references.
+}
+
 Luck and Toiviainen's study showed that when the conductor's gestures were well articulated,
 the lowest vertical position preceded the beat by circa 230 milliseconds,
 while the highest vertical velocity preceded the beat by circa 90 milliseconds,
@@ -539,7 +552,19 @@ The usefulness of a result degrades after its deadline.
 \end{description}
 An audio plugin has firm real-time constraints,
 since the result for each block of audio needs to be delivered in time.
-Missing a deadline means that block will not be played back.
+Missing a deadline means that block will not be played back,
+causing a glitch in the sound output.
+
+It is important to understand the difference between
+deadline based real time constraints
+and throughoutput based constraints.
+Throughoutput based real time constraints have
+more to do with with the algorithmic complexity
+of the methods used,
+while deadline based constraints
+require special programming techniques on the implementation level.
+All further references to RT constraints in this thesis
+refer to the deadline based definition.
 
 In addition to having RT constraints,
 the 30Hz frame rate of the motion capture system
@@ -683,6 +708,9 @@ To summarize, the threads are:
 
 \end{enumerate}
 
+\subsection{Essential common utilities}
+
+\subsubsection*{Event Buffer}
 
 \section{Time Handling}
 
@@ -789,6 +817,11 @@ beats, bars, samples and physical time,
 and derived dimensions for
 bar durations, tempi, sample rates, and speed changes.
 The unit system is described in detail in Table \ref{tab:score_units}.
+The difference between real time and score time (both in seconds),
+comes inherently from the libraries used:
+Boost.Units for score time and Boost.Chrono for real time.
+This implies that an explicit conversion function is always
+needed to convert between these two dimensions.
 
 \begin{table}
 \begin{center}
@@ -882,7 +915,7 @@ which is reversing the observation values $\mathbf{y}$.
 The implementation of the score following methods
 described in section \ref{sec:meth:score_following}
 is rather straight forward.
-The biggest complication
+
 
 
 \subsection{Beat Classification}
