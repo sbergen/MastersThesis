@@ -224,6 +224,7 @@ both having a high correlation at that lag.
 \subsection{Expressive Feature Extraction}
 
 \section{Score Following}
+\label{sec:meth:score_following}
 
 \fixme{Write something}
 
@@ -257,6 +258,7 @@ the system should also be aware of events in the score.
 \fixme{Write about score events}
 
 \subsection{Real Time and Score Positions}
+\label{sec:meth:read_and_score_time}
 
 When modifying the playback speed of a musical score
 which has tempo variations already build into it,
@@ -768,6 +770,46 @@ this can be simplified to
 \Delta n_e = n_b \frac{t_e - \tau_b}{\Delta \tau}.
 \end{equation}
 
+\subsection{Dimensional Analysis}
+
+Because of the various time bases and units used
+(see section \ref{sec:meth:read_and_score_time}),
+using compile time dimensional analysis using Boost.Units \cite{needed?}
+eased the development process.
+Boost.Units uses zero runtime overhead C++ template metaprogramming \cite{abrahams?}
+techniques to check during compile time,
+that all calculations have the proper dimensions.
+This does not guarantee dimensionally proper calculations all the time
+(e.g. dimensionless units may cause errors),
+but does catch many errors made during development.
+For handling time,
+a custom unit system was declared.
+This system contains base dimensions for
+beats, bars, samples and physical time,
+and derived dimensions for
+bar durations, tempi, sample rates, and speed changes.
+The unit system is described in detail in Table \ref{tab:score_units}.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{ | l  l  p{5.5cm} |}
+\hline
+Dimension & Base Unit & Notes \\ \hline
+beats & beat & Base for musical time \\
+bars & bar & See bar duration. \\
+samples & sample & See sample rate\\
+time & second & Base for physical time \\
+bar duration & beats per bar & Derived dimension. \\
+tempo & beats per second & Derived dimension. \\
+sample rate & samples per second & Derived dimension. \\
+speed change & fractions per second & Fraction here is a dimensionless unit. A derived dimension. \\
+\hline
+\end{tabular}
+\caption{Overview of custom unit system for time.}
+\label{tab:score_units}
+\end{center}
+\end{table}
+
 \section{Motion Capture}
 
 \subsection{The Savitzky-Golay Filter}
@@ -778,12 +820,14 @@ The polynomial fitting part for the filter is implemented using
 matrix operations and the uBLAS library.
 Estimating the polynomial coefficients is done by the equation
 \begin{equation}
+\label{eq:sg_coefs}
 \widehat{\mathbf{a}} = \left( \mathbf{X}^T \mathbf{X} \right)^{-1} \mathbf{X}^T \mathbf{y},
 \end{equation}
 where $\widehat{\mathbf{a}}$ are the estimated coefficients,
 $\mathbf{y}$ the observations,
 and $\mathbf{X}$ the design matrix
 \begin{equation}
+\label{eq:sg_design_matrix}
 \mathbf{X} = \left[
 \begin{array}{ccccc}
 1 & x_1 & x_1^2 & \ldots & x_1^m \\
@@ -823,11 +867,23 @@ for the value, and
 \end{equation}
 for the $n^{\text{th}}$ derivative.
 
+To make $\mathbf{X}^T \mathbf{X}$ invertible,
+it is also necessary to reverse the values $x_1 \ldots x_n$
+used in equation \ref{eq:sg_design_matrix}.
+This change requires a correction to equation \ref{eq:sg_coefs},
+which is reversing the observation values $\mathbf{y}$.
+
 \subsection{Beat Detection}
 
 \subsection{Expressive Features}
 
-\section{Tempo Following}
+\section{Score Following}
+
+The implementation of the score following methods
+described in section \ref{sec:meth:score_following}
+is rather straight forward.
+The biggest complication
+
 
 \subsection{Beat Classification}
 
