@@ -5,3 +5,14 @@
 % Set notation
 \newcommand{\set}[1]{\ensuremath{\left \lbrace #1 \right \rbrace }}
 \newcommand{\setdef}[2]{\ensuremath{#1 \in \set{#2}}}
+
+% nth
+\newcommand{\nth}[1][n]{\ensuremath{#1^{\text{th}}}}
+
+% intervals
+\newcommand{\interval}[3]{\ensuremath{\mathopen#1 #2 \mathclose#3}}
+\newcommand{\oointerval}[1]{\interval{]}{#1}{[}}
+\newcommand{\ccinterval}[1]{\interval{[}{#1}{]}}
+\newcommand{\ocinterval}[1]{\interval{]}{#1}{]}}
+\newcommand{\cointerval}[1]{\interval{[}{#1}{[}}
+
