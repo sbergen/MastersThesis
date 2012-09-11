@@ -180,13 +180,80 @@ there is no need to cover the details of those here.
 
 \fixme{Write more, once the implementation is more final}
 
+
+\subsection{Supporting Methods}
+
+Extracting meaningful information out of the motion data
+requires using many time related analysis methods.
+Extracting features such as velocity and acceleration
+require inspecting the movement at a single point in time,
+while the cyclic nature of conducting requires
+averaging over time to extract features that apply
+at the beat or bar level.
+
+For the analysis at a single point,
+the Savitzky-Golay filter \cite{savitzky1964} is used.
+For averaging over time, methods such as
+exponential moving averages and peak holders are used.
+When selecting parameters for the averaging methods,
+there is always a trade-off between the 
+ability to react to fast changes
+and the amount of averaging provided.
+\fixme{Write more about the selection of parameters.}
+
+\subsubsection*{The Savitzky-Golay Filter}
+
 Luck and Toiviainen have studied the gestures of conductors
 both from a beat synchronization \cite{luck2006}
 and expressive \cite{luck2010} point of view.
-Both studies used Savitzky-Golay filtering (polynomial fitting) \cite{savitzky1964}
+Both studies used Savitzky-Golay filtering
 for data smoothing and differentiation.
-As the results of these studies are utilized,
-it is logical to use the same methods in the implementation.
+As these studies form the basis for a lot
+of the analysis used in this project,
+it is logical to use the same methods.
+
+The Savitzky-Golay filter uses polynomial fitting
+over a sliding window to approximate the movement
+as a polynomial at each point.
+This approximation is applied to each spatial axis separately,
+using the points at times $t_{i-n} \ldots t_{i+n}$,
+for analysing the movement at time $t_i$,
+where the length of the filter is $2n + 1$.
+
+\subsubsection*{Exponential Moving Average}
+
+Compared to a simple moving average (SMA),
+the exponential moving average (EMA)
+gives two benefits in our use case:
+\begin{itemize}
+\item The EMA reacts to sudden changes faster than an SMA,
+while sill offering good averaging.
+\item The EMA is computationally much lighter, as seen below.
+\end{itemize}
+The EMA can be effectively calculated recursively:
+\begin{equation}
+S_i =
+\begin{cases}
+y_i & \text{if } i = 1 \\
+\alpha y_i + ( 1 - \alpha ) S_{i-1} & \text{if } i > 1, \\
+\end{cases}
+\end{equation}
+where $\alpha \in \oointerval{0, 1}$ is the smoothing coefficient,
+and $y_i$ the \nth[i] observation.
+High values of $\alpha$
+provide less averaging with faster reaction to changes.
+
+\subsubsection*{Peak Holder}
+
+A peak holder simply holds the peak value
+\begin{equation}
+P_i = \max \left( y_i \ldots y_{i - n} \right),
+\end{equation}
+where $y_i$ is the \nth[i] observation,
+and $n$ the length of the peak holder.
+High values of $n$ will provide a smoother output,
+but will not react to sudden decreases in magnitude as fast.
+
 
 \subsection{Beat Detection}
 \label{sec:meth:beat_detection}
@@ -277,46 +344,7 @@ Based on the results by Luck and Toiviainen \cite{luck2010},
 and Sousa \cite{sousa1988},
 a set of kinematic features were selected for extracting
 expressive features out of the motion data.
-Because of the cyclic nature of conducting,
-some methods for averaging over time were required.
-When selecting parameters to the averaging methods,
-there is always a trade-off between the 
-ability to react to fast changes
-and the amount of averaging provided.
-
-\subsubsection*{Exponential Moving Average}
-
-Compared to a simple moving average (SMA),
-the exponential moving average (EMA)
-gives two benefits in our use case:
-\begin{itemize}
-\item The EMA reacts to sudden changes faster than an SMA,
-while sill offering good averaging.
-\item The EMA is computationally much lighter, as seen below.
-\end{itemize}
-The EMA can be effectively calculated recursively:
-\begin{equation}
-S_i =
-\begin{cases}
-y_i & \text{if } i = 1 \\
-\alpha y_i + ( 1 - \alpha ) S_{i-1} & \text{if } i > 1, \\
-\end{cases}
-\end{equation}
-where $\alpha \in \oointerval{0, 1}$ is the smoothing coefficient,
-and $y_i$ the \nth[i] observation.
-High values of $\alpha$
-provide less averaging with faster reaction to changes.
-
-\subsubsection*{Peak Holder}
-
-A peak holder simply holds the peak value
-\begin{equation}
-P_i = \max y_i \ldots y_{i - n},
-\end{equation}
-where $y_i$ is the \nth[i] observation,
-and $n$ the length of the peak holder.
-High values of $n$ will provide a smoother output,
-but will not react to sudden decreases in magnitude as fast.
+\fixme{Write more}
 
 \section{Score Following}
 \label{sec:meth:score_following}
@@ -962,9 +990,10 @@ selecting an odd value for $n$
 and evaluation the polynomial at the center value
 $x_{\lfloor \frac{n}{2} \rfloor}$.
 An optimization that is easy to implement for equally sampled data,
-is to pre-calculate $\mathbf{X}$,
+is to pre-calculate $\left( \mathbf{X}^T \mathbf{X} \right)^{-1} \mathbf{X}^T$,
 with $x_{\lfloor \frac{n}{2} \rfloor} = 0$.
-The value and derivatives are calculated from the polynomial
+The value and derivatives at the center point
+can thus be calculated from the polynomial
 \begin{equation}
 \widehat{y}(x) =
 \widehat{\mathbf{a}}_m \, x^m +
