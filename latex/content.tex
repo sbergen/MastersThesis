@@ -214,11 +214,15 @@ it is logical to use the same methods.
 
 The Savitzky-Golay filter uses polynomial fitting
 over a sliding window to approximate the movement
-as a polynomial at each point.
+as a polynomial at each point,
+using a least squares method.
 This approximation is applied to each spatial axis separately,
 using the points at times $t_{i-n} \ldots t_{i+n}$,
 for analysing the movement at time $t_i$,
 where the length of the filter is $2n + 1$.
+Once the polynomial is approximated,
+it can be used to solve a smoothed value and
+derivatives at $t_i$.
 
 \subsubsection*{Exponential Moving Average}
 
@@ -819,9 +823,42 @@ To summarize, the threads are:
 
 \end{enumerate}
 
-\subsection{Essential common utilities}
+\subsection{Essential Common Utilities}
+
+A number of utilities are widely used across the application,
+and reserve a mention.
+These are mostly related to lockfree programming techniques.
 
 \subsubsection*{Event Buffer}
+
+The event buffer is probably the most used utility in the implementation.
+It is a container for storing timestamp-event-pairs.
+It allows specifying the internal storage depending on the use case.
+For data which is collected when loading the score,
+a dynamically resizeable container (such as std::vector) can be used,
+while buffers used during playback mostly use a statically sized ringbuffer
+to guarantee allocation free operation.
+Utilities for accessing timestamp-based ranges,
+with all valid combinations of
+bounded, left-bounded, left-open and left-closed are available.
+
+\subsubsection*{The Butler Thread}
+
+The butler thread is used for asynchronously running
+tasks that can not be run in an RT-thread.
+The butler thread is configured with a maximum execution interval,
+and will check for new tasks and execute them repeatedly,
+until terminated.
+The thread will block as necessary to not exceed the
+maximum execution interval.
+
+\subsubsection*{Lockfree Ringbuffer}
+
+The lockfree ringbuffer provided by the Boost.Lockfree library \cite{required?}
+is used for most of the lockfree inter-thread communication.
+This includes passing events from the motion capture thread
+to the MIDI thread, and logging from RT threads using the Butler thread.
+It is an essential utility for lockfree multi-threaded programming.
 
 \section{Time Handling}
 
