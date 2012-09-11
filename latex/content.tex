@@ -128,26 +128,23 @@ Because bringing out expressive features of music is a crucial part of conductin
 a conductor follower is a rather natural candidate for
 an expressive sound synthesis system.
 
-\section{Conductor Follower Systems}
-
-Over the years, several performance, educational and research systems
-have been designed and implemented,
-which follow conductor gestures and produce or modify music based on the input.
-\fixme{History covered in detail in several other papers, just a quick overview here}
-
-\fixme{Summarize what we are doing and why}
-
 \section{Thesis Overview}
 
 \fixme{Write some}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Methods}
-\label{chapter:methods}
+\chapter{Conductor Following}
+\label{chapter:conductor_following}
 
+Over the years, several performance, educational and research systems
+have been designed and implemented,
+which follow conductor gestures and produce or modify music based on the input.
 \fixme{Write some more}
 
-\section{Make up a nice title}
+\section{Previous Work}
+\fixme{History covered in detail in several other papers, just a quick overview here}
+
+\section{Design Rationale}
 
 If the real life interaction between a conductor and musicians
 were to be modelled as closely as possible,
@@ -166,7 +163,11 @@ be too large an effort for the scope of this project.
 Instead, a more general and static rule based system is
 considered and implemented.
 
-\section{Motion Capture}
+\fixme{Summarize what we are doing and why}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Motion Capture}
+\label{chapter:motion_capture}
 
 Motion capture in the context of the conductor follower system,
 consists of tracking the hands.
@@ -180,8 +181,7 @@ there is no need to cover the details of those here.
 
 \fixme{Write more, once the implementation is more final}
 
-
-\subsection{Supporting Methods}
+\section{Supporting Methods}
 
 Extracting meaningful information out of the motion data
 requires using many time related analysis methods.
@@ -201,7 +201,7 @@ ability to react to fast changes
 and the amount of averaging provided.
 \fixme{Write more about the selection of parameters.}
 
-\subsubsection*{The Savitzky-Golay Filter}
+\subsection{The Savitzky-Golay Filter}
 
 Luck and Toiviainen have studied the gestures of conductors
 both from a beat synchronization \cite{luck2006}
@@ -224,7 +224,7 @@ Once the polynomial is approximated,
 it can be used to solve a smoothed value and
 derivatives at $t_i$.
 
-\subsubsection*{Exponential Moving Average}
+\subsection{Exponential Moving Average}
 
 Compared to a simple moving average (SMA),
 the exponential moving average (EMA)
@@ -247,7 +247,7 @@ and $y_i$ the \nth[i] observation.
 High values of $\alpha$
 provide less averaging with faster reaction to changes.
 
-\subsubsection*{Peak Holder}
+\subsection{Peak Holder}
 
 A peak holder simply holds the peak value
 \begin{equation}
@@ -259,7 +259,7 @@ High values of $n$ will provide a smoother output,
 but will not react to sudden decreases in magnitude as fast.
 
 
-\subsection{Beat Detection}
+\section{Beat Detection}
 \label{sec:meth:beat_detection}
 
 The aim of the beat detection system is
@@ -308,7 +308,7 @@ the lowest vertical position preceded the beat by circa 230 milliseconds,
 while the highest vertical velocity preceded the beat by circa 90 milliseconds,
 both having a high correlation at that lag.
 
-\subsection{Start Gesture Detection}
+\section{Start Gesture Detection}
 
 The gesture for starting the piece
 is detected using the beat detection method, together with
@@ -325,7 +325,7 @@ This range is based on the start tempo estimation described in section
 \ref{sec:meth:start_tempo_estimation}.
 \end{itemize}
 
-\subsection{Expressive Feature Extraction}
+\section{Expressive Feature Extraction}
 
 Luck and Toiviainen \cite{luck2010}
 studied the correlation between the kinematic features of conductors' hands
@@ -350,12 +350,13 @@ a set of kinematic features were selected for extracting
 expressive features out of the motion data.
 \fixme{Write more}
 
-\section{Score Following}
-\label{sec:meth:score_following}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Score Following}
+\label{chapter:score_following}
 
 \fixme{Write something}
 
-\subsection{Score Data Format}
+\section{Score Data Format}
 
 Regardless of its limitations and age,
 MIDI (Musical Instrument Digital Interface)
@@ -384,7 +385,7 @@ In addition to track instrument assignment,
 the system should also be aware of events in the score.
 \fixme{Write about score events}
 
-\subsection{Real Time and Score Positions}
+\section{Real Time and Score Positions}
 \label{sec:meth:read_and_score_time}
 
 When modifying the playback speed of a musical score
@@ -435,7 +436,7 @@ w = \frac{\Delta \phi}{\Delta t},
 which is piecewise constant over time.
  
 
-\subsection{Tempo Following}
+\section{Tempo Following}
 
 The aim of the tempo following system
 is to behave like a real orchestra would,
@@ -581,7 +582,7 @@ The bar qualities are reset when the winning classification
 is of type $\mathrm{NextBar}$,
 and are updated at every detected beat as described above.
 
-\subsection{Start Tempo Estimation}
+\section{Start Tempo Estimation}
 \label{sec:meth:start_tempo_estimation}
 
 The start tempo is estimated based on
@@ -597,13 +598,17 @@ and $t_b$ the time at the bottom of the gesture.
 
 \fixme{Will the tempo estimation in the first bar(s) be changed?}
 
-\section{Sound Synthesis}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Sound Synthesis}
+\label{chapter:sound_synthesis}
 
 Since the objective of the system is to emulate an orchestra,
 also the sound synthesis system should be able to
 provide realistic synthesis of an entire orchestra.
 It should be able to reproduce a musical composition
 at varying tempi and articulations.
+
+\section{Vienna Symphonic Library}
 
 There are several commercial orchestral synthesizers available,
 the majority of which use some form of sampling or concatenative synthesis.
@@ -624,6 +629,8 @@ while others allow stretching out the note infinitely.
 Switching between patches can be accomplished with \textit{keyswitch} events
 (notes outside of the scale of the instrument).
 
+\section{Patch Switching}
+
 In order to control the switching of patches,
 the synthesis system must have some knowledge of
 the available instruments and their patches.
@@ -641,8 +648,8 @@ the most appropriate patch for each note.
 \fixme{Write more on patch selection (e.g. distance function)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Implementation}
-\label{chapter:implementation}
+\chapter{Implementation Details}
+\label{chapter:implementation_details}
 
 Since the synthesis environment is a VST plugin,
 implementing the conductor follower as a VST plugin was a logical choice.
@@ -1055,35 +1062,8 @@ used in equation \ref{eq:sg_design_matrix}.
 This change requires a correction to equation \ref{eq:sg_coefs},
 which is reversing the observation values $\mathbf{y}$.
 
-\subsection{Beat Detection}
-
-\subsection{Expressive Features}
-
-\section{Score Following}
-
-The implementation of the score following methods
-described in section \ref{sec:meth:score_following}
-is rather straight forward.
-
-
-
-\subsection{Beat Classification}
-
-\subsection{Time Warping}
-
-
-
-% Use \textofpdfstring when the title is final,
-% to add a nice line break
-\section{Mapping Expressions to Synthesis Parameters}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Discussion}
+\chapter{Discussion and Conclusions}
 \label{chapter:discussion}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Conclusions}
-\label{chapter:conclusions}
-
 
 
