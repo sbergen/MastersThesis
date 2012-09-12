@@ -1,0 +1,46 @@
+score {
+  name: "Mozart: Trio for piano, clarinet and viola in E flat major, KV 498 (1786)",
+  midi_file: "/scores/mozart_498.mid",
+  instrument_file: "/scores/instruments.def",
+  beat_pattern_file: "/scores/beat_patterns.def",
+  
+  tracks: [
+    track {
+      name: "clarinet",
+      instrument: "clarinet Bb"
+    },
+    track {
+      name: "viola",
+      instrument: "chamber viola"
+    },
+    track {
+      instrument: "ignore"
+    },
+    track {
+      name: "piano right hand",
+      instrument: "piano"
+    },
+    track {
+      instrument: "ignore"
+    },
+    track {
+      name: "piano left hand",
+      instrument: "piano"
+    }
+  ],
+  
+  events: [
+    tempo_sensitivity {
+      position: 0|0,
+      sensitivity: 1.0
+    },
+    tempo_sensitivity {
+      position: 1|0,
+      sensitivity: 0.8
+    },
+    tempo_sensitivity {
+      position: 3|0,
+      sensitivity: 0.5
+    },
+  ]
+}
