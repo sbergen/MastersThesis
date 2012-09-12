@@ -649,72 +649,6 @@ and $t_b$ the time at the bottom of the gesture.
 
 \fixme{Will the tempo estimation in the first bar(s) be changed?}
 
-\section{Score Data Format}
-
-In order to play a score,
-the score events need to be provided to the system in some format.
-The objective was to be able to use existing material as much as possible,
-with minimal effort.
-The format used in the implementation combines a MIDI score and
-a domain specific language (DSL) based terse score description format.
-
-\subsection{The Musical Instrument Digital Interface}
-
-Regardless of its limitations and age,
-the Musical Instrument Digital Interface (MIDI)
-is still one of the most used standards
-for the digital representation of musical events.
-MIDI is also the built-in way to communicate musical events
-in the Virtual Studio Technology (VST) plugin format
-(see section \ref{sec:vsl} for details).
-Thus using MIDI as the score format is a natural choice.
-
-A MIDI score contains note, time signature and tempo information.
-It may also contain \textit{program change} events,
-as specified in the General Midi specification \cite{GeneralMidi},
-to indicate the instrument to be used for each track.
-However, practical experience with MIDI files showed,
-that using program changes to deduce the instrument to use,
-was not sufficient.
-Often scores would use the
-\textit{String ensemble} patch for all strings,
-even though the string instruments were separated to individual tracks.
-In cases like this it is necessary to be able to manually
-define the instrument to be used with each track.
-
-\subsection{Score Description Format}
-
-Because the data present in a MIDI score was
-not sufficient alone,
-a JSON-like \cite{JSON} DSL for describing the score was developed.
-A score definition file includes the following information:
-\begin{description}[leftmargin=24ex]
-\item[name] A human readable name for the score.
-\item[midi file] The path of the related midi file.
-\item[instrument file] The path of the related instrument definition file.
-\item[beat pattern file] The path of the related beat pattern file.
-\item[track information] A list of track to instrument mappings.
-\item[score events] A list of score event.
-\end{description}
-An example of a score description file can be found from Appendix \ref{appendix:dsl_samples}.
-For more information on instrument definitions,
-see section \ref{sec:instrument_definition_format},
-and for beat patterns section \ref{}.
-The different types of score events are described in detail below.
-
-\subsubsection*{Tempo Sensitivity Events}
-
-A tempo sensitivity event contains the following information:
-\begin{description}[leftmargin=16ex]
-\item[position] The score position to which this sensitivity change applies.
-\item[sensitivity] A sensitivity value in the range $0 \ldots 1$.
-\end{description}
-The event will cause the catchup time $t_c$,
-as described in section \ref{sec:tempo_following},
-to be adjusted to provide a different level of sensitivity in tempo following.
-A low sensitivity will lead to a long $t_c$,
-whereas a high sensitivity translates to a short $t_c$.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Sound Synthesis}
 \label{chapter:sound_synthesis}
@@ -1186,6 +1120,72 @@ it is also necessary to reverse the values $x_1 \ldots x_n$
 used in equation \ref{eq:sg_design_matrix}.
 This change requires a correction to equation \ref{eq:sg_coefs},
 which is reversing the observation values $\mathbf{y}$.
+
+\section{Score Data Format}
+
+In order to play a score,
+the score events need to be provided to the system in some format.
+The objective was to be able to use existing material as much as possible,
+with minimal effort.
+The format used in the implementation combines a MIDI score and
+a domain specific language (DSL) based terse score description format.
+
+\subsection{The Musical Instrument Digital Interface}
+
+Regardless of its limitations and age,
+the Musical Instrument Digital Interface (MIDI)
+is still one of the most used standards
+for the digital representation of musical events.
+MIDI is also the built-in way to communicate musical events
+in the Virtual Studio Technology (VST) plugin format
+(see section \ref{sec:vsl} for details).
+Thus using MIDI as the score format is a natural choice.
+
+A MIDI score contains note, time signature and tempo information.
+It may also contain \textit{program change} events,
+as specified in the General Midi specification \cite{GeneralMidi},
+to indicate the instrument to be used for each track.
+However, practical experience with MIDI files showed,
+that using program changes to deduce the instrument to use,
+was not sufficient.
+Often scores would use the
+\textit{String ensemble} patch for all strings,
+even though the string instruments were separated to individual tracks.
+In cases like this it is necessary to be able to manually
+define the instrument to be used with each track.
+
+\subsection{Score Description Format}
+
+Because the data present in a MIDI score was
+not sufficient alone,
+a JSON-like \cite{JSON} DSL for describing the score was developed.
+A score definition file includes the following information:
+\begin{description}[leftmargin=24ex]
+\item[name] A human readable name for the score.
+\item[midi file] The path of the related midi file.
+\item[instrument file] The path of the related instrument definition file.
+\item[beat pattern file] The path of the related beat pattern file.
+\item[track information] A list of track to instrument mappings.
+\item[score events] A list of score event.
+\end{description}
+An example of a score description file can be found from Appendix \ref{appendix:dsl_samples}.
+For more information on instrument definitions,
+see section \ref{sec:instrument_definition_format},
+and for beat patterns section \ref{}.
+The different types of score events are described in detail below.
+
+\subsubsection*{Tempo Sensitivity Events}
+
+A tempo sensitivity event contains the following information:
+\begin{description}[leftmargin=16ex]
+\item[position] The score position to which this sensitivity change applies.
+\item[sensitivity] A sensitivity value in the range $0 \ldots 1$.
+\end{description}
+The event will cause the catchup time $t_c$,
+as described in section \ref{sec:tempo_following},
+to be adjusted to provide a different level of sensitivity in tempo following.
+A low sensitivity will lead to a long $t_c$,
+whereas a high sensitivity translates to a short $t_c$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Discussion and Conclusions}
