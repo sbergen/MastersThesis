@@ -266,6 +266,22 @@ Once the polynomial is approximated,
 it can be used for solving a smoothed value and
 all available derivatives at $t_i$.
 
+\subsubsection*{The Savitzky-Golay Peak Detector}
+
+As the Savitzky-Golay filter provides the first derivative,
+it can be easily used to detect local minima and maxima (peaks and dips).
+A change in direction can be detected as a change of sign in the first derivative:
+\begin{equation}
+P_i =
+\begin{cases}
+\mathrm{None} & \text{if } \sgn{y_{i-1}} = \sgn{y_{i}} \\
+\mathrm{Dip} & \text{if } \sgn{y_{i-1}} < \sgn{y_{i}} \\
+\mathrm{Peak} & \text{if } \sgn{y_{i-1}} > \sgn{y_{i}} ,
+\end{cases}
+\end{equation}
+where $P_i$ is the type of peak or dip detected,
+and $y_i$ the value of the function at time $i$.
+
 \subsection{Exponential Moving Average}
 
 Compared to a simple moving average (SMA),
