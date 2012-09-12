@@ -498,7 +498,29 @@ and that it must be able to relate each beat to some beat in the pattern.
 
 \subsection{Beat Patterns}
 
-\fixme{Write some}
+To interpret the beats of a conductor properly,
+knowledge of beat patterns has to be applied.
+Each time signature has a set of common conducting patterns,
+which may be varied within the piece being conducted.
+For example the 6/8 signature may be conducted
+placing beats on
+all six eighth notes,
+on the first and fourth eighth,
+or even only on the first.
+
+The beat classification operation presented
+in section \ref{sec:beat_classification_op}
+attempts to not get confused by changes in beat patterns.
+As an example, a change from beating all six eighths in 6/8
+to beating only the first and fourth eighth,
+the second beat in a bar could easily be mistakenly classified
+as a beat on the third or fifth eighth
+by a na\"ive method.
+The presented method should, however,
+be able to detect the pattern change as
+a more probable choice,
+producing a correct estimate.
+
 
 \subsection{Beat Classification}
 
@@ -565,6 +587,7 @@ where $t$ is the time of the beat,
 and $p_B$ the beginning of the current bar.
 
 \subsection{The Beat Classification Operation}
+\label{sec:beat_classification_op}
 
 The classification operation $\mathcal{C}$,
 uses the beat positions within the bar, $\mathbf{b}$,
@@ -669,8 +692,6 @@ Vienna Symphonic Library (VSL) \cite{vsl} was chosen for the task.
 VSL uses a form of concatenative synthesis,
 using a vast library of samples played at
 various velocities and articulations \cite{schwartz2006}.
-
-\fixme{Write about VST.}
 
 Each instrument in VSL contains a set of \textit{patches},
 which represent a certain articulation and/or playing style.
