@@ -496,10 +496,12 @@ conducting patterns for each time signature,
 and that it must be able to relate each beat to some beat in the pattern.
 \fixme{Write more}
 
-The formal objective of tempo following
-is to minimize the offset between
-beats conducted and
-beats played by the virtual orchestra.
+\subsection{Beat Patterns}
+
+\fixme{Write some}
+
+\subsection{Beat Classification}
+
 Once the beats are detected as described
 in section \ref{sec:beat_detection},
 the beats have to be classified.
@@ -522,6 +524,8 @@ Out of the set of classifications produced by the beat patterns,
 the classification with the best quality is
 selected as the final classification.
 
+\subsection{Tempo Adjustment}
+
 The action taken based on the winning classification
 depends on the type of the classification.
 In the case of NotClassified, no action is taken for that beat.
@@ -541,6 +545,10 @@ whose magnitude is derived from the integral
 \begin{equation}
 \int_t^{t + t_c} \upsilon \, \mathrm{d}t = \Delta b.
 \end{equation}
+$\upsilon (t)$ should be constant outside,
+and monotonic within \ccinterval{t, t + t_c}.
+
+\subsection{Offset Compensation}
 
 Given the previous beat offset $\Delta b'$ (at time $t'$),
 and current $\upsilon (t)$,
@@ -556,11 +564,13 @@ b' = \mathcal{M} [ t ] - p_B - \Delta b(t),
 where $t$ is the time of the beat,
 and $p_B$ the beginning of the current bar.
 
+\subsection{The Beat Classification Operation}
+
 The classification operation $\mathcal{C}$,
-uses the beat positions within the bar $\mathbf{b}$,
+uses the beat positions within the bar, $\mathbf{b}$,
 to create an estimate for the beat position $b$:
 \begin{enumerate}
-\item The classification for the current bar $c_c$,
+\item The classification for the current bar, $c_c$,
 is calculated by selecting the most probable match for $b$
 from the available positions $\mathbf{b}$.
 \begin{enumerate}
@@ -617,13 +627,13 @@ maximizing the quality.
 
 \end{enumerate}
 Once the classification has been done for each beat pattern,
-the beat pattern with the best quality for the current bar
+the classification from the beat pattern with the best quality for the current bar
 is selected and acted upon.
 The bar qualities are reset when the winning classification
 is of type $\mathrm{NextBar}$,
 and are updated at every detected beat as described above.
 
-\section{Start Tempo Estimation}
+\subsection{Start Tempo Estimation}
 \label{sec:meth:start_tempo_estimation}
 
 The start tempo is estimated based on
@@ -688,7 +698,7 @@ A score definition file includes the following information:
 \end{description}
 An example of a score description file can be found from Appendix \ref{appendix:dsl_samples}.
 For more information on instrument definitions,
-see section \ref{},
+see section \ref{sec:instrument_definition_format},
 and for beat patterns section \ref{}.
 The different types of score events are described in detail below.
 
@@ -755,6 +765,11 @@ the system is capable of selecting
 the most appropriate patch for each note.
 
 \fixme{Write more on patch selection (e.g. distance function)}
+
+\subsection{Instrument Definition Format}
+\label{sec:instrument_definition_format}
+
+\fixme{Write some}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Implementation Details}
