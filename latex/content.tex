@@ -681,6 +681,19 @@ also the sound synthesis system should be able to
 provide realistic synthesis of an entire orchestra.
 It should be able to reproduce a musical composition
 at varying tempi and articulations.
+To support these requirements,
+the most straightforward approach is to use
+a score defined as a set of score events
+(notes, tempo events, etc.),
+which function as the input to a synthesis engine,
+which produces the final output sound in real time.
+The score event format needs to be in,
+or convertible to a format that is understood by the synthesis engine.
+This means the score format is most tightly
+coupled to the synthesis engine,
+while the coupling to the rest of the system is rather loose.
+The synthesis engine and score format selected for the system
+are presented in this chapter.
 
 \section{Vienna Symphonic Library}
 
@@ -710,7 +723,56 @@ rather freely in a room.
 MIR includes impulse response data for the Vienna Konzerthaus,
 and allows placing the virtual microphones at the conductor's podium.
 
+\subsection{Virtual Studio Technology}
+
+Virtual Studio Technology (VST) \cite{vst} is
+a virtual instrument and effect plugin architecture created by Steinberg GmbH.
+\fixme{Mention platforms.}
+It is one of the plugin formats that VSL is available in.
+While the plugin API should be considered an implementation detail,
+it can not be completely forgotten in the design phase
+because of the vast effect design choices can have on implementation complexity.
+VST will be referred to in later parts of this document,
+and is thus introduced here.
+
+\section{Score Event Format}
+
+In order to play a score,
+the score events need to be provided to the system in some format.
+The objective was to be able to use existing material as much as possible,
+with minimal effort.
+The format used in the system combines
+a MIDI score, discussed in section \ref{sec:midi} and
+a terse domain specific language (DSL) based score description format,
+discussed in section \ref{sec:score_description_file}.
+
+\subsection{The Musical Instrument Digital Interface}
+\label{sec:midi}
+
+Regardless of its limitations and age,
+the Musical Instrument Digital Interface (MIDI)
+is still one of the most used standards
+for the digital representation of musical events.
+MIDI is also the built-in way to communicate musical events
+in the Virtual Studio Technology (VST) plugin format.
+Thus using MIDI as the score format is a natural choice.
+
+A MIDI score contains note, time signature and tempo information.
+It may also contain \textit{program change} events,
+as specified in the General Midi specification \cite{GeneralMidi},
+to indicate the instrument to be used for each track.
+However, practical experience with MIDI files showed,
+that using program changes to deduce the instrument to use,
+was not sufficient.
+Often scores would use the
+\textit{String ensemble} patch for all strings,
+even though the string instruments were separated to individual tracks.
+In cases like this it is necessary to be able to manually
+define the instrument to be used with each track.
+See section \ref{sec:score_description_file}.
+
 \section{Patch Switching}
+\label{sec:patch_switching}
 
 In order to control the switching of patches,
 the synthesis system must have some knowledge of
@@ -728,16 +790,12 @@ the most appropriate patch for each note.
 
 \fixme{Write more on patch selection (e.g. distance function)}
 
-\subsection{Instrument Definition Format}
-\label{sec:instrument_definition_format}
-
-\fixme{Write some}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Implementation Details}
 \label{chapter:implementation_details}
 
-Since the synthesis environment is a VST plugin,
+Since the synthesis environment is a
+Virtual Studio Technology (VST) plugin,
 implementing the conductor follower as a VST plugin was a logical choice.
 The input for the plugin is read from a MIDI file
 and the output is MIDI events via the VST interface.
@@ -1149,71 +1207,92 @@ used in equation \ref{eq:sg_design_matrix}.
 This change requires a correction to equation \ref{eq:sg_coefs},
 which is reversing the observation values $\mathbf{y}$.
 
-\section{Score Data Format}
+\section{Data File Formats}
 
-In order to play a score,
-the score events need to be provided to the system in some format.
-The objective was to be able to use existing material as much as possible,
-with minimal effort.
-The format used in the implementation combines a MIDI score and
-a domain specific language (DSL) based terse score description format.
+For additional data needed by the system,
+a number of JSON-like \cite{JSON} DSLs were developed.
+The syntax in all of them is similar,
+only the contained data varying between different formats.
+The formats will be described here briefly.
 
-\subsection{The Musical Instrument Digital Interface}
-
-Regardless of its limitations and age,
-the Musical Instrument Digital Interface (MIDI)
-is still one of the most used standards
-for the digital representation of musical events.
-MIDI is also the built-in way to communicate musical events
-in the Virtual Studio Technology (VST) plugin format
-(see section \ref{sec:vsl} for details).
-Thus using MIDI as the score format is a natural choice.
-
-A MIDI score contains note, time signature and tempo information.
-It may also contain \textit{program change} events,
-as specified in the General Midi specification \cite{GeneralMidi},
-to indicate the instrument to be used for each track.
-However, practical experience with MIDI files showed,
-that using program changes to deduce the instrument to use,
-was not sufficient.
-Often scores would use the
-\textit{String ensemble} patch for all strings,
-even though the string instruments were separated to individual tracks.
-In cases like this it is necessary to be able to manually
-define the instrument to be used with each track.
-
-\subsection{Score Description Format}
+\subsection{Score Description Files}
+\label{sec:score_description_file}
 
 Because the data present in a MIDI score was
-not sufficient alone,
-a JSON-like \cite{JSON} DSL for describing the score was developed.
+not sufficient alone, a format
+for describing additional data related to the score was developed.
 A score definition file includes the following information:
 \begin{description}[leftmargin=24ex]
-\item[name] A human readable name for the score.
-\item[midi file] The path of the related midi file.
-\item[instrument file] The path of the related instrument definition file.
-\item[beat pattern file] The path of the related beat pattern file.
-\item[track information] A list of track to instrument mappings.
-\item[score events] A list of score event.
+\item[Name] A human readable name for the score.
+\item[MIDI file] The path of the related midi file.
+\item[Instrument file] The path of the related instrument definition file.
+\item[Beat pattern file] The path of the related beat pattern file.
+\item[Track information] A list of track to instrument mappings.
+\item[Score events] A list of score event.
 \end{description}
 An example of a score description file can be found from Appendix \ref{appendix:dsl_samples}.
 For more information on instrument definitions,
 see section \ref{sec:instrument_definition_format},
-and for beat patterns section \ref{}.
+and for beat patterns section \ref{sec:instrument_definition_format}.
 The different types of score events are described in detail below.
 
 \subsubsection*{Tempo Sensitivity Events}
 
 A tempo sensitivity event contains the following information:
 \begin{description}[leftmargin=16ex]
-\item[position] The score position to which this sensitivity change applies.
-\item[sensitivity] A sensitivity value in the range $0 \ldots 1$.
+\item[Position] The score position to which this sensitivity change applies.
+\item[Sensitivity] A sensitivity value in the range $0 \ldots 1$.
 \end{description}
 The event will cause the catchup time $t_c$,
 as described in section \ref{sec:tempo_following},
 to be adjusted to provide a different level of sensitivity in tempo following.
 A low sensitivity will lead to a long $t_c$,
 whereas a high sensitivity translates to a short $t_c$.
+
+\fixme{If no more events are implemented, change the formatting}
+
+\subsection{Instrument Definition Files}
+\label{sec:instrument_definition_format}
+
+The purpose of instrument definition files,
+is to provide the necessary data for
+mapping expressive parameters to different
+instrument patches.
+The file is a list of instrument definitions,
+which include patch definitions.
+A patch definition includes the following information:
+\begin{description}[leftmargin=24ex]
+\item[Name] A human readable name for the patch.
+\item[Keyswitch] The keyswitch for selecting this patch.
+\item[Length] Length of patch, as described in section \ref{sec:patch_switching}.
+This is a relative value in the range \ocinterval{0, 1}.
+\item[Attack] Attack of patch, as described in section \ref{sec:patch_switching}.
+\item[Weight] Weight of patch, as described in section \ref{sec:patch_switching}.
+\end{description}
+Each patch is unique to an instrument,
+the instrument definition including the following information:
+\begin{description}[leftmargin=24ex]
+\item[Name] A human readable name for the instrument.
+\item[Shortest note] The length for the relative note length of 0.
+\item[Longest note] The length for the relative note length of 1.
+\item[Patches] List of patches.
+\end{description}
+An example of an instrument definition file can be found from Appendix
+\ref{appendix:dsl_samples}.
+
+\subsection{Beat Pattern Definition Files}
+\label{sec:instrument_definition_format}
+
+The beat pattern definition files include the
+information for all the conducting beat patterns
+that the system recognizes.
+Each beat pattern includes the following information:
+\begin{description}[leftmargin=24ex]
+\item[Meter] The time signature to which this pattern applies.
+\item[Beats] A list of beat times as an offset into the bar in quarter notes.
+\end{description}
+An example of a beat pattern definition file can be found from Appendix
+\ref{appendix:dsl_samples}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Discussion and Conclusions}
