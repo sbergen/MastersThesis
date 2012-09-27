@@ -577,20 +577,96 @@ When the type is NextBar,
 the current bar is incremented,
 and the classification is repeated with an
 updated relative beat position.
-The type CurrentBar,
-means that the offset $\Delta b$ is used for correcting
+The type CurrentBar
+means that the classification is used for correcting
 the current warp factor $w$.
-The factor is corrected so that after a catchup time $t_c$,
-the position will differ by $\Delta b$,
-compared to the position
-that would be reached by maintaining the current tempo.
-The correction is applied as a tempo function $\upsilon (t)$,
-whose magnitude is derived from the integral
+The current error in position is taken directly from
+the beat offset $\Delta b$,
+while the instantaneous tempo estimate
 \begin{equation}
-\int_t^{t + t_c} \upsilon \, \mathrm{d}t = \Delta b.
+v_i = \frac{(b - \Delta b) - (b' - \Delta b')}{t - t'},
 \end{equation}
-$\upsilon (t)$ should be constant outside,
-and monotonic within \ccinterval{t, t + t_c}.
+where $b$ and $\Delta b$ are the position and offset of
+the latest conducted beat,
+$t$ the time of the latest conducted beat,
+and $b'$, $\Delta b'$ and $t'$ those of
+the previous conducted beat, respectively.
+The target tempo, $v_t$, is taken as an exponential moving average
+of the instantaneous tempi.
+
+The parameters $\Delta b$ and $v_t$
+form the basis for tempo adjustment.
+The target of the adjustment is to be
+at the the tempo $v_t$,
+and having made a position adjustment of $\Delta b$
+after a catchup time $t_c$.
+As can be seen,
+the operation requires adjusting two interlinked parameters,
+tempo and position,
+which is not possible using a linear function.
+Instead, the tempo change is built as the sum of two functions
+\begin{equation}
+v(t) = v_i + v_t(t) + v_b(t),
+\end{equation}
+where $v_i$ is the initial tempo,
+$v_t(t)$ is a linear function
+contributing to the gross tempo change,
+and $v_b(t)$ a non-linear function contributing
+to the gross position change
+without affecting the final tempo.
+
+To make the tempo change $\Delta v$,
+during the time $t_c$, we define
+\begin{equation}
+v_t(t) = \frac{\Delta v t}{t_c}.
+\end{equation}
+Thus, the difference to our target tempo
+\begin{equation}
+v'_t(t) = \frac{\Delta v t}{t_c} - \Delta v,
+\end{equation}
+and the difference in position due to this
+tempo difference can be solved from the integral
+\begin{equation}
+\int v'_t \, \mathrm{d}t =
+\Delta v \left( \frac{t^2}{2 \, t_c} - t \right) + C.
+\end{equation}
+The cumulative difference in position due to $v_t(t)$
+over $t_c$
+\begin{equation}
+\Delta b_{v_t} =
+\int_t^{t + t_c} v'_t \, \mathrm{d}t =
+-\frac{\Delta v \, t_c }{2}.
+\end{equation}
+
+
+To have zero effect on the final tempo,
+we define
+\begin{equation}
+v_b(t) = a \sin \left( \frac{\pi t}{t_c} \right),
+\end{equation}
+where $a$ is the correction coefficient.
+The cumulative position difference can be solved from
+the integral
+\begin{equation}
+\int v_b \, \mathrm{d}t =
+\frac{a t}{\pi} \left( 1 - \cos \left( \frac{\pi t}{t_c} \right) \right),
+\end{equation}
+giving the total difference in position
+\begin{equation}
+\Delta b_{v_b} = \int_t^{t + t_c} v_b \, \mathrm{d}t =
+\frac{2 \, a \, t_c}{\pi}
+\end{equation}
+To correct the position after $t_c$,
+$v_b(t)$ will need to compensate for both
+$\Delta b$ and counter $\Delta b_{v_t}$.
+Thus we can solve $a$ from the equation
+\begin{equation}
+\Delta b_{v_b} = \Delta b - \Delta b_{v_t},
+\end{equation}
+giving the solution
+\begin{equation}
+a = \frac{\pi \left( \Delta b - \Delta b_{v_t} \right)}{2 t_c}.
+\end{equation}
 
 \subsection{Offset Compensation}
 
