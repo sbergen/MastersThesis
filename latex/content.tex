@@ -614,56 +614,76 @@ contributing to the gross tempo change,
 and $v_b(t)$ a non-linear function contributing
 to the gross position change
 without affecting the final tempo.
+The times in these functions are relative to the
+beat classification time,
+and are always larger or equal to zero.
 
-To make the tempo change $\Delta v$,
-during the time $t_c$, we define
+To make the gross tempo change
+over $t_c$ equal $\Delta v$,
+we define
 \begin{equation}
-v_t(t) = \frac{\Delta v t}{t_c}.
+v_t(t) =
+\begin{cases}
+\frac{\Delta v}{t_c} \, t & \text{if } t < t_c \\
+\Delta v & \text{otherwise}.
+\end{cases}
 \end{equation}
-Thus, the difference to our target tempo
+Since the tempo is changed gradually,
+it will not immediately match the target tempo.
+The difference to the target tempo causes
+a cumulative difference in position,
+which can be simply solved by integrating over time:
 \begin{equation}
-v'_t(t) = \frac{\Delta v t}{t_c} - \Delta v,
-\end{equation}
-and the difference in position due to this
-tempo difference can be solved from the integral
-\begin{equation}
-\int v'_t \, \mathrm{d}t =
+\int v_t - \Delta v \, \mathrm{d}t =
 \Delta v \left( \frac{t^2}{2 \, t_c} - t \right) + C.
 \end{equation}
-The cumulative difference in position due to $v_t(t)$
-over $t_c$
+The difference in position
+caused by the difference between $v_t(t)$ and $\Delta v$
+cumulates over the catchup time $t_c$,
+causing a gross difference of
 \begin{equation}
 \Delta b_{v_t} =
-\int_t^{t + t_c} v'_t \, \mathrm{d}t =
+\int_t^{t + t_c} v_t - \Delta v \, \mathrm{d}t =
 -\frac{\Delta v \, t_c }{2}.
 \end{equation}
-
+This difference in position will need to be taken into account
+when defining $v_b(t)$,
+which should compensate for the position difference.
 
 To have zero effect on the final tempo,
 we define
 \begin{equation}
-v_b(t) = a \sin \left( \frac{\pi t}{t_c} \right),
+v_b(t) =
+\begin{cases}
+a \sin \left( \frac{\pi t}{t_c} \right) & \text{if } t < t_c \\
+0 & \text{otherwise},
+\end{cases}
 \end{equation}
-where $a$ is the correction coefficient.
-The cumulative position difference can be solved from
-the integral
+where $a$ is the correction coefficient
+which defines the amount of change in position.
+To solve $a$, we need to look at the
+cumulative position difference caused by $v_b(t)$,
+which can be solved from the integral
 \begin{equation}
 \int v_b \, \mathrm{d}t =
-\frac{a t}{\pi} \left( 1 - \cos \left( \frac{\pi t}{t_c} \right) \right),
+\frac{a t}{\pi} \left( 1 - \cos \left( \frac{\pi t}{t_c} \right) \right) + C.
 \end{equation}
-giving the total difference in position
+Similarly to $b_{v_t}$,
+the gross difference in position that cumulates over $t_c$
 \begin{equation}
+\label{eq:non-linear_tempo_func_total}
 \Delta b_{v_b} = \int_t^{t + t_c} v_b \, \mathrm{d}t =
-\frac{2 \, a \, t_c}{\pi}
+\frac{2 \, a \, t_c}{\pi}.
 \end{equation}
-To correct the position after $t_c$,
-$v_b(t)$ will need to compensate for both
-$\Delta b$ and counter $\Delta b_{v_t}$.
-Thus we can solve $a$ from the equation
+To completely correct the position after $t_c$,
+$v_b(t)$ will need to both compensate for
+$\Delta b$ and counter $\Delta b_{v_t}$,
+giving the equation
 \begin{equation}
-\Delta b_{v_b} = \Delta b - \Delta b_{v_t},
+\Delta b_{v_b} = \Delta b - \Delta b_{v_t}.
 \end{equation}
-giving the solution
+Using equation \ref{eq:non-linear_tempo_func_total},
+we can solve $a$ as
 \begin{equation}
 a = \frac{\pi \left( \Delta b - \Delta b_{v_t} \right)}{2 t_c}.
 \end{equation}
