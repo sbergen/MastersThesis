@@ -446,7 +446,27 @@ In essence, the task consists of establishing a mapping between
 wall clock time and the relative timestamps of score events.
 This mapping is based the conducted tempo of the piece,
 which is formed based on score data and beat events.
-This mapping is formalized and explained in detail in this chapter.
+
+The aim of the score following system
+is to behave like a real orchestra would,
+when reacting to a conductor.
+\fixme{quote some studies on this matter, if you find some}
+This implies that
+\begin{enumerate}
+\item The orchestra should not be confused by changes in the conducting pattern. \label{follow_point:pattern}
+\item In the absence of beats, the orchestra will continue with it's previous tempo.
+\item Extra beats in "unexpected" positions will not be acted upon. \label{follow_point:unexpected}
+\item Sudden changes in tempo will not be immediately followed.
+\end{enumerate}
+Points \ref{follow_point:pattern} and \ref{follow_point:unexpected} require
+that the tempo follower must have knowledge of all the possible
+conducting patterns for each time signature,
+and that it must be able to relate each beat to some beat in the pattern.
+In this chapter,
+we will first formalize the different time bases used,
+and then deconstruct score following into
+three different tasks:
+beat classification, tempo adjustment and start tempo estimation.
 
 \section{Real Time and Score Positions}
 \label{sec:meth:read_and_score_time}
@@ -497,26 +517,30 @@ represent the relation with a warp factor
 w = \frac{\Delta \phi}{\Delta t},
 \end{equation}
 which is piecewise constant over time.
- 
-\section{Tempo Following}
-\label{sec:tempo_following}
 
-The aim of the tempo following system
-is to behave like a real orchestra would,
-when reacting to a conductor.
-\fixme{quote some studies on this matter, if you find some}
-This implies that
-\begin{enumerate}
-\item The orchestra should not be confused by changes in the conducting pattern. \label{follow_point:pattern}
-\item In the absence of beats, the orchestra will continue with it's previous tempo.
-\item Extra beats in "unexpected" positions will not be acted upon. \label{follow_point:unexpected}
-\item Sudden changes in tempo will not be immediately followed.
-\end{enumerate}
-Points \ref{follow_point:pattern} and \ref{follow_point:unexpected} require
-that the tempo follower must have knowledge of all the possible
-conducting patterns for each time signature,
-and that it must be able to relate each beat to some beat in the pattern.
-\fixme{Write more}
+\section{Beat Classification}
+
+Once the beats are detected as described
+in section \ref{sec:beat_detection},
+the beats have to be classified.
+A beat classification is defined as the tuple
+\[
+\tupledef{C}{\Delta b, q, \tau},
+\]
+where $\Delta b$ is the offset,
+$q$ the classification quality,
+and $\tau$ the type
+\[
+\setdef{\tau}{\mathrm{NotClassified}, \mathrm{CurrentBar}, \mathrm{NextBar}}
+\]
+Each beat pattern has a related
+classification operation $ \mathcal{C} : B \rightarrow C, $
+which uses the relative position of the detected beat
+within the current bar,
+to produce a classification.
+Out of the set of classifications produced by the beat patterns,
+the classification with the best quality is
+selected as the final classification.
 
 \subsection{Beat Patterns}
 
@@ -543,223 +567,11 @@ be able to detect the pattern change as
 a more probable choice,
 producing a correct estimate.
 
-
-\subsection{Beat Classification}
-
-Once the beats are detected as described
-in section \ref{sec:beat_detection},
-the beats have to be classified.
-A beat classification is defined as the tuple
-\[
-\tupledef{C}{\Delta b, q, \tau},
-\]
-where $\Delta b$ is the offset,
-$q$ the classification quality,
-and $\tau$ the type
-\[
-\setdef{\tau}{\mathrm{NotClassified}, \mathrm{CurrentBar}, \mathrm{NextBar}}
-\]
-Each beat pattern has a related
-classification operation $ \mathcal{C} : B \rightarrow C, $
-which uses the relative position of the detected beat
-within the current bar,
-to produce a classification.
-Out of the set of classifications produced by the beat patterns,
-the classification with the best quality is
-selected as the final classification.
-
-\subsection{Tempo Adjustment}
-\label{sec:tempo_adjustment}
-
-The action taken based on the winning classification
-depends on the type of the classification.
-In the case of NotClassified, no action is taken for that beat.
-When the type is NextBar,
-the current bar is incremented,
-and the classification is repeated with an
-updated relative beat position.
-The type CurrentBar
-means that the classification is used for correcting
-the current warp factor $w$.
-The current error in position is taken directly from
-the beat offset $\Delta b$,
-while the instantaneous tempo estimate
-\begin{equation}
-v_i = \frac{(b - \Delta b) - (b' - \Delta b')}{t - t'},
-\end{equation}
-where $b$ and $\Delta b$ are the position and offset of
-the latest conducted beat,
-$t$ the time of the latest conducted beat,
-and $b'$, $\Delta b'$ and $t'$ those of
-the previous conducted beat, respectively.
-The target tempo, $v_t$, is taken as a time dependent moving average
-of the instantaneous tempi.
-
-The parameters $\Delta b$ and $v_t$
-form the basis for tempo adjustment.
-The target of the adjustment is to be
-at the the tempo $v_t$,
-and having made a position adjustment of $\Delta b$
-after a catchup time $t_c$.
-As can be seen,
-the operation requires adjusting two interlinked parameters,
-tempo and position,
-which is not possible using a linear function.
-Instead, the tempo change is built as the sum of two functions
-\begin{equation}
-v(t) = v_i + v_t(t) + v_b(t),
-\end{equation}
-where $v_i$ is the initial tempo,
-$v_t(t)$ is a linear function
-contributing to the gross tempo change,
-and $v_b(t)$ a non-linear function contributing
-to the gross position change
-without affecting the final tempo.
-The times in these functions are relative to the
-beat classification time,
-and are always larger or equal to zero.
-
-To make a gross tempo change
-over $t_c$ equal to $\Delta v$,
-we define
-\begin{equation}
-v_t(t) =
-\begin{cases}
-\frac{\Delta v}{t_c} \, t & \text{if } t < t_c \\
-\Delta v & \text{otherwise}.
-\end{cases}
-\end{equation}
-Since the tempo is changed gradually,
-it will not immediately match the target tempo.
-The difference to the target tempo causes
-a cumulative difference in position,
-which can be simply solved by integrating over time:
-\begin{equation}
-\label{eq:linear_tempo_change_pos_diff}
-\int v_t - \Delta v \, \mathrm{d}t =
-\Delta v \left( \frac{t^2}{2 \, t_c} - t \right) + C.
-\end{equation}
-The difference in position
-caused by the difference between $v_t(t)$ and $\Delta v$
-cumulates over the catchup time $t_c$,
-causing a gross difference of
-\begin{equation}
-\Delta b_{v_t} =
-\int_t^{t + t_c} v_t - \Delta v \, \mathrm{d}t =
--\frac{\Delta v \, t_c }{2}.
-\end{equation}
-This difference in position will need to be taken into account
-when defining $v_b(t)$,
-which should compensate for the position difference.
-
-To have zero effect on the final tempo,
-we define
-\begin{equation}
-v_b(t) =
-\begin{cases}
-a \sin \left( \frac{\pi t}{t_c} \right) & \text{if } t < t_c \\
-0 & \text{otherwise},
-\end{cases}
-\end{equation}
-where $a$ is the correction coefficient
-which defines the amount of change in position.
-To solve $a$, we need to look at the
-cumulative position difference caused by $v_b(t)$,
-which can be solved from the integral
-\begin{equation}
-\int v_b \, \mathrm{d}t =
-\frac{a t}{\pi} \left( 1 - \cos \left( \frac{\pi t}{t_c} \right) \right) + C.
-\end{equation}
-Similarly to $\Delta b_{v_t}$,
-the gross difference in position caused by $v_b$ over $t_c$
-\begin{equation}
-\label{eq:non-linear_tempo_func_total}
-\Delta b_{v_b} = \int_t^{t + t_c} v_b \, \mathrm{d}t =
-\frac{2 \, a \, t_c}{\pi}.
-\end{equation}
-To completely correct the position after $t_c$,
-$v_b$ will need to both compensate for
-$\Delta b$ and counter the positional change caused by $v_t$,
-giving the equation
-\begin{equation}
-\Delta b_{v_b} = - \left( \Delta b + \Delta b_{v_t} \right) .
-\end{equation}
-Thus, applying equation \ref{eq:non-linear_tempo_func_total},
-we can solve $a$ as
-\begin{equation}
-\label{eq:non_linear_coef}
-a = - \frac{\pi \left( \Delta b + \Delta b_{v_t} \right)}{2 t_c}.
-\end{equation}
-
-Since the tempo adjustment function is non-linear,
-selecting the catchup time $t_c$ properly is critical.
-To have a consistent state for each beat estimation,
-the adjustment should be fully completed
-or very near completion
-at the time the next beat occurs.
-A very short time, however,
-would cause a very non-musical result,
-as the tempo change would be temporarily very large.
-This is why $t_c$ is selected as the time between
-the current and previous beat,
-which should predict the time to the next
-beat fairly well.
-
-\subsection{Relaxed Tempo Following}
-
-The tempo adjustment method described in section
-\ref{sec:tempo_adjustment}
-is very strict,
-as it attempts to do a full tempo and position correction
-between each beat.
-In a real life situation
-the timing of the detected beats will often have some
-fluctuation over time,
-causing large beat offsets.
-When such an offset is present,
-the non-linear part of the tempo function,
-trying to correct the offset,
-will cause a large temporary change in tempo.
-
-It is not viable to filter the beat offset values,
-as is done with the instantaneous tempi,
-for the offset is directly affected by
-the tempo adjustment function.
-Doing so would cause feedback in the system,
-with hard to predict results.
-Instead, only part of the beat offset may be compensated for.
-This adjustment does not apply to
-the offset caused by the tempo change
-(equation \ref{eq:linear_tempo_change_pos_diff}),
-but only the offset of the latest beat.
-To relax the tempo following,
-only a fraction of the beat offset $\Delta b$ is corrected,
-modifying the coefficient for the non-linear 
-part of the tempo function, defined in equation
-\ref{eq:non_linear_coef}.
-
-
-\subsection{Offset Compensation}
-
-Given the previous beat offset $\Delta b'$ (at time $t'$),
-and current $\upsilon (t)$,
-the current offset can be estimated as
-\begin{equation}
-\Delta b(t) = \Delta b' - \int_{t'}^t \upsilon \, \mathrm{d}t.
-\end{equation}
-To get the best beat classifications,
-$ \mathcal{C} $ is used with the relative beat position
-\begin{equation}
-b' = \mathcal{M} [ t ] - p_B - \Delta b(t),
-\end{equation}
-where $t$ is the time of the beat,
-and $p_B$ the beginning of the current bar.
-
 \subsection{The Beat Classification Operation}
 \label{sec:beat_classification_op}
 
 The classification operation $\mathcal{C}$,
-uses the beat positions within the bar, $\mathbf{b}$,
+uses the positions of beats in a beat pattern, $\mathbf{b}$,
 to create an estimate for the beat position $b$:
 \begin{enumerate}
 \item The classification for the current bar, $c_c$,
@@ -825,12 +637,202 @@ The bar qualities are reset when the winning classification
 is of type $\mathrm{NextBar}$,
 and are updated at every detected beat as described above.
 
-\subsection{Start Tempo Estimation}
+\section{Tempo Adjustment}
+\label{sec:tempo_adjustment}
+
+The action taken based on the winning classification
+depends on the type of the classification.
+In the case of NotClassified, no action is taken for that beat.
+When the type is NextBar,
+the current bar is incremented,
+and the classification is repeated with an
+updated relative beat position.
+The type CurrentBar
+means that the classification is used for correcting
+the current warp factor $w$.
+The current error in position is taken directly from
+the beat offset $\Delta b$,
+while the instantaneous tempo estimate
+\begin{equation}
+v_i = \frac{(b - \Delta b) - (b' - \Delta b')}{t - t'},
+\end{equation}
+where $b$ and $\Delta b$ are the position and offset of
+the latest conducted beat,
+$t$ the time of the latest conducted beat,
+and $b'$, $\Delta b'$ and $t'$ those of
+the previous conducted beat, respectively.
+The target tempo, $v_t$, is taken as a time dependent moving average
+of the instantaneous tempi.
+
+The parameters $\Delta b$ and $v_t$
+form the basis for tempo adjustment.
+The target of the adjustment is to be
+at the the tempo $v_t$,
+and having made a position adjustment of $\Delta b$
+after a catchup time $t_c$.
+As can be seen,
+the operation requires adjusting two interlinked parameters,
+tempo and position,
+which is not possible using a linear function.
+Instead, the tempo change is built as the sum of two functions
+\begin{equation}
+v(t) = v_i + v_t(t) + v_b(t),
+\end{equation}
+where $v_i$ is the initial tempo,
+$v_t(t)$ is a linear function
+contributing to the gross tempo change,
+and $v_b(t)$ a non-linear function contributing
+to the gross position change
+without affecting the final tempo.
+The times in these functions are relative to the
+beat classification time,
+and are always larger or equal to zero.
+
+\subsection{Correcting tempo differences}
+
+To make a gross tempo change
+over $t_c$ equal to $\Delta v$,
+we define the tempo changing part of our tempo function
+\begin{equation}
+v_t(t) =
+\begin{cases}
+\frac{\Delta v}{t_c} \, t & \text{if } t < t_c \\
+\Delta v & \text{otherwise}.
+\end{cases}
+\end{equation}
+Since the tempo is changed gradually,
+it will not immediately match the target tempo.
+The difference to the target tempo causes
+a cumulative difference in position,
+which can be simply solved by integrating over time:
+\begin{equation}
+\label{eq:linear_tempo_change_pos_diff}
+\int v_t - \Delta v \, \mathrm{d}t =
+\Delta v \left( \frac{t^2}{2 \, t_c} - t \right) + C.
+\end{equation}
+The difference in position
+caused by the difference between $v_t(t)$ and $\Delta v$
+cumulates over the catchup time $t_c$,
+causing a gross difference of
+\begin{equation}
+\Delta b_{v_t} =
+\int_t^{t + t_c} v_t - \Delta v \, \mathrm{d}t =
+-\frac{\Delta v \, t_c }{2}.
+\end{equation}
+This difference in position will need to be taken into account
+when defining $v_b(t)$,
+which should compensate for the position difference.
+
+\subsection{Correcting position differences}
+
+To have an effect on position,
+but zero effect on the final tempo,
+we define the position changing part of our tempo function
+\begin{equation}
+v_b(t) =
+\begin{cases}
+a \sin \left( \frac{\pi t}{t_c} \right) & \text{if } t < t_c \\
+0 & \text{otherwise},
+\end{cases}
+\end{equation}
+where $a$ is the correction coefficient
+contributing to the amount of change in position.
+To solve $a$, we need to look at the
+cumulative position difference caused by $v_b(t)$,
+which can be solved from the integral
+\begin{equation}
+\int v_b \, \mathrm{d}t =
+\frac{a t}{\pi} \left( 1 - \cos \left( \frac{\pi t}{t_c} \right) \right) + C.
+\end{equation}
+Similarly to $\Delta b_{v_t}$,
+the gross difference in position caused by $v_b$ over $t_c$
+\begin{equation}
+\label{eq:non-linear_tempo_func_total}
+\Delta b_{v_b} = \int_t^{t + t_c} v_b \, \mathrm{d}t =
+\frac{2 \, a \, t_c}{\pi}.
+\end{equation}
+To completely correct the position after $t_c$,
+$v_b$ will need to both compensate for
+$\Delta b$ and counter the positional change caused by $v_t$,
+giving the equation
+\begin{equation}
+\Delta b_{v_b} = - \left( \Delta b + \Delta b_{v_t} \right) .
+\end{equation}
+Thus, applying equation \ref{eq:non-linear_tempo_func_total},
+we can solve $a$ as
+\begin{equation}
+\label{eq:non_linear_coef}
+a = - \frac{\pi \left( \Delta b + \Delta b_{v_t} \right)}{2 t_c}.
+\end{equation}
+
+\subsection{Relaxed Tempo Following}
+
+Since the tempo adjustment function is non-linear,
+selecting the catchup time $t_c$ properly is critical.
+To have a consistent state for each beat estimation,
+the adjustment should be fully completed
+or very near completion
+at the time the next beat occurs.
+A very short time, however,
+would cause very abrupt temporary changes in tempo.
+Thus $t_c$ is selected as the time between
+the current and previous beat,
+which should predict the time to the next
+beat fairly well.
+
+The tempo adjustment method described above is very strict,
+as it attempts to do a full tempo and position correction
+between each beat.
+In a real life situation
+the timing of the detected beats will often have some
+fluctuation over time,
+causing large beat offsets.
+When such an offset is present,
+the non-linear part of the tempo function,
+trying to correct the offset,
+will cause a large temporary change in tempo.
+
+It is not viable to filter the beat offset values,
+as is done with the instantaneous tempi,
+for the offset is directly affected by
+the tempo adjustment function.
+Doing so would cause feedback in the system,
+with hard to predict results.
+Instead, only part of the beat offset may be compensated for.
+This adjustment does not apply to
+the offset caused by the tempo change
+(equation \ref{eq:linear_tempo_change_pos_diff}),
+but only the offset of the latest beat.
+To relax the tempo following,
+only a fraction of the beat offset $\Delta b$ is corrected,
+modifying the coefficient for the non-linear 
+part of the tempo function, defined in equation
+\ref{eq:non_linear_coef}.
+
+
+\subsection{Offset Compensation}
+
+Given the previous beat offset $\Delta b'$ (at time $t'$),
+and current $v_t$ and $v_b$,
+the current offset can be estimated as
+\begin{equation}
+\Delta b(t) = \Delta b' - \int_{t'}^t v_t + v_b \, \mathrm{d}t.
+\end{equation}
+To get the best beat classifications,
+$ \mathcal{C} $ is used with the relative beat position
+\begin{equation}
+b' = \mathcal{M} [ t ] - p_B - \Delta b(t),
+\end{equation}
+where $t$ is the time of the beat,
+and $p_B$ the beginning of the current bar.
+The offset approaches zero as $t$ approaches $t' + t_c$.
+
+\section{Start Tempo Estimation}
 \label{sec:meth:start_tempo_estimation}
 
 The start tempo is estimated based on
 the duration of the start gesture.
-Th duration from bottom to top position is
+The duration from bottom to top position is
 assumed to be the length of one eight beat,
 and the starting tempo thus
 \begin{equation}
