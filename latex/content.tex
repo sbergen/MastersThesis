@@ -569,6 +569,7 @@ the classification with the best quality is
 selected as the final classification.
 
 \subsection{Tempo Adjustment}
+\label{sec:tempo_adjustment}
 
 The action taken based on the winning classification
 depends on the type of the classification.
@@ -591,7 +592,7 @@ the latest conducted beat,
 $t$ the time of the latest conducted beat,
 and $b'$, $\Delta b'$ and $t'$ those of
 the previous conducted beat, respectively.
-The target tempo, $v_t$, is taken as an exponential moving average
+The target tempo, $v_t$, is taken as a time dependent moving average
 of the instantaneous tempi.
 
 The parameters $\Delta b$ and $v_t$
@@ -618,8 +619,8 @@ The times in these functions are relative to the
 beat classification time,
 and are always larger or equal to zero.
 
-To make the gross tempo change
-over $t_c$ equal $\Delta v$,
+To make a gross tempo change
+over $t_c$ equal to $\Delta v$,
 we define
 \begin{equation}
 v_t(t) =
@@ -634,6 +635,7 @@ The difference to the target tempo causes
 a cumulative difference in position,
 which can be simply solved by integrating over time:
 \begin{equation}
+\label{eq:linear_tempo_change_pos_diff}
 \int v_t - \Delta v \, \mathrm{d}t =
 \Delta v \left( \frac{t^2}{2 \, t_c} - t \right) + C.
 \end{equation}
@@ -668,25 +670,73 @@ which can be solved from the integral
 \int v_b \, \mathrm{d}t =
 \frac{a t}{\pi} \left( 1 - \cos \left( \frac{\pi t}{t_c} \right) \right) + C.
 \end{equation}
-Similarly to $b_{v_t}$,
-the gross difference in position that cumulates over $t_c$
+Similarly to $\Delta b_{v_t}$,
+the gross difference in position caused by $v_b$ over $t_c$
 \begin{equation}
 \label{eq:non-linear_tempo_func_total}
 \Delta b_{v_b} = \int_t^{t + t_c} v_b \, \mathrm{d}t =
 \frac{2 \, a \, t_c}{\pi}.
 \end{equation}
 To completely correct the position after $t_c$,
-$v_b(t)$ will need to both compensate for
-$\Delta b$ and counter $\Delta b_{v_t}$,
+$v_b$ will need to both compensate for
+$\Delta b$ and counter the positional change caused by $v_t$,
 giving the equation
 \begin{equation}
-\Delta b_{v_b} = \Delta b - \Delta b_{v_t}.
+\Delta b_{v_b} = - \left( \Delta b + \Delta b_{v_t} \right) .
 \end{equation}
-Using equation \ref{eq:non-linear_tempo_func_total},
+Thus, applying equation \ref{eq:non-linear_tempo_func_total},
 we can solve $a$ as
 \begin{equation}
-a = \frac{\pi \left( \Delta b - \Delta b_{v_t} \right)}{2 t_c}.
+\label{eq:non_linear_coef}
+a = - \frac{\pi \left( \Delta b + \Delta b_{v_t} \right)}{2 t_c}.
 \end{equation}
+
+Since the tempo adjustment function is non-linear,
+selecting the catchup time $t_c$ properly is critical.
+To have a consistent state for each beat estimation,
+the adjustment should be fully completed
+or very near completion
+at the time the next beat occurs.
+A very short time, however,
+would cause a very non-musical result,
+as the tempo change would be temporarily very large.
+This is why $t_c$ is selected as the time between
+the current and previous beat,
+which should predict the time to the next
+beat fairly well.
+
+\subsection{Relaxed Tempo Following}
+
+The tempo adjustment method described in section
+\ref{sec:tempo_adjustment}
+is very strict,
+as it attempts to do a full tempo and position correction
+between each beat.
+In a real life situation
+the timing of the detected beats will often have some
+fluctuation over time,
+causing large beat offsets.
+When such an offset is present,
+the non-linear part of the tempo function,
+trying to correct the offset,
+will cause a large temporary change in tempo.
+
+It is not viable to filter the beat offset values,
+as is done with the instantaneous tempi,
+as the offset is directly affected by
+the tempo adjustment function.
+This would cause feedback in the system,
+with hard to predict results.
+Instead, only part of the beat offset is compensated for.
+This does apply to the offset caused by the tempo change
+(equation \ref{eq:linear_tempo_change_pos_diff}),
+but only the offset of the latest beat.
+To relax the tempo following,
+only a fraction of the beat offset $\Delta b$ is corrected,
+modifying the coefficient for the non-linear 
+part of the tempo function, defined in equation
+\ref{eq:non_linear_coef}.
+
 
 \subsection{Offset Compensation}
 
