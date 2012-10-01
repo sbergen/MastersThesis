@@ -723,12 +723,13 @@ will cause a large temporary change in tempo.
 
 It is not viable to filter the beat offset values,
 as is done with the instantaneous tempi,
-as the offset is directly affected by
+for the offset is directly affected by
 the tempo adjustment function.
-This would cause feedback in the system,
+Doing so would cause feedback in the system,
 with hard to predict results.
-Instead, only part of the beat offset is compensated for.
-This does apply to the offset caused by the tempo change
+Instead, only part of the beat offset may be compensated for.
+This adjustment does not apply to
+the offset caused by the tempo change
 (equation \ref{eq:linear_tempo_change_pos_diff}),
 but only the offset of the latest beat.
 To relax the tempo following,
@@ -1005,8 +1006,7 @@ the 30Hz frame rate of the motion capture system
 makes it a multirate, multithreaded application.
 Working in such an environment requires using
 lock-free programming techniques,
-such as atomic variables, read-copy-update (RCU) constructs,
-and lock-free ringbuffers.
+such as atomic variables and lock-free ringbuffers.
 The multirate nature also requires having robust timestamping and synchronization mechanisms.
 
 \fixme{chapter overview}
@@ -1179,6 +1179,19 @@ is used for most of the lockfree inter-thread communication.
 This includes passing events from the motion capture thread
 to the MIDI thread, and logging from RT threads using the Butler thread.
 It is an essential utility for lockfree multi-threaded programming.
+
+\subsubsection*{Chen \& Burns Buffer}
+
+While the lockfree ringbuffer is a good solution
+for event-like data,
+better mechanisms exist for sharing a a single
+instance of data, e.g. a state. 
+For this use, a fully asynchronous reader-writer mechanism
+as described by Chen and Burns \cite{Chen97} was implemented.
+The mechanism allows lockfree access for
+a single writer and multiple readers,
+with no dynamic memory allocation required,
+however requiring the number of readers to be predefined.
 
 \section{Time Handling}
 
