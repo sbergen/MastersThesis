@@ -206,7 +206,23 @@ considered and implemented.
 \fixme{Write more.}
 
 \section{System overview}
-\fixme{Summarize what we are doing and why}
+
+The system can be broken down to four components:
+motion capture, score following, sound synthesis
+and visualization.
+The motion capture component
+takes depth sensor input,
+analyzes the body movements of the conductor,
+and produces a stream of events.
+These events describe those features of the conductor's movement,
+which are relevant to conductor following.
+
+The output of the motion capture is then analyzed
+for both tempo following and expressive synthesis purposes.
+The score following component classifies conducted beats,
+and modifies the tempo of the playback to match the conducting.
+\fixme{Write more}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Motion Capture}
