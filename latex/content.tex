@@ -981,6 +981,59 @@ the most appropriate patch for each note.
 \chapter{Visualization}
 \label{chapter:visualization}
 
+\fixme{Write overview, mention possible use in pedagogical purposes.}
+
+\section{Movement Tracing}
+
+When conducting a pattern,
+it is very difficult for the conductor himself to
+perceive the actual shape of the hand movement.
+Conventionally conducting students have
+videotaped their rehearsals in order to better see how they perform.
+However, this method does not provide an immediate form of feedback 
+already during the rehearsal.
+
+By visualizing both the current position of the hand,
+and a trace of the movement history,
+immediate visual feedback can be provided.
+An intuitive way of presenting the movement history
+is to draw a colored line segment between each sampled position,
+with the opacity of the segment decreasing the older the samples are.
+
+\section{Spatial Beat Visualization}
+
+The visualization can show the spatial position
+of the detected beats,
+which are somewhere along the traced hand trajectory.
+Due to the nature of the beat detection algorithm,
+the usefulness of this visualization for
+pedagogical purposes is questionable.
+However, the visualization was a good aid
+during the development of the system,
+and could be a good aid if the system is to be developed further.
+
+
+\section{Beat Offset Visualization}
+
+To indicate the positions of the detected beats
+relative to their classifications,
+a circular visualization is used.
+The progress of the current bar
+is visualized with a segment of a circle,
+alternately growing to a full circle,
+and shrinking to zero length,
+as the bar progress to their ends.
+The detected beats are visualized outside this circle,
+as a segment from the detected position
+to the position of the respective classification.
+Beats that happened early are visualized in green,
+and beats that happened late in red.
+Similarly to the movement tracing,
+the opacity of the old beats decreases
+and they eventually disappear as time progresses.
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Implementation Details}
 \label{chapter:implementation_details}
@@ -1211,9 +1264,11 @@ instance of data, e.g. a state.
 For this use, a fully asynchronous reader-writer mechanism
 as described by Chen and Burns \cite{Chen97} was implemented.
 The mechanism allows lockfree access for
-a single writer and multiple readers,
-with no dynamic memory allocation required,
-however requiring the number of readers to be predefined.
+a single writer and a fixed number of readers.
+It uses a number of copies of the data,
+and a set of atomic variables to track
+the reading and writing states.
+
 
 \section{Time Handling}
 
@@ -1229,10 +1284,10 @@ a typical configuration running the
 plugin at around 100 Hz (an audio block length of 10ms).
 Additionally, the thread in which the plugin runs
 is controlled by the host,
-and the code has to be absolutely lock-free.
+and the code has to be completely lock-free.
 
 Considering the implications of needing to run lock-free code on
-a modern multi-core system running a general purpose
+a modern multi-core system, running a general purpose
 operating system (OS),
 no assumptions about causality or parallelism between
 motion capture and plugin code execution can be made --
