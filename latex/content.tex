@@ -871,16 +871,26 @@ The offset approaches zero as $t$ approaches $t' + t_c$.
 
 The start tempo is estimated based on
 the duration of the start gesture.
+As there are several beat patterns for a given time signature,
+the length of the start gesture may also differ.
 The duration from bottom to top position is
-assumed to be the length of one eight beat,
-and the starting tempo thus
+assumed to be half the length of
+the first \textit{conducted} beat.
+The starting tempo is thus
 \begin{equation}
-v_s = \tfrac{1}{2} (t_t - t_b),
+v_s = \frac{\Delta t_{b_{1,2}}}{2} (t_t - t_b),
 \end{equation}
-where $t_t$ is the time at the top of the gesture,
+where $\Delta t_{b1,2}$ is the time between the first and second conducted beat,
+$t_t$ the time at the top of the gesture,
 and $t_b$ the time at the bottom of the gesture.
+From the different values of $v_s$ derived from the
+different conducting patterns,
+the one closest to the transcribed tempo is selected
+as the final start tempo.
 
-\fixme{Will the tempo estimation in the first bar(s) be changed?}
+\section{Tempo Changes}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Sound Synthesis}
