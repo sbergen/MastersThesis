@@ -722,7 +722,7 @@ contributing to the gross tempo change,
 and $v_b(t)$ a non-linear function contributing
 to the gross position change
 without affecting the final tempo.
-The times in these functions are relative to the
+The values of $t$ in these functions are relative to the
 beat classification time,
 and are always larger or equal to zero.
 
@@ -732,6 +732,7 @@ To make a gross tempo change
 over $t_c$ equal to $\Delta v$,
 we define the tempo changing part of our tempo function
 \begin{equation}
+\label{eq:tempo_function_tempo_correction}
 v_t(t) =
 \begin{cases}
 \frac{\Delta v}{t_c} \, t & \text{if } t < t_c \\
@@ -803,6 +804,68 @@ we can solve $a$ as
 a = - \frac{\pi \left( \Delta b + \Delta b_{v_t} \right)}{2 t_c}.
 \end{equation}
 
+\subsection{Offset Compensation}
+
+Given the previous beat offset $\Delta b'$ (at time $t'$),
+and current $v_t$ and $v_b$,
+the current offset can be estimated as
+\begin{equation}
+\label{eq:tempo_function_offset_function}
+\Delta b(t) = \Delta b' - \int_{t'}^t v_t + v_b \, \mathrm{d}t.
+\end{equation}
+To get the best beat classifications,
+$ \mathcal{C} $ is used with the relative beat position
+\begin{equation}
+b' = \mathcal{M} [ t ] - p_B - \Delta b(t),
+\end{equation}
+where $t$ is the time of the beat,
+and $p_B$ the beginning of the current bar.
+The offset approaches zero as $t$ approaches $t' + t_c$.
+
+\subsection{Tempo Changes}
+
+Tempo changes in the score are taken into account
+by changing the tempo function accordingly.
+When the tempo changes by a factor $a$,
+new values for $\Delta v$ and $\Delta b$ are calculated,
+and the tempo function is reset.
+The new change in tempo
+\begin{equation}
+\Delta v = a \left( v_i' + \Delta v' \right) - v'(t),
+\end{equation}
+where $v_i'$ is the previous initial tempo,
+$\Delta v'$ the previous tempo change,
+and $v'(t)$ the current tempo.
+The new offset
+\begin{equation}
+\Delta b = \Delta b'(t),
+\end{equation}
+where $\Delta b'(t)$ is the previous offset function
+as defined in equation \ref{eq:tempo_function_offset_function},
+is expressed in beats,
+and is thus not affected by the tempo change.
+
+When changing a tempo function that has not yet
+finished applying its changes,
+the most intuitive course of action would be to set
+\begin{equation}
+\label{eq:tempo_change_bad_tc}
+t_c = t_c' - t,
+\end{equation}
+where $t_c'$ is the previous value of $t_c$,
+and $t$ the time since the function was last reset.
+However, since $\Delta v$ will be finite in most cases,
+we can see that the coefficient $\frac{\Delta v}{t_c}$
+in equation \ref{eq:tempo_function_tempo_correction}
+will approach infinity,
+as $t$ approaches $t_c'$:
+\begin{equation}
+\lim_{t \to t_c'} \frac{\Delta v}{t_c' - t} = \pm \infty,
+\, \Delta v \neq 0.
+\end{equation}
+Thus it is not feasible to use equation \ref{eq:tempo_change_bad_tc},
+but we instead define $t_c = t_c'$.
+
 \subsection{Relaxed Tempo Following}
 
 Since the tempo adjustment function defined in
@@ -848,24 +911,6 @@ modifying the coefficient for the non-linear
 part of the tempo function, defined in equation
 \ref{eq:non_linear_coef}.
 
-
-\subsection{Offset Compensation}
-
-Given the previous beat offset $\Delta b'$ (at time $t'$),
-and current $v_t$ and $v_b$,
-the current offset can be estimated as
-\begin{equation}
-\Delta b(t) = \Delta b' - \int_{t'}^t v_t + v_b \, \mathrm{d}t.
-\end{equation}
-To get the best beat classifications,
-$ \mathcal{C} $ is used with the relative beat position
-\begin{equation}
-b' = \mathcal{M} [ t ] - p_B - \Delta b(t),
-\end{equation}
-where $t$ is the time of the beat,
-and $p_B$ the beginning of the current bar.
-The offset approaches zero as $t$ approaches $t' + t_c$.
-
 \section{Start Tempo Estimation}
 \label{sec:meth:start_tempo_estimation}
 
@@ -880,16 +925,14 @@ The starting tempo is thus
 \begin{equation}
 v_s = \frac{\Delta t_{b_{1,2}}}{2} (t_t - t_b),
 \end{equation}
-where $\Delta t_{b1,2}$ is the time between the first and second conducted beat,
+where $\Delta t_{b1,2}$ is the
+time between the first and second conducted beat,
 $t_t$ the time at the top of the gesture,
 and $t_b$ the time at the bottom of the gesture.
 From the different values of $v_s$ derived from the
 different conducting patterns,
 the one closest to the transcribed tempo is selected
 as the final start tempo.
-
-\section{Tempo Changes}
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
