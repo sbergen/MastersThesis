@@ -666,9 +666,11 @@ updated relative beat position.
 The type CurrentBar
 means that the classification is used for correcting
 the current warp factor $w$.
-The current error in position is taken directly from
-the beat offset $\Delta b$,
-while the instantaneous tempo estimate
+
+\subsection{Tempo Estimation}
+
+The instantaneous tempo estimate is calculated from
+the beat classifications as
 \begin{equation}
 v_i = \frac{(b - \Delta b) - (b' - \Delta b')}{t - t'},
 \end{equation}
@@ -677,8 +679,28 @@ the latest conducted beat,
 $t$ the time of the latest conducted beat,
 and $b'$, $\Delta b'$ and $t'$ those of
 the previous conducted beat, respectively.
-The target tempo, $v_t$, is taken as a time dependent moving average
-of the instantaneous tempi.
+
+Since the beats are not uniformly spaced in time,
+a conventional moving average can not be used
+for filtering the instantaneous tempi.
+Instead, a linearly decaying time dependent filter is used.
+The filter is defined by its cut-off time $t_{co}$,
+which forms the limit for how old a tempo estimate can be,
+to be taken into account.
+Each tempo estimate not older than $t_{co}$ is given a weight coefficient
+\begin{equation}
+c_i(\Delta t) = 1 - \frac{\Delta t}{t_{co}},
+\end{equation}
+where $\Delta t$ is the absolute offset to the current time.
+The target tempo is then the
+weighted and normalized sum of all the estimates:
+\begin{equation}
+v_t = \frac{\Sigma c_i v_i}{\Sigma c_i}.
+\end{equation}
+
+
+\subsection{Tempo Function}
+\label{sec:tempo_function}
 
 The parameters $\Delta b$ and $v_t$
 form the basis for tempo adjustment.
@@ -704,7 +726,7 @@ The times in these functions are relative to the
 beat classification time,
 and are always larger or equal to zero.
 
-\subsection{Correcting tempo differences}
+\subsubsection*{Correcting tempo differences}
 
 To make a gross tempo change
 over $t_c$ equal to $\Delta v$,
@@ -739,7 +761,7 @@ This difference in position will need to be taken into account
 when defining $v_b(t)$,
 which should compensate for the position difference.
 
-\subsection{Correcting position differences}
+\subsubsection*{Correcting position differences}
 
 To have an effect on position,
 but zero effect on the final tempo,
@@ -783,7 +805,8 @@ a = - \frac{\pi \left( \Delta b + \Delta b_{v_t} \right)}{2 t_c}.
 
 \subsection{Relaxed Tempo Following}
 
-Since the tempo adjustment function is non-linear,
+Since the tempo adjustment function defined in
+\ref{sec:tempo_function} is non-linear,
 selecting the catchup time $t_c$ properly is critical.
 To have a consistent state for each beat estimation,
 the adjustment should be fully completed
@@ -1033,7 +1056,6 @@ the opacity of the old beats decreases
 and they eventually disappear as time progresses.
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Implementation Details}
 \label{chapter:implementation_details}
@@ -1190,7 +1212,7 @@ lockfree programming techniques.
 To summarize, the threads are:
 \begin{enumerate}
 
-\item VST MIDI
+\item VST MIDI (audio)
 \begin{itemize}
 \item Provided by plugin host.
 \item Produces the MIDI events.
@@ -1208,7 +1230,7 @@ To summarize, the threads are:
 \begin{itemize}
 \item Runs the motion capture device.
 \item Has firm RT requirements.
-\item Higher latency than the MIDI thread (30 Hz).
+\item Higher latencies allowed compared to the MIDI thread (30 Hz).
 \end{itemize}
 
 \item Butler
@@ -1312,9 +1334,9 @@ The plugin thread needs to know not only
 the timestamp corresponding to the beginning of the current audio block,
 but also an estimate for the end of the block.
 Let the audio block be defined by its beginning and end:
-\begin{equation}
-\boldsymbol{\tau} = [\tau_b, \tau_e[.
-\end{equation}
+\[
+\boldsymbol{\tau} \definedas [\tau_b, \tau_e[.
+\]
 Using the information provided to the plugin,
 the theoretical block length
 \begin{equation}
@@ -1496,6 +1518,8 @@ The different types of score events are described in detail below.
 
 \subsubsection*{Tempo Sensitivity Events}
 
+\fixme{These need to be reimplemented!}
+
 A tempo sensitivity event contains the following information:
 \begin{description}[leftmargin=16ex]
 \item[Position] The score position to which this sensitivity change applies.
@@ -1539,7 +1563,7 @@ An example of an instrument definition file can be found from Appendix
 \ref{appendix:dsl_samples}.
 
 \subsection{Beat Pattern Definition Files}
-\label{sec:instrument_definition_format}
+\label{sec:beat_pattern_definition_format}
 
 The beat pattern definition files include the
 information for all the conducting beat patterns
@@ -1555,5 +1579,23 @@ An example of a beat pattern definition file can be found from Appendix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Discussion and Conclusions}
 \label{chapter:discussion}
+
+\fixme{Summarize}
+
+\section{Evaluation of Results}
+
+\fixme{Write}
+
+\section{Conclusions}
+
+\fixme{Write}
+
+\section{Further work}
+
+\fixme{
+Discuss further score analysis,
+tempo curves (considered harmful),
+further motion and gesture sutff...
+}
 
 
