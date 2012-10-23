@@ -541,17 +541,14 @@ in section \ref{sec:beat_detection},
 the beats have to be classified.
 A beat classification is defined as the tuple
 \[
-\tupledef{C}{\Delta b, q, \tau},
+\tupledef{C}{t, b, \Delta b},
 \]
-where $\Delta b$ is the offset,
-$q$ the classification quality,
-and $\tau$ the type
-\[
-\setdef{\tau}{\mathrm{NotClassified}, \mathrm{CurrentBar}, \mathrm{NextBar}}
-\]
+where $t$ is the time of the beat,
+$b$ the (uncorrected) position of the beat,
+and $\Delta b$ the offset to the classified position.
 Each beat pattern has a related
 classification operation $ \mathcal{C} : B \rightarrow C, $
-which uses the relative position of the detected beat
+which uses the relative positions of the detected beats
 within the current bar,
 to produce a classification.
 Out of the set of classifications produced by the beat patterns,
@@ -587,71 +584,62 @@ producing a correct estimate.
 \label{sec:beat_classification_op}
 
 The classification operation $\mathcal{C}$,
-uses the positions of beats in a beat pattern, $\mathbf{b}$,
-to create an estimate for the beat position $b$:
+uses the positions of beats in a beat pattern, $\mathbf{p}$,
+and the history of the latest beats, $\mathbf{h}$,
+to classify the detected beats.
+To keep all the relevant beats in $\mathbf{h}$,
+the current bar is tracked continuously.
+When a new beat is to be classified,
+it is added to the end of $\mathbf{h}$,
+and all beats which have been classified
+as being in prior bars are removed.
+Next, the match quality for each beat pattern is assessed:
 \begin{enumerate}
-\item The classification for the current bar, $c_c$,
-is calculated by selecting the most probable match for $b$
-from the available positions $\mathbf{b}$.
+\item Let the quality of a match between a detected beat
+and a beat in a pattern
+\begin{equation}
+q(i, j) = -\vert \mathbf{h}_i - \mathbf{p}_j \vert.
+\end{equation}
+
+\item Let $\alpha$ be such that $q(0, \alpha)$ is maximized,
+i.e. the best match for the first beat.
+
+\item For all other beats $\mathbf{h}_k$,
+$q(k, \alpha)$ and $q(k, \alpha + 1)$ are evaluated,
+affecting the score in the following way:
 \begin{enumerate}
-\item The offset for each beat is calculated:
-\begin{equation}
-\Delta b_i = b - \mathbf{b}_i.
-\end{equation}
+\item If $\alpha$ exceeds the \size{\mathbf{p}} in any quality evaluation
+\begin{itemize}
+\item The wrapped value $\alpha' = \modulo{\alpha}{\size{\mathbf{p}}}$ is used instead of $\alpha$.
+\item The compensated value
+$\mathbf{p}_j' = \mathbf{p}_j +
+\left \lfloor
+\frac{\alpha}{\size{\mathbf{p}}}
+\right \rfloor l$,
+where $l$ is the length of the bar,
+is used instead of $\mathbf{p}_j$.
+\end{itemize}
 
-\item The quality of each beat is calculated as
-\begin{equation}
-q_i = -\vert \Delta b_i \vert.
-\end{equation}
+\item If $q(k, \alpha) \leq q(k, \alpha + 1)$
+\begin{itemize}
+\item $\alpha$ is incremented, and the evaluation is repeated.
+\item If this was not the first evaluation for the current value of $k$,
+a penalty for a missing beat is added to the total quality of the match.
+\end{itemize}
 
-\item If the beat $\mathbf{b}_i$ has already been marked as used,
-a beat penalty $q_{p_b}$ is added to $q_i$,
-and the type $\tau_i$ is set as $\mathrm{NotClassified}$,
-in order to not classify two beats as the same.
-Otherwise $\tau_i$ is set as $\mathrm{CurrentBar}$.
-
-\item The classification is then selected as
-\begin{equation}
-c_c = \tuple{\Delta b_j, q_j, \tau_i},
-\end{equation}
-where $j$ is the index with the best quality,
-and the beat $\mathbf{b}_j$ is marked as used.
-
+\item If $q(k, \alpha) > q(k, \alpha + 1)$
+\begin{itemize}
+\item The best match has been found,
+and $q(k, \alpha)$ is added to the total quality of the match.
+\item If $\alpha$ has not yet been incremented,
+a penalty for duplicate beats is added to the total quality.
+\end{itemize}
+\end{enumerate}
 \end{enumerate}
 
-\item For each previously unused beat $\mathbf{b}_i \mid i < j$,
-where $j$ is the index of $c_c$,
-a bar penalty $q_{p_B}$ is added to the bar quality,
-and the beat is marked as used.
-
-\item The classification for moving to the next bar $c_n$,
-is calculated from the offset to the next bar.
-\begin{enumerate}
-\item The offset is calculated based on the length of the bar $b_B$,
-\begin{equation}
-\Delta b_n = b - b_B.
-\end{equation}
-
-\item The classification is built based on this offset
-\begin{equation}
-c_n = \tuple{\Delta b_n, -\vert \Delta b_n \vert, \mathrm{NextBar}}.
-\end{equation}
-
-\end{enumerate}
-
-\item The final classification $c_f$,
-is selected from $ \set{c_c, c_n} $,
-maximizing the quality.
-
-\item The quality of $c_f$ is added to the quality of this bar.
-
-\end{enumerate}
 Once the classification has been done for each beat pattern,
 the classification from the beat pattern with the best quality for the current bar
 is selected and acted upon.
-The bar qualities are reset when the winning classification
-is of type $\mathrm{NextBar}$,
-and are updated at every detected beat as described above.
 
 \section{Tempo Adjustment}
 \label{sec:tempo_adjustment}
