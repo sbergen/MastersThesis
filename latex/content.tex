@@ -683,16 +683,14 @@ Therefore all beats after the second are always classified.
 \section{Tempo Adjustment}
 \label{sec:tempo_adjustment}
 
-The action taken based on the winning classification
-depends on the type of the classification.
-In the case of NotClassified, no action is taken for that beat.
-When the type is NextBar,
-the current bar is incremented,
-and the classification is repeated with an
-updated relative beat position.
-The type CurrentBar
-means that the classification is used for correcting
-the current warp factor $w$.
+After a successful beat classification,
+the current position and tempo offsets
+are estimated.
+Based on these estimates,
+changes to the playback tempo are made,
+that attempt to correct the offsets
+so that the playback matches the conducting
+as closely as possible.
 
 \subsection{Tempo Estimation}
 
@@ -712,8 +710,8 @@ a conventional moving average can not be used
 for filtering the instantaneous tempi.
 Instead, a linearly decaying time dependent filter is used.
 The filter is defined by its cut-off time $t_{co}$,
-which forms the limit for how old a tempo estimate can be,
-to be taken into account.
+which forms the limit for how old tempo estimates
+are taken into account.
 Each tempo estimate not older than $t_{co}$ is given a weight coefficient
 \begin{equation}
 c_i(\Delta t) = 1 - \frac{\Delta t}{t_{co}},
