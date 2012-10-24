@@ -110,6 +110,55 @@ is quite the opposite of the usual case,
 as it is based on an already defined --
 albeit somewhat varying -- set of gestures.
 
+\section{Tempo Following}
+
+One of the most fundamental musical parameters communicated
+to the orchestra by the conductor, is tempo.
+Tempo is not, however, a simple parameter to follow
+in a musically pleasing way.
+To understand the concepts related to tempo following,
+one has to look at two separate problems:
+conductor-performer synchronization,
+and expressive timing.
+Furthermore, since tempo is essentially the
+first derivative of position,
+and both are communicated via the same means --
+by conducting beats --
+synchronizing both tempo and position is not trivial.
+
+Beat synchronization has been studied in
+both laboratory and musical rehearsal situations.
+These studies provide insight into
+beat induction, i.e.
+what features are used to
+derive beats from continuous motion.
+The studies conducted in rehearsal situations
+have shown that realistic conducting
+situations differ from laboratory beat induction tests.
+However, these studies have been rather limited,
+and do not provide any insight on
+how absolute tempo or tempo changes
+affect the synchronization.
+
+Expressive timing refers to the mostly subtle
+differences in timing that occur over phrases.
+These changes are used by the musician as a means of expression.
+While the average tempo may be even across a piece of music,
+the length of a transcribed note duration (e.g. quarter note)
+will differ depending on its position in the score.
+Several systems for producing expressive timing --
+based on rule sets, machine learning, or statistical models --
+have been developed.
+Expressive timing is a feature
+that can be added to a score file,
+and is thus not necessarily a task the conductor follower has to perform.
+The most relevant point regarding expressive timing, however,
+is its tempo dependence --
+phrase timing will differ depending on the absolute tempo.
+
+\fixme{Add citations!}
+
+
 \section{Expressive Sound Synthesis}
 
 Music is fundamentally a form of human expression,
@@ -172,15 +221,15 @@ in the implementation of the system.
 \chapter{Conductor Following}
 \label{chapter:conductor_following}
 
-Over the years, several performance, educational and research systems
-have been designed and implemented,
-which follow conductor gestures and produce or modify music based on the input.
+Over the years, several conductor follower systems for
+performance, educational and research use have been designed and implemented.
+These systems follow conductor gestures
+and produce or modify music based on the input.
 This chapter provides a brief overview of previous systems,
 and introduces the system to be implemented together with its design rationale.
 
-\fixme{Write more when you get the book}
-
 \section{Previous Work}
+
 \fixme{History covered in detail in several other papers,
 just a quick overview here, write more when you get the book.}
 
