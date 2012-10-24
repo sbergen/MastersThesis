@@ -637,9 +637,48 @@ a penalty for duplicate beats is added to the total quality.
 \end{enumerate}
 \end{enumerate}
 
-Once the classification has been done for each beat pattern,
-the classification from the beat pattern with the best quality for the current bar
-is selected and acted upon.
+To achieve a better response to tempo changes,
+the evaluation of beat patterns is repeated
+using a range of stretch factors.
+The positions in $\mathbf{h}$ are
+adjusted with respect to the first beat in the array:
+\begin{equation}
+\mathbf{h}'_i = \mathbf{h}_i + s(\mathbf{h}_i - \mathbf{h}_0),
+\end{equation}
+where $\mathbf{h}'$ is the corrected array,
+and $s$ the stretch factor.
+To reduce the possibility for false positive tempo changes,
+the range of $s$ is restricted to be close to unity,
+and a penalty proportional to the difference from unity
+is applied to the scores produced with stretch factors.
+
+Once each beat pattern and stretch factor combination
+has been evaluated,
+the best match is selected for classifying previously unclassified beats.
+The classification method depends on
+the amount of beats detected for the current bar:
+\begin{itemize}
+\item The first beat in any bar is assumed to always be on the first beat.
+Thus, its position does not depend on the beat pattern of the current bar,
+and it can be classified based on the beats in the previous bar.
+This maximizes the number of beats used
+to estimate the beginning of each bar,
+and should thus also maximize the probability of a correct estimate.
+\item The first and second beats in a bar do not usually
+provide enough information about the beat pattern used in that bar.
+Therefore the second beat in a bar is only given an estimate if
+it scores better than its neighbouring beats in the winning beat pattern,
+i.e.
+\begin{equation}
+q(\beta,\gamma) > q(\beta, \gamma \pm 1),
+\end{equation}
+where $\beta$ is the beat being classified,
+and $\gamma$ the best estimate.
+\item Considering the number of beats in most beat patterns,
+three or more beats should give a good enough estimate
+(or else there will be no hope of ever getting one).
+Therefore all beats after the second are always classified.
+\end{itemize}
 
 \section{Tempo Adjustment}
 \label{sec:tempo_adjustment}
