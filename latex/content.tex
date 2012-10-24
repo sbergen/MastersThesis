@@ -1596,15 +1596,13 @@ The different types of score events are described in detail below.
 
 \subsubsection*{Tempo Sensitivity Events}
 
-\fixme{These need to be reimplemented!}
-
 A tempo sensitivity event contains the following information:
 \begin{description}[leftmargin=16ex]
 \item[Position] The score position to which this sensitivity change applies.
 \item[Sensitivity] A sensitivity value in the range $0 \ldots 1$.
 \end{description}
 The event will cause the catchup time $t_c$,
-as described in section \ref{sec:tempo_following},
+as described in section \ref{sec:tempo_function},
 to be adjusted to provide a different level of sensitivity in tempo following.
 A low sensitivity will lead to a long $t_c$,
 whereas a high sensitivity translates to a short $t_c$.
