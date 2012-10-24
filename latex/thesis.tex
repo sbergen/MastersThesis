@@ -4,7 +4,13 @@
 % Note that the option pdftext is used for pdflatex; there is no
 % pdflatex option. 
 % ------------------------------------------------------------------
-\documentclass[12pt,a4paper,oneside,pdftex]{report}
+
+% PDF
+%\documentclass[12pt,a4paper,oneside,pdftex]{report}
+
+% Print
+\documentclass[12pt,a4paper,twoside,pdftex]{report}
+\usepackage[bindingoffset=16mm]{geometry}
 
 % All packages used are in here
 \input{packages.tex}
@@ -257,6 +263,8 @@
 % ------------------------------------------------------------------
 % You can use several .bib files:
 % \bibliography{thesis_sources,ietf_sources}
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Bibligraphy}
 \printbibliography
 
 
