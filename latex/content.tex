@@ -168,6 +168,7 @@ Given that the tempo in the performance does not differ much
 from the notated tempo,
 these features can be added to a score file beforehand.
 
+
 \section{Expressive Sound Synthesis}
 
 Music is fundamentally a form of human expression,
@@ -238,6 +239,8 @@ This chapter provides a brief overview of previous systems,
 and introduces the system to be implemented together with its design rationale.
 
 \section{Previous Work}
+
+
 
 \fixme{History covered in detail in several other papers,
 just a quick overview here, write more when you get the book.}
@@ -466,15 +469,26 @@ both having a high correlation at that lag.
 \section{Start Gesture Detection}
 
 The gesture for beginning playing the score
-is detected using the beat detection method,
-discussed in section \ref{sec:beat_detection},
-together with the lowest vertical position preceding the beat and
-the highest vertical position succeeding the beat.
-If the following criteria are filled,
+is detected using basic motion features.
+First of all,
+a momentary immobile state of the right hand is required
+before performing the actual start gesture.
+The immobile state is detected from the absolute speed,
+which must be below a threshold for the hand to be considered as immobile.
+To qualify as sufficient,
+the immobile state has to be held for a while,
+and the entire start gesture has to be performed
+within a limited time after the immobile period.
+After the immobile period,
+the hand is required to make a vertical move,
+indicating the starting tempo with the 
+vertical minimum and maximum of that move.
+To conclude, if the following criteria are filled,
 a start gesture is detected:
 \begin{itemize}
-\item The latest minimum of the vertical position was before the beat.
-\item The latest maximum of the vertical position was after the beat.
+\item A long enough immobile state has been detected not too long ago.
+\item A local minimum for the vertical position has been detected after the steady state.
+\item A local maximum for the vertical position has been detected after the local minimum.
 \item The distance between the minimum and maximum is large enough.
 \item The time between the minimum and maximum is within a suitable range.
 This range is based on the start tempo estimation described in section
