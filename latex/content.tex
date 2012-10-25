@@ -338,7 +338,6 @@ When selecting these parameters,
 there is always a trade-off between the 
 ability to react to fast changes
 and the amount of averaging provided.
-\fixme{Write more about the selection of parameters?}
 
 \subsection{The Polynomial Regression Filter}
 
@@ -358,10 +357,10 @@ using a least squares method.
 This approximation is applied to each spatial axis separately,
 using the points at times $t_{i-n} \ldots t_{i+n}$,
 for analysing the movement at time $t_i$,
-where the length of the filter is $2n + 1$.
+giving a filter length of $2n + 1$.
 Once the polynomial is approximated,
 it can be used for solving a smoothed value and
-all available derivatives at $t_i$.
+all derivatives up to $2n$ at $t_i$.
 
 \subsubsection*{The Polynomial Regression Peak Detector}
 
