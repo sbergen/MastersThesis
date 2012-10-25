@@ -565,12 +565,10 @@ which is formed based on score data and beat events.
 
 The aim of the score following system
 is to behave like a real orchestra would,
-when reacting to a conductor.
-\fixme{quote some studies on this matter, if you find some}
+when reacting to a conductor \cite{findsomecites?}.
 This implies that
 \begin{enumerate}
 \item The orchestra should not be confused by changes in the conducting pattern. \label{follow_point:pattern}
-\item In the absence of beats, the orchestra will continue with it's previous tempo.
 \item Extra beats in "unexpected" positions will not be acted upon. \label{follow_point:unexpected}
 \item Sudden changes in tempo will not be immediately followed.
 \end{enumerate}
@@ -584,7 +582,7 @@ and then deconstruct score following into
 three different tasks:
 beat classification, tempo adjustment and start tempo estimation.
 
-\section{Real Time and Score Positions}
+\section{Physical Time and Score Positions}
 \label{sec:meth:read_and_score_time}
 
 When modifying the playback speed of a musical score
@@ -593,7 +591,7 @@ it is important to precisely define the concepts of time used.
 Wall-clock time is the monotonically progressing concept of time
 most familiar to humans.
 It is the time counted by a regular clock,
-and will be referred to as real time,
+and will be referred to as physical time,
 its dimension denoted by $T$ and quantities with $t$.
 
 Score positions, on the other hand,
@@ -607,7 +605,7 @@ A score position is thus defined as
 $ \tupledef{P}{b, \varphi}, $
 and variables will be denoted with a $p$.
 
-Mapping between real time and score positions will be denoted with
+Mapping between physical time and score positions will be denoted with
 the mapping operator
 $ \mathcal{M} : T \rightarrow P, $
 and it's inverse
@@ -625,7 +623,7 @@ may produce results that differ from
 from future mapping operations,
 and may only be used in special cases.
 
-The relation between real time and score time
+The relation between physical time and score time
 is embedded in the mapping operator.
 To formalize the relation, we can
 represent the relation with a warp factor
@@ -633,6 +631,14 @@ represent the relation with a warp factor
 w = \frac{\Delta \phi}{\Delta t},
 \end{equation}
 which is piecewise constant over time.
+
+The model here is a simplified model
+suitable for the problem at hand.
+For a more musically oriented overview
+on the subject of score time and physical time,
+along with a formalization of tempo,
+see \cite{Mazzola2011}.
+
 
 \section{Beat Classification}
 
@@ -1575,9 +1581,9 @@ beats, bars, samples and physical time,
 and derived dimensions for
 bar durations, tempi, sample rates, and speed changes.
 The unit system is described in detail in Table \ref{tab:score_units}.
-The difference between real time and score time (both in seconds),
+The difference between physical time and score time (both in seconds),
 comes inherently from the libraries used:
-Boost.Units for score time and Boost.Chrono for real time.
+Boost.Units for score time and Boost.Chrono for physical time.
 This implies that an explicit conversion function is always
 needed to convert between these two dimensions.
 
