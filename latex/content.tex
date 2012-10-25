@@ -426,13 +426,12 @@ The approach taken here will thus not be
 based on specific beat patterns or gestures.
 Many previous systems have been based on
 using machine learning techniques with
-predefined beat patterns \cite{},
+predefined beat patterns \cite{getsomecites},
 but such systems would easily get confused with
 the large variance present in the style of
 many orchestral conductors.
 Instead, the approach is based on beat induction
 from the motion features of the conductors hands.
-\fixme{Write more, cite some beat induction stuff}
 
 Luck and Toiviainen \cite{luck2006}
 conducted a beat synchronization study,
@@ -448,23 +447,55 @@ Since the study represented the conducting style of only one conductor,
 and the response of only one orchestra,
 it does not present universally valid results.
 
-\fixme{
-This part needs more research.
-Low position, y-acceleration and acceleration along trajectory
-are the stuff we want to look into.
-New Perspectives on Music and Gesture
-has an article by Luck, which at least has references.
-Remember, correlation (esp. decceleration along trajectory)
-does not mean it can be used for detection!
-$v_y$ and $a_t$ together would probably give good
-input for a learning system.
-Would we still like to go there?
-}
+Studies have shown
+that the feature with the largest correlation with beats,
+is acceleration along the trajectory ($a_t$)
+\cite{LuckSloboda2008, LuckSloboda2009}.
+However, a good correlation between features and events
+does not necessarily mean the features can be used
+for detecting events trivially.
+Features with high correlation with beats --
+including $a_t$ --
+were evaluated for their suitability for beat detection
+in the conductor follower system
+via simple experimentation.
+Initially the most promising feature was
+vertical velocity ($v_y$),
+which was noted as one of the most correlated features in \cite{luck2006}.
+$a_t$ on the other hand, was found to have local minima
+around the beat, but also elsewhere.
+The timing of the local minima also changes along with the conducting style.
+If a system based on machine learning were to be made,
+our experimentation would suggest that $v_y$ and $a_t$
+would most likely be good input for the system.
 
-Luck and Toiviainen's study showed that when the conductor's gestures were well articulated,
-the lowest vertical position preceded the beat by circa 230 milliseconds,
-while the highest vertical velocity preceded the beat by circa 90 milliseconds,
-both having a high correlation at that lag.
+Based on experiences with a trained conductor --
+both motion capture data analysis and discussions --
+a very simple solution for beat detection
+using only the vertical position was finally chosen.
+The method combines the theoretical position of the beat
+in any beat pattern, the vertical bottom,
+with the fact that musicians react to conducted beats with a lag.
+Once a vertical minimum is found in the hand movement
+(based on change of sign in $v_y$),
+its timestamp and location are recorded.
+Each new position which is not a new local minimum
+is checked for two criteria,
+using two different thresholds for the vertical position --
+the reset threshold and beat threshold:
+\begin{enumerate}
+\item If the vertical position has not increased more than
+the reset threshold from the minimum position,
+the timestamp for the minimum is reset.
+This is done to accommodate situations,
+where the conductor's hand stays relatively still after
+its bottom position, but has not yet indicated a beat.
+\item If the vertical position has increased more
+than the beat threshold,
+and the time since the bottom position
+is larger than a tempo dependent value,
+a beat is detected.
+\end{enumerate}
 
 \section{Start Gesture Detection}
 
