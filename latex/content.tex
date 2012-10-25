@@ -290,8 +290,7 @@ and modifies the tempo of the playback to match the conducting.
 \label{chapter:motion_capture}
 
 Motion capture in the context of the conductor follower system,
-consists of tracking the hands.
-\fixme{Will this still change?}
+consists of tracking the right hand of the conductor.
 The methods used for this are fairly mature,
 and not in the main focus of this thesis.
 Since sufficient methods and implementations for
@@ -299,18 +298,17 @@ motion capture using depth sensor devices
 are commonly available,
 there is no need to cover the details of those here.
 
-\fixme{Write more, once the implementation is more final}
-
 This chapter introduces the methods used for
 extracting all relevant features from the motion data.
-This includes tracking the hands and
-detecting beats, expressive features,
-and gestures from the hand motion data.
+This includes tracking the hands,
+and detecting beats and expressive features
+from the hand motion data.
 
 \section{OpenNI and Hand Tracking}
 
 OpenNI (for Open Natural Interaction),
-is an open source API that provides
+is a library with an open source API,
+which provides
 a ready implementation for tracking hands
 using depth sensor equipped motion tracking devices.
 While the API is open, 
@@ -331,7 +329,7 @@ averaging over time, to extract features that apply
 at the beat or bar level.
 
 For the analysis at a single point,
-the Savitzky-Golay filter \cite{savitzky1964} is used.
+a polynomial regression filter is used.
 For averaging over time, methods such as
 exponential moving averages and peak holders are used.
 These averaging methods require selecting 
@@ -342,18 +340,18 @@ ability to react to fast changes
 and the amount of averaging provided.
 \fixme{Write more about the selection of parameters?}
 
-\subsection{The Savitzky-Golay Filter}
+\subsection{The Polynomial Regression Filter}
 
 Luck and Toiviainen have studied the gestures of conductors
 both from a beat synchronization \cite{luck2006}
 and expressive \cite{luck2010} point of view.
-Both studies used Savitzky-Golay filtering
+Both studies used polynomial regression filtering
 for data smoothing and differentiation.
 As these studies form the basis for a lot
 of the analysis used in this project,
 it is logical to use the same methods.
 
-The Savitzky-Golay filter uses polynomial fitting
+The filter uses polynomial fitting
 over a sliding window to approximate the movement
 as a polynomial at each point,
 using a least squares method.
@@ -365,9 +363,9 @@ Once the polynomial is approximated,
 it can be used for solving a smoothed value and
 all available derivatives at $t_i$.
 
-\subsubsection*{The Savitzky-Golay Peak Detector}
+\subsubsection*{The Polynomial Regression Detector}
 
-As the Savitzky-Golay filter provides the first derivative,
+As the polynomial regression filter provides the first derivative,
 it can be easily used to detect the presence of local minima and maxima
 \tupledef{M}{\mathrm{None}, \mathrm{Dip}, \mathrm{Peak}}.
 A change in direction can be detected as a change of sign in the first derivative:
@@ -1606,9 +1604,9 @@ speed change & fractions per second & Fraction here is a dimensionless unit. A d
 
 \section{Motion Capture}
 
-\subsection{The Savitzky-Golay Filter}
+\subsection{The Polynomial Regression Filter}
 
-The Savitzky-Golay filter is used for three purposes in the system:
+The polynomial regression filter is used for three purposes in the system:
 smoothing, differentiation and interpolation.
 The polynomial fitting part for the filter is implemented using
 matrix operations and the uBLAS library.
