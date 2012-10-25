@@ -127,7 +127,8 @@ by conducting beats --
 synchronizing both tempo and position is not trivial.
 
 Beat synchronization has been studied in
-both laboratory and musical rehearsal situations.
+both laboratory \cite{LuckSloboda2008, LuckSloboda2009}
+and musical rehearsal situations \cite{luck2006}.
 These studies provide insight into
 beat induction, i.e.
 what features are used to
@@ -143,21 +144,29 @@ affect the synchronization.
 Expressive timing refers to the mostly subtle
 differences in timing that occur over phrases.
 These changes are used by the musician as a means of expression.
-While the average tempo may be even across a piece of music,
+While the average tempo may be steady across a piece of music,
 the length of a transcribed note duration (e.g. quarter note)
 will differ depending on its position in the score.
+This minute variance in timing has been studied,
+and many studies have concluded,
+that simple parabolic \textit{tempo curves} are not sufficient
+for representing expressive timing
+\cite{Desain1993, Kirke2012}.
+It has also been discovered,
+that expressive timing is
+dependent on the absolute tempo \cite{Desain1993, Desain1994},
+and is thus in no way trivial to model.
+
 Several systems for producing expressive timing --
 based on rule sets, machine learning, or statistical models --
 have been developed.
-Expressive timing is a feature
-that can be added to a score file,
-and is thus not necessarily a task the conductor follower has to perform.
-The most relevant point regarding expressive timing, however,
-is its tempo dependence --
-phrase timing will differ depending on the absolute tempo.
-
-\fixme{Add citations!}
-
+A comprehensive overview of such systems can be found in \cite{Kirke2012}.
+These systems aim at adding tempo and loudness variation
+to raw notation data,
+in order to make it sound more human-like.
+Given that the tempo in the performance does not differ much
+from the notated tempo,
+these features can be added to a score file beforehand.
 
 \section{Expressive Sound Synthesis}
 
