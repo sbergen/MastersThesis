@@ -49,15 +49,6 @@ cycle;
 (0, \InitialTempo) --
 (1, \TargetTempo);
 
-% actual function
-\draw[thick,domain=0:1]
-plot (\x,
-{
-	\YOffset +
-	\LinearCoef * \x +
-	\NonlinearCoef * sin(pi * \x r)
-});
-
 % Initial tempo
 \draw[dashed,gray]
 (\XOffset - 0.01, \InitialTempo) node[left] {$v_i$} -|
@@ -71,6 +62,22 @@ plot (\x,
 % Tempo change
 \draw [decorate,decoration={brace,mirror,amplitude=4pt,raise=1pt},yshift=0pt]
 	(1, \InitialTempo) -- (1, \TargetTempo)
-	node [black,midway,xshift=0.6cm] {\footnotesize $\Delta v$};
+	node [black,midway,xshift=0.6cm] {$\Delta v$};
+
+% actual function
+\pgfmathsetmacro{\FunctionLineEnd}{
+	\YOffset +
+	\LinearCoef * 0.3 +
+	\NonlinearCoef * sin(pi * 0.3 r)}
+\draw[thick,domain=0:1]
+plot (\x,
+{
+	\YOffset +
+	\LinearCoef * \x +
+	\NonlinearCoef * sin(pi * \x r)
+});
+\draw[gray]
+(0.2, 0.8 * \CenterTempo) node [above left, black]{$v(t)$} --
+(0.3, \FunctionLineEnd);
 
 \end{tikzpicture}
