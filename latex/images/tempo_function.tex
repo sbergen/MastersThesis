@@ -12,8 +12,8 @@
 \draw [<->] (0, \PlotHeigth) node (yaxis) [above] {$v$}
 	|- (1,0) node (xaxis) [right] {$t$};
 
-% Position change
-\path[fill=gray!50,opacity=.5,domain=0:1]
+% Total position change
+\path[fill=gray!30,domain=0:1]
 (0, \InitialTempo) --
 plot (\x,
 {
@@ -23,9 +23,10 @@ plot (\x,
 }) --
 (1, \InitialTempo) --
 cycle;
+\node at (0.85, 0.8 * \CenterTempo) {$\Delta b$};
 
 % non-linear position change
-\path[fill=gray!50,opacity=.3,domain=0:1]
+\path[fill=gray!15,domain=0:1]
 (0, \InitialTempo) --
 plot (\x,
 {
@@ -34,9 +35,12 @@ plot (\x,
 	\NonlinearCoef * sin(pi * \x r)
 }) --
 cycle;
+\draw[gray]
+(0.4, 1.1 * \CenterTempo) node [above left, black] {$-\Delta b_{v_b}$} --
+(0.5, 0.85 * \CenterTempo);
 
 % line for linear tempo change
-\draw[dashed]
+\draw[dashed,gray]
 (0, \InitialTempo) --
 (1, \TargetTempo);
 
@@ -50,12 +54,12 @@ plot (\x,
 });
 
 % Initial tempo
-\draw[dashed]
+\draw[dashed,gray]
 (0, \InitialTempo) node[left] {$v_i$} -|
 (1, \InitialTempo);
 
 % Target tempo
-\draw[dashed]
+\draw[dashed,gray]
 (0, \TargetTempo) node[left] {$v_t$} -|
 (1, \TargetTempo);
 
@@ -63,9 +67,5 @@ plot (\x,
 \draw [decorate,decoration={brace,mirror,amplitude=4pt,raise=1pt},yshift=0pt]
 	(1, \InitialTempo) -- (1, \TargetTempo)
 	node [black,midway,xshift=0.6cm] {\footnotesize $\Delta v$};
-
-% TODO add legend
-%\node at (0, -0.05) {$\Delta b_{v_b}$};
-%\node at (0, -0.10) {$\Delta b$};
 
 \end{tikzpicture}
