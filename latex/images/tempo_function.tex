@@ -1,6 +1,7 @@
-\begin{tikzpicture}[scale=12]
+\begin{tikzpicture}[scale=11]
 
-\def\YOffset{0.05}
+\def\XOffset{-0.02}
+\def\YOffset{0.03}
 \def\LinearCoef{0.2}
 \def\NonlinearCoef{-0.04}
 \pgfmathsetmacro{\InitialTempo}{\YOffset}
@@ -9,8 +10,12 @@
 \pgfmathsetmacro{\CenterTempo}{\YOffset + 0.5 * \LinearCoef}
 
 % Draw axes
-\draw [<->] (0, \PlotHeigth) node (yaxis) [above] {$v$}
-	|- (1,0) node (xaxis) [right] {$t$};
+\draw [<->] (\XOffset, \PlotHeigth) node (yaxis) [above] {$v$}
+	|- (1.05,0) node (xaxis) [right] {$t$};
+
+% ticks on time axis
+\draw[gray] (0,0.01) -- (0,-0.01) node [below] {$t_0$};
+\draw[gray] (1,0.01) -- (1,-0.01) node [below] {$t_0 + t_c$};
 
 % Total position change
 \path[fill=gray!30,domain=0:1]
@@ -55,12 +60,12 @@ plot (\x,
 
 % Initial tempo
 \draw[dashed,gray]
-(0, \InitialTempo) node[left] {$v_i$} -|
+(\XOffset - 0.01, \InitialTempo) node[left] {$v_i$} -|
 (1, \InitialTempo);
 
 % Target tempo
 \draw[dashed,gray]
-(0, \TargetTempo) node[left] {$v_t$} -|
+(\XOffset - 0.01, \TargetTempo) node[left] {$v_t$} -|
 (1, \TargetTempo);
 
 % Tempo change
