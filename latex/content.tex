@@ -499,8 +499,9 @@ is detected using basic motion features.
 First of all,
 a momentary immobile state of the right hand is required
 before performing the actual start gesture.
-The immobile state is detected from the absolute speed,
-which must be below a threshold for the hand to be considered as immobile.
+The immobile state is detected from the absolute speed ($v$),
+which must be below a threshold ($v_{thresh}$)
+for the hand to be considered as immobile.
 To qualify as sufficient,
 the immobile state has to be held for a while,
 and the entire start gesture has to be performed
@@ -509,17 +510,33 @@ After the immobile period,
 the hand is required to make a vertical move,
 indicating the starting tempo with the 
 vertical minimum and maximum of that move.
-To conclude, if the following criteria are filled,
-a start gesture is detected:
+The criteria for start gesture detection
+are conclude in figure \ref{fig:start_gesture}
+and in the list below:
 \begin{itemize}
-\item A long enough immobile state has been detected not too long ago.
-\item A local minimum for the vertical position has been detected after the steady state.
-\item A local maximum for the vertical position has been detected after the local minimum.
-\item The distance between the minimum and maximum is large enough.
-\item The time between the minimum and maximum is within a suitable range.
+\item A long enough ($\Delta t_i$ greater than threshold)
+immobile state has been detected not too long ago.
+\item A local minimum for the vertical position ($y_{min}$) has been detected after the immobile state.
+\item A local maximum for the vertical position ($y_{max}$) has been detected after the local minimum.
+\item The distance between the minimum and maximum ($\Delta y_g$) is large enough.
+\item The time between the minimum and maximum ($\Delta t_g$)
+is within a suitable range.
 This range is based on the start tempo estimation described in section
 \ref{sec:meth:start_tempo_estimation}.
 \end{itemize}
+
+\begin{figure}
+\begin{center}
+\input{images/start_gesture.tex}
+\caption{
+Start gesture parameters:
+immobile time ($\Delta t_i$),
+gesture amplitude ($\Delta y_g$), and
+gesture time ($\Delta t_g$).
+}
+\label{fig:start_gesture}
+\end{center}
+\end{figure}
 
 \section{Expressive Feature Extraction}
 
