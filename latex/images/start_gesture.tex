@@ -40,8 +40,8 @@
 %\draw
 %	(\XOffset - 0.5 * \TickLength, \StillTop + \SafetyMargin) --
 %	(\XOffset + 0.5 * \TickLength, \StillTop + \SafetyMargin);
-%\draw [opacity=0] (\XOffset, \StillBottom) -- (\XOffset, \StillTop)
-%	node [opacity=1,black,midway,left] {$\Delta y_i$};
+%\path (\XOffset, \StillBottom) -- (\XOffset, \StillTop)
+%	node [black,midway,left] {$\Delta y_i$};
 
 % Motion amplitude indicators
 \draw[dashed,gray!50]
@@ -85,7 +85,7 @@
 	node [black,midway,below,yshift=-6pt] {$\Delta t_g$};
 
 % Motion line
-\draw
+\draw[looseness=0.5]
 	(0.0 * \StillEnd, \StillBottom) to[out=20,in=180]
 	(0.3 * \StillEnd, \StillTop) to[out=0,in=180]
 	(0.5 * \StillEnd, \StillBottom) to[out=0,in=180]
