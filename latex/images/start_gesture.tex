@@ -91,7 +91,8 @@
 	(0.5 * \StillEnd, \StillBottom) to[out=0,in=180]
 	(0.8 * \StillEnd, \StillTop) to[out=0,in=160]
 	(1.0 * \StillEnd, \StillBottom) to[out=-20,in=180]
-	(\BottomTime, \MotionBottom) node[above,gray] {$y_{min}$} to[out=0,in=180]
+	(\BottomTime, \MotionBottom)
+	node[above,gray,yshift=2pt,xshift=-3pt] {$y_{min}$} to[out=0,in=180]
 	(\TopTime, \MotionTop) node[above,gray] {$y_{max}$} to[out=0,in=110]
 	(\EndTime, \MotionEnd);
 	
