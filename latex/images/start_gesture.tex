@@ -1,5 +1,7 @@
 \begin{tikzpicture}[scale=10]
 
+\input{images/tikz_common.tex}
+
 \def\XOffset{-0.05}
 \def\TickLength{0.01}
 \def\SafetyMargin{0.005}
@@ -26,13 +28,13 @@
 	(1, 0) node (xaxis) [right] {$t$};
 
 % Still threshold indicators
-\draw[dashed,gray!50]
+\draw[subtle, dotted]
 	(0, \StillBottom - \SafetyMargin) --
 	(\StillEnd, \StillBottom - \SafetyMargin);
-\draw[dashed,gray!50]
+\draw[subtle, dotted]
 	(0, \StillTop + \SafetyMargin) --
 	(\StillEnd, \StillTop + \SafetyMargin)
-	node [midway, above, gray] {\footnotesize $v < v_{thresh}$};
+	node [midway, above, subtle] {\footnotesize $v < v_{thresh}$};
 
 %\draw
 %	(\XOffset - 0.5 * \TickLength, \StillBottom - \SafetyMargin) --
@@ -44,10 +46,10 @@
 %	node [black,midway,left] {$\Delta y_i$};
 
 % Motion amplitude indicators
-\draw[dashed,gray!50]
+\draw[subtle line]
 	(\BottomTime, \MotionBottom) --
 	(\EndTime, \MotionBottom);
-\draw[dashed,gray!50]
+\draw[subtle line]
 	(\TopTime, \MotionTop) --
 	(\EndTime, \MotionTop);
 \draw [decorate,decoration={brace,mirror,amplitude=4pt,raise=1pt}]
@@ -67,18 +69,18 @@
 	node [black,midway,below,yshift=-6pt] {$\Delta t_i$};
 
 % Gesture time indicators
-\draw [dashed,gray!50]
+\draw [subtle line]
 	(\BottomTime, \MotionBottom) --
-	(\BottomTime, -0.5 * \TickLength);
-\draw [dashed,gray!50]
+	(\BottomTime, 0);
+\draw [subtle line]
 	(\TopTime, \MotionTop) --
-	(\TopTime, -0.5 * \TickLength);
+	(\TopTime, 0);
 \draw
 	(\BottomTime, 0.5 * \TickLength) --
-	(\BottomTime, -0.5 * \TickLength);
+	+(0, -\TickLength);
 \draw
 	(\TopTime, 0.5 * \TickLength) --
-	(\TopTime, -0.5 * \TickLength);
+	+(0, -\TickLength);
 \draw
 	[decorate,decoration={brace,mirror,amplitude=4pt,raise=1pt}]
 	(\BottomTime, -\TickLength) -- (\TopTime, -\TickLength)
