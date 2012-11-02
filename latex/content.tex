@@ -282,6 +282,20 @@ The score following component classifies conducted beats,
 and modifies the tempo of the playback to match the conducting.
 \fixme{Write more}
 
+\begin{figure}
+\begin{center}
+\includestandalone{images/architecture}
+\caption{
+Data flow oriented and module overview.
+Sharp-cornered rectangles depict software modules and
+ellipses depict data sources.
+The round-cornered rectangle is reserved for the user.
+A dotted outline implies that the item was not
+implemented or specified in this project.
+}
+\label{fig:architecture}
+\end{center}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Motion Capture}
@@ -527,7 +541,7 @@ This range is based on the start tempo estimation described in section
 
 \begin{figure}
 \begin{center}
-\input{images/start_gesture.tex}
+\includestandalone{images/start_gesture}
 \caption{
 Start gesture parameters:
 immobile time ($\Delta t_i$),
@@ -876,7 +890,8 @@ and are always larger or equal to zero.
 
 \begin{figure}
 \begin{center}
-\input{images/tempo_function.tex}
+\includestandalone{images/tempo_function}
+%\input{images/tempo_function.tex}
 \caption{
 Tempo function $v(t)$,
 showing the total tempo change $\Delta v$,
@@ -1359,16 +1374,6 @@ VST plugin wrapper, MIDI file I/O,
 and user interface (UI) functionality.
 
 \section{Architectural overview}
-
-\begin{figure}
-\begin{center}
-\input{images/architecture.tex}
-\caption{
-\fixme{Architecture}
-}
-\label{fig:architecture}
-\end{center}
-\end{figure}
 
 The implementation is divided into
 six well defined and loosely coupled modules:

@@ -27,5 +27,4 @@
 *.mtc0
 *.bcf
 *.run.xml
-
-/latex/thesis.pdf
+*.pdf

@@ -1,6 +1,12 @@
+\documentclass{standalone}
+\input{../tikz_packages.tex}
+
+\begin{document}
 \begin{tikzpicture}[]
 
-\def\BoxWidth{10em}
+\IfStandalone {\input{tikz_common.tex}} {\input{images/tikz_common.tex}}
+
+\def\BoxWidth{8em}
 \def\BoxHeight{2.5em}
 \def\Spacing{3em}
 \def\HSpacing{8em}
@@ -12,28 +18,31 @@
 \tikzstyle{module} =
 	[box, draw, minimum height=\BoxHeight]
 
+\tikzstyle{outside} =
+	[dotted, thick]
+
 % Modules
 
 \node (User) at (0, 0)
-	[module, minimum width=2*\BoxWidth+\HSpacing]
+	[module, rounded corners, outside, minimum width=2*\BoxWidth+\HSpacing]
 	{ User };
 	
-\path (User.south west) + (0, -\Spacing)
+\path (User.west) + (0, -\Spacing)
 	node (MotionTracker) [module, anchor=north west] {MotionTracker};
 \node (ScoreFollower) [module, below=\Spacing of MotionTracker] {Score Follower};
 \node (DataFiles) [module, ellipse, below=\Spacing of ScoreFollower] {Data Files};
 
-\path (User.south east) + (0, -\Spacing)
-	node (Synthesis) [module, rounded corners, anchor=north east] {Synthesis};
+\path (User.east) + (0, -\Spacing)
+	node (Synthesis) [module, outside, anchor=north east] {Synthesis};
 \node (Plugin) [module, below=\Spacing of Synthesis] {Plugin};
-\node (MIDIFile) [module, ellipse, below=\Spacing of Plugin] {Score File};
+\node (MIDIFile) [module, ellipse, outside, below=\Spacing of Plugin] {Score File};
 
 % Edges
 
 \tikzstyle{data text} =
 	[font=\footnotesize\itshape]
 
-\path[->, thick, data text, align=flush right, text width=8.5em
+\path[->, thick, data text, align=flush right, text width=9em
 	, inner xsep = -10pt] % Nasty workaround
 	(User.south -| MotionTracker) edge node[left] {motion} (MotionTracker)
 	(MotionTracker) edge node[left] {motion events} (ScoreFollower)
@@ -41,8 +50,8 @@
 		node[left] {score, pattern and instrument data}
 		(ScoreFollower);
 
-\path[->, thick, data text, align=flush left, text width=8.5em]
-	(MIDIFile) edge node[right] {score events (MIDI)} (Plugin)
+\path[->, thick, data text, align=flush left, text width=9em]
+	(MIDIFile) edge node[right] {score events} (Plugin)
 	(Plugin) edge node[right] {score events and keyswitches} (Synthesis)
 	(Synthesis) edge node[right] {sound} (User.south -| Synthesis);
 	
@@ -54,3 +63,4 @@
 %  agnostic indicator
 
 \end{tikzpicture}
+\end{document}

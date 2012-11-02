@@ -1,6 +1,10 @@
+\documentclass{standalone}
+\input{../tikz_packages.tex}
+
+\begin{document}
 \begin{tikzpicture}[scale=10]
 
-\input{images/tikz_common.tex}
+\IfStandalone {\input{tikz_common.tex}} {\input{images/tikz_common.tex}}
 
 \def\XOffset{-0.05}
 \def\TickLength{0.01}
@@ -99,3 +103,4 @@
 	(\EndTime, \MotionEnd);
 	
 \end{tikzpicture}
+\end{document}

@@ -1,9 +1,13 @@
+\documentclass{standalone}
+\input{../tikz_packages.tex}
+
+\begin{document}
 \begin{tikzpicture}[
 	scale=11,
 	pin distance=10mm,
 	pin position=150]
 
-\input{images/tikz_common.tex}
+\IfStandalone {\input{tikz_common.tex}} {\input{images/tikz_common.tex}}
 
 \def\XOffset{-0.02}
 \def\YOffset{0.03}
@@ -72,3 +76,4 @@
 
 \end{scope}
 \end{tikzpicture}
+\end{document}
