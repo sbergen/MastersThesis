@@ -1,0 +1,56 @@
+\begin{tikzpicture}[]
+
+\def\BoxWidth{10em}
+\def\BoxHeight{2.5em}
+\def\Spacing{3em}
+\def\HSpacing{8em}
+
+% Styles
+\tikzstyle{box} =
+	[text centered, text width=0.8 * \BoxWidth, minimum width=\BoxWidth]
+
+\tikzstyle{module} =
+	[box, draw, minimum height=\BoxHeight]
+
+% Modules
+
+\node (User) at (0, 0)
+	[module, minimum width=2*\BoxWidth+\HSpacing]
+	{ User };
+	
+\path (User.south west) + (0, -\Spacing)
+	node (MotionTracker) [module, anchor=north west] {MotionTracker};
+\node (ScoreFollower) [module, below=\Spacing of MotionTracker] {Score Follower};
+\node (DataFiles) [module, ellipse, below=\Spacing of ScoreFollower] {Data Files};
+
+\path (User.south east) + (0, -\Spacing)
+	node (Synthesis) [module, rounded corners, anchor=north east] {Synthesis};
+\node (Plugin) [module, below=\Spacing of Synthesis] {Plugin};
+\node (MIDIFile) [module, ellipse, below=\Spacing of Plugin] {Score File};
+
+% Edges
+
+\tikzstyle{data text} =
+	[font=\footnotesize\itshape]
+
+\path[->, thick, data text, align=flush right, text width=8.5em
+	, inner xsep = -10pt] % Nasty workaround
+	(User.south -| MotionTracker) edge node[left] {motion} (MotionTracker)
+	(MotionTracker) edge node[left] {motion events} (ScoreFollower)
+	(DataFiles) edge
+		node[left] {score, pattern and instrument data}
+		(ScoreFollower);
+
+\path[->, thick, data text, align=flush left, text width=8.5em]
+	(MIDIFile) edge node[right] {score events (MIDI)} (Plugin)
+	(Plugin) edge node[right] {score events and keyswitches} (Synthesis)
+	(Synthesis) edge node[right] {sound} (User.south -| Synthesis);
+	
+\path[<->, thick, data text, align=center, text width=0.9*\HSpacing]
+	(ScoreFollower) edge
+	node[above]	{options, status, score events}
+	(ScoreFollower -| Plugin.west);
+
+%  agnostic indicator
+
+\end{tikzpicture}
