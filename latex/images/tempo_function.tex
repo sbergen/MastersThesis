@@ -1,4 +1,10 @@
-\begin{tikzpicture}[scale=11]
+\begin{tikzpicture}[
+	scale=11,
+	pin distance=10mm,
+	pin position=150]
+
+\tikzstyle{subtle}=[thin,gray]
+\tikzstyle{subtle line}=[thin,gray!60]
 
 \def\XOffset{-0.02}
 \def\YOffset{0.03}
@@ -14,8 +20,18 @@
 	|- (1.05,0) node (xaxis) [right] {$t$};
 
 % ticks on time axis
-\draw[gray] (0,0.01) -- (0,-0.01) node [below] {$t_0$};
-\draw[gray] (1,0.01) -- (1,-0.01) node [below] {$t_0 + t_c$};
+\draw[subtle] (0,0.01) -- (0,-0.01) node [below] {$t_0$};
+\draw[subtle] (1,0.01) -- (1,-0.01) node [below] {$t_0 + t_c$};
+
+% non-linear position change
+\path[fill=gray!15]
+	(0, \InitialTempo)
+	-- (1, \TargetTempo)
+	-- (1, \InitialTempo)
+	-- cycle;
+\node at (0.5, 0.85 * \CenterTempo) [coordinate,
+	pin=$-\Delta b_{v_b}$
+	] {};
 
 % Total position change
 \path[fill=gray!30,domain=0:1]
@@ -30,33 +46,19 @@ plot (\x,
 cycle;
 \node at (0.85, 0.8 * \CenterTempo) {$\Delta b$};
 
-% non-linear position change
-\path[fill=gray!15,domain=0:1]
-(0, \InitialTempo) --
-plot (\x,
-{
-	\YOffset +
-	\LinearCoef * \x +
-	\NonlinearCoef * sin(pi * \x r)
-}) --
-cycle;
-\draw[gray]
-(0.4, 1.1 * \CenterTempo) node [above left, black] {$-\Delta b_{v_b}$} --
-(0.5, 0.85 * \CenterTempo);
-
 % line for linear tempo change
-\draw[dashed,gray]
+\draw[subtle line]
 (0, \InitialTempo) --
 (1, \TargetTempo);
 
 % Initial tempo
-\draw[dashed,gray]
-(\XOffset - 0.01, \InitialTempo) node[left] {$v_i$} -|
+\draw[subtle line]
+(\XOffset - 0.01, \InitialTempo) node[left, subtle] {$v_i$} -|
 (1, \InitialTempo);
 
 % Target tempo
-\draw[dashed,gray]
-(\XOffset - 0.01, \TargetTempo) node[left] {$v_t$} -|
+\draw[subtle line]
+(\XOffset - 0.01, \TargetTempo) node[left, subtle] {$v_t$} -|
 (1, \TargetTempo);
 
 % Tempo change
@@ -65,7 +67,7 @@ cycle;
 	node [black,midway,xshift=0.6cm] {$\Delta v$};
 
 % actual function
-\pgfmathsetmacro{\FunctionLineEnd}{
+\pgfmathsetmacro{\FunctionLabelPos}{
 	\YOffset +
 	\LinearCoef * 0.3 +
 	\NonlinearCoef * sin(pi * 0.3 r)}
@@ -76,8 +78,8 @@ plot (\x,
 	\LinearCoef * \x +
 	\NonlinearCoef * sin(pi * \x r)
 });
-\draw[gray]
-(0.2, 0.8 * \CenterTempo) node [above left, black]{$v(t)$} --
-(0.3, \FunctionLineEnd);
+\node at (0.3, \FunctionLabelPos) [coordinate,
+	pin=$v(t)$
+	] {};
 
 \end{tikzpicture}
