@@ -258,9 +258,9 @@ the overview here will be kept brief.
 
 While the history of conductor following systems
 can be traced back to
-early computer performance control systems \cite{},
+early computer performance control systems
 where score parameters could be modified during playback
-by using control interfaces which do not resemble a conductor's baton,
+by using control interfaces which do not resemble a conductor's baton \cite{},
 the first system that tracked a baton-like wand
 was developed in 1983 \cite{}.
 The system was able to analyze conducting gestures performed with the wand,
@@ -330,11 +330,58 @@ will be discussed in more depth in the next section.
 
 \subsection{Performance Control}
 
+Fabiani et al. define three levels of performance control in \cite{}:
+direct control, model-based performance control,
+and high-level control via semantic descriptors.
+The distinction between these modes is necessarily fuzzy;
+many systems use a combination of the three levels.
+In direct control systems,
+the user is in direct control of the performance parameters,
+such as tempo, dynamics, articulation, and instrument section balance.
+Model-based performance control combines the input from the conductor
+with a performance model.
+Performance models include
+e.g. changes in dynamics and tempo
+for achieving expressive phrasing.
+In model-based systems
+there is always a trade-off between stability and sensitivity --
+i.e. if much weight is put on the model,
+the system will not be very sensitive to the input,
+while too much weight on the input
+can cause very large deviations from the model.
+Most of the previously implemented conductor following systems
+use a combination of direct and model based control.
 
+The highest level of control utilizes semantic descriptors --
+such as emotional expressions --
+to control the performance.
+This requires mapping the descriptors to both motion features
+and performance features,
+which allows first translating motion features to
+descriptors and then applying relevant performance features
+based on the descriptors extracted.
+While the relation between semantic descriptors
+and musical and tonal qualities has been studied
+a lot \cite{},
+the mapping of conducting gestures to semantic descriptors
+has not been studied as extensively.
 
-\subsection{synthesis}
+\subsection{Synthesis}
 
- 
+Once the performance parameters have been generated
+based on the gestures of the user,
+they need to be applied to the score.
+The methods implemented in previous systems can be classified
+into two categories:
+synthesizing the output from a score file (e.g. MIDI or MusicXML)
+using a synthesizer,
+or applying modifications to a pre-recorded performance.
+While the former can obviously be implemented very flexibly
+using any synthesis method available,
+the number of options for implementing the latter is more restricted.
+The methods used for modifying pre-recorded performances
+include time-frequency manipulation \cite{},
+and combining parts from several different performances \cite{}.
 
 \section{Design Rationale}
 
