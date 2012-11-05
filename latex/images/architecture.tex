@@ -6,10 +6,10 @@
 
 \IfStandalone {\input{tikz_common.tex}} {\input{images/tikz_common.tex}}
 
-\def\BoxWidth{8em}
-\def\BoxHeight{2.5em}
-\def\Spacing{3em}
-\def\HSpacing{8em}
+\def\BoxWidth{3.0cm}
+\def\BoxHeight{0.8cm}
+\def\Spacing{1.0cm}
+\def\HSpacing{3.0cm}
 
 % Styles
 \tikzstyle{box} =
@@ -27,12 +27,12 @@
 	[module, rounded corners, outside, minimum width=2*\BoxWidth+\HSpacing]
 	{ User };
 	
-\path (User.west) + (0, -\Spacing)
+\path (User.south west) + (0, -\Spacing)
 	node (MotionTracker) [module, anchor=north west] {MotionTracker};
 \node (ScoreFollower) [module, below=\Spacing of MotionTracker] {Score Follower};
 \node (DataFiles) [module, ellipse, below=\Spacing of ScoreFollower] {Data Files};
 
-\path (User.east) + (0, -\Spacing)
+\path (User.south east) + (0, -\Spacing)
 	node (Synthesis) [module, outside, anchor=north east] {Synthesis};
 \node (Plugin) [module, below=\Spacing of Synthesis] {Plugin};
 \node (MIDIFile) [module, ellipse, outside, below=\Spacing of Plugin] {Score File};
@@ -42,15 +42,14 @@
 \tikzstyle{data text} =
 	[font=\footnotesize\itshape]
 
-\path[->, thick, data text, align=flush right, text width=9em
-	, inner xsep = -10pt] % Nasty workaround
+\path[->, thick, data text, align=flush right, text width=2.5cm]
 	(User.south -| MotionTracker) edge node[left] {motion} (MotionTracker)
 	(MotionTracker) edge node[left] {motion events} (ScoreFollower)
 	(DataFiles) edge
 		node[left] {score, pattern and instrument data}
 		(ScoreFollower);
 
-\path[->, thick, data text, align=flush left, text width=9em]
+\path[->, thick, data text, align=flush left, text width=2.5cm]
 	(MIDIFile) edge node[right] {score events} (Plugin)
 	(Plugin) edge node[right] {score events and keyswitches} (Synthesis)
 	(Synthesis) edge node[right] {sound} (User.south -| Synthesis);
@@ -59,8 +58,6 @@
 	(ScoreFollower) edge
 	node[above]	{options, status, score events}
 	(ScoreFollower -| Plugin.west);
-
-%  agnostic indicator
 
 \end{tikzpicture}
 \end{document}
