@@ -240,8 +240,101 @@ and introduces the system to be implemented together with its design rationale.
 
 \section{Previous Work}
 
-\fixme{History covered in detail in several other papers,
-just a quick overview here, write more when you get the book.}
+Conductor following systems implemented in the past
+can be roughly classified based on four features:
+the types of sensors used for capturing gestures,
+the methods used for analysing the gesture data,
+the level of control they provide, and
+the type of sound synthesis they use
+(modifying pre-recorded music or synthesizing from a score).
+
+This section provides a brief overview on how these four features
+have been implemented in previous systems.
+As more comprehensive overviews can be found elsewhere --
+one of the latest and most detailed being \cite{} --
+the overview here will be kept brief.
+
+\subsection{Sensors for Gesture Capture}
+
+While the history of conductor following systems
+can be traced back to
+early computer performance control systems \cite{},
+where score parameters could be modified during playback
+by using control interfaces which do not resemble a conductor's baton,
+the first system that tracked a baton-like wand
+was developed in 1983 \cite{}.
+The system was able to analyze conducting gestures performed with the wand,
+and control the tempo and dynamics of a score.
+Since then, several similar systems have been developed,
+utilizing a multitude of tracking methods,
+including the following:
+\begin{itemize}
+\item systems that measure the capacitance between a baton and an "antenna" \cite{},
+\item accelerometer based systems \cite{},
+\item infra red reflection tracking systems \cite{},
+\item video analysis from a regular video stream \cite{}, and
+\item direct measurement of the conductor's body movements with
+sensors attached to the conductor \cite{}.
+\end{itemize}
+In addition to tracking the movements of the baton or hands,
+breath and gaze sensors have also been used \cite{}.
+
+Capturing the relevant data from the conductor's gestures
+provides the raw input to the system.
+While the quality and quantity of this data
+sets the baseline for what can be done
+in the later stages of processing,
+the method used for acquiring the data
+is very loosely coupled to the rest of the system.
+
+\subsection{Methods for gesture analysis}
+
+The methods used for analysing the raw data
+provided by the sensors define the
+mode of interaction between the conductor and the system.
+The most fundamental differentiation between different systems
+can be made based on their mode of output:
+whether the method produces
+a set of continuously varying parameters,
+or a stream of discrete events based on detecting discrete gestures.
+Most systems combine both types of analysis methods.
+While it is possible to use
+rule heuristics to extract data \cite{},
+also hidden Markov models (HMMs) \cite{} and
+artificial neural networks (ANNs) \cite{}
+have been used.
+All these methods can be used to produce both discrete events
+and continuous values for parameters.
+
+Since both hands have distinct roles in conducting,
+the methods used for gesture analysis also differ between the hands.
+Since the right hand is used for conducting the tempo
+and is in continuous motion,
+both continuous parameters --
+such as articulation and dynamics related features --
+and discrete events --
+such as beats, fermatas and beat pattern changes --
+can be extracted from its motion.
+The left hand, however,
+is usually used only for discrete gestures.
+
+The features described above are all rather low level.
+However, it is possible to also extract
+higher level features from the conductor's movement.
+While the output of the analysis differs from
+the lower level feature extraction,
+the methods used for analysis will be somewhat similar,
+using methods such as rule heuristics, HMMs or ANNs.
+The difference between these modes of control
+will be discussed in more depth in the next section.
+
+\subsection{Performance Control}
+
+
+
+\subsection{synthesis}
+
+ 
 
 \section{Design Rationale}
 
@@ -286,7 +379,7 @@ and modifies the tempo of the playback to match the conducting.
 \begin{center}
 \includestandalone{images/architecture}
 \caption{
-Data flow oriented and module overview.
+Data flow oriented module overview.
 Sharp-cornered rectangles depict software modules and
 ellipses depict data sources.
 The round-cornered rectangle is reserved for the user.
