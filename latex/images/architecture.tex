@@ -45,7 +45,7 @@
 \def\EdgeTextWidth{3cm}
 
 \path[->, thick, data text, align=flush right, text width=\EdgeTextWidth]
-	(User.south -| MotionTracker) edge node[left] {motion} (MotionTracker)
+	(User.south -| MotionTracker) edge node[left] (MotionNode) {motion} (MotionTracker)
 	(MotionTracker) edge node[left] {motion events} (ScoreFollower)
 	(DataFiles) edge
 		node[left] {score, pattern and instrument data}
@@ -58,8 +58,22 @@
 	
 \path[<->, thick, data text, align=center, text width=0.9*\HSpacing]
 	(ScoreFollower) edge
-	node[above]	{options, status, score events}
+	node[above] (SfPluginNode) {options, status, score events}
 	(ScoreFollower -| Plugin.west);
+
+\coordinate (VisualizationCorner) at ($(SfPluginNode.north) + (1.0, 0.2) $);
+\path[->, thick, draw, data text]
+	let \p1 = (VisualizationCorner),
+	    \p2 = (User.south) in
+	(Plugin.north) +(-0.25 * \BoxWidth ,0)
+	|- (\p1)
+	-- (\x1, \y2);
+	
+\path[data text, align=flush right, text width=\EdgeTextWidth]
+	let \p1 = (VisualizationCorner),
+	    \p2 = (MotionNode) in
+	(\x1, \y2) node[left] {visualization};
+
 
 \end{tikzpicture}
 \end{document}
