@@ -1,14 +1,14 @@
-\documentclass{standalone}
+\documentclass[12pt]{standalone}
 \input{../tikz_packages.tex}
 
 \begin{document}
-\begin{tikzpicture}[]
+\begin{tikzpicture}
 
 \IfStandalone {\input{tikz_common.tex}} {\input{images/tikz_common.tex}}
 
-\def\BoxWidth{3.0cm}
+\def\BoxWidth{3.3cm}
 \def\BoxHeight{0.8cm}
-\def\Spacing{1.0cm}
+\def\Spacing{1.3cm}
 \def\HSpacing{3.0cm}
 
 % Styles
@@ -41,15 +41,17 @@
 
 \tikzstyle{data text} =
 	[font=\footnotesize\itshape]
+	
+\def\EdgeTextWidth{3cm}
 
-\path[->, thick, data text, align=flush right, text width=2.5cm]
+\path[->, thick, data text, align=flush right, text width=\EdgeTextWidth]
 	(User.south -| MotionTracker) edge node[left] {motion} (MotionTracker)
 	(MotionTracker) edge node[left] {motion events} (ScoreFollower)
 	(DataFiles) edge
 		node[left] {score, pattern and instrument data}
 		(ScoreFollower);
 
-\path[->, thick, data text, align=flush left, text width=2.5cm]
+\path[->, thick, data text, align=flush left, text width=\EdgeTextWidth]
 	(MIDIFile) edge node[right] {score events} (Plugin)
 	(Plugin) edge node[right] {score events and keyswitches} (Synthesis)
 	(Synthesis) edge node[right] {sound} (User.south -| Synthesis);
