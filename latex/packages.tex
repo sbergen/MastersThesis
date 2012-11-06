@@ -143,26 +143,6 @@
 \usepackage[mydraft,doublenumbering]{aalto-thesis}
 %\usepackage{aalto-thesis}
 
-
-% Hyperref
-% ------------------------------------------------------------------
-% Hyperref creates links from URLs, for references, and creates a
-% TOC in the PDF file.
-% This package must be the last one you include, because it has
-% compatibility issues with many other packages and it fixes
-% those issues when it is loaded.   
-\RequirePackage[pdftex]{hyperref}
-% Setup hyperref so that links are clickable but do not look 
-% different
-\hypersetup{colorlinks=false,raiselinks=false,breaklinks=true}
-\hypersetup{pdfborder={0 0 0}}
-\hypersetup{bookmarksnumbered=true}
-% The following line suggests the PDF reader that it should show the 
-% first level of bookmarks opened in the hierarchical bookmark view. 
-\hypersetup{bookmarksopen=true,bookmarksopenlevel=1}
-% Hyperref can also set up the PDF metadata fields. These are
-% set a bit later on, after the thesis setup.   
-
 % Enumitem for better spacing in lists
 \usepackage{enumitem}
 \setlist[itemize]{topsep=0.5ex,itemsep=0ex,parsep=0.5ex}
@@ -205,3 +185,23 @@ showtabs=false,
 \usepackage{standalone}
 
 \input{tikz_packages.tex}
+
+
+% Hyperref
+% ------------------------------------------------------------------
+% Hyperref creates links from URLs, for references, and creates a
+% TOC in the PDF file.
+% This package must be the last one you include, because it has
+% compatibility issues with many other packages and it fixes
+% those issues when it is loaded.   
+\RequirePackage[pdftex]{hyperref}
+% Setup hyperref so that links are clickable but do not look 
+% different
+\hypersetup{colorlinks=false,raiselinks=false,breaklinks=true}
+\hypersetup{pdfborder={0 0 0}}
+\hypersetup{bookmarksnumbered=true}
+% The following line suggests the PDF reader that it should show the 
+% first level of bookmarks opened in the hierarchical bookmark view. 
+\hypersetup{bookmarksopen=true,bookmarksopenlevel=1}
+% Hyperref can also set up the PDF metadata fields. These are
+% set a bit later on, after the thesis setup.   
