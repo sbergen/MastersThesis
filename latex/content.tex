@@ -207,8 +207,6 @@ This thesis is based on the development of
 a conductor follower system,
 which uses motion capture and sound synthesis techniques
 to provide an interactive experience of conducting a virtual orchestra.
-\fixme{Write more.}
-
 In this chapter the central concepts behind
 the work in this thesis are discussed.
 Chapter \ref{chapter:conductor_following} discusses
@@ -225,7 +223,10 @@ implementation choices.
 Chapter \ref{chapter:implementation_details}
 highlights the most relevant details
 in the implementation of the system.
-\fixme{Describe chapter \ref{chapter:discussion}.}
+Chapter \ref{chapter:discussion}
+evaluates the results of the project,
+discusses recommended further work on the subject,
+and provides a conclusion of the thesis.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Conductor Following}
@@ -407,7 +408,7 @@ summarized with the following statements:
 \begin{enumerate}
 \item The system should be usable without wearing or holding external equipment.
 \label{item:usable_without_equipment}
-\item The system should be usable by anyone familiar with conducting with minimal instruction.
+\item The system should be usable by anyone familiar with conducting, without having to provide extensive instructions on usage.
 \item The system should react to conducting like a real orchestra.
 \label{item:sould_react_like_real_orchestra}
 \item The system should produce sound that resembles a real orchestra.
@@ -1201,6 +1202,8 @@ The offset approaches zero as $t$ approaches $t' + t_c$.
 
 \subsection{Tempo Changes}
 
+\fixme{Revise once the method use is final!}
+
 Tempo changes in the score are taken into account
 by changing the tempo function accordingly.
 When the tempo changes by a factor $a$,
@@ -1367,10 +1370,9 @@ and allows placing the virtual microphones at the conductor's podium.
 
 Virtual Studio Technology (VST) \cite{vst} is
 a virtual instrument and effect plugin architecture created by Steinberg GmbH.
-\fixme{Mention platforms.}
 It is one of the plugin formats that VSL is available in.
 While the plugin API should be considered an implementation detail,
-it can not be completely forgotten in the design phase
+it can not be completely ignored in the design phase,
 because of the vast effect design choices can have on implementation complexity.
 VST will be referred to in later parts of this document,
 and is thus introduced here.
@@ -1549,7 +1551,7 @@ while libraries not yet in the official boost distribution
 are marked with $^\dagger$.
 \begin{description}[leftmargin=14ex]
 \item[Chrono$^*$] Time library for timestamping and jitter correction.
-\item[Geometry] \fixme{Is this really used much anywhere?}
+%\item[Geometry] Is this really used much anywhere?
 \item[Lockfree$^\dagger$] Various lock-free constructs.
 \item[Spirit] A parsing library, used for configuration file parsing.
 \item[Thread$^*$] Threading utilities.
@@ -2014,16 +2016,18 @@ An example of a beat pattern definition file can be found from Appendix
 
 \fixme{Write}
 
-\section{Conclusions}
+\section{Further work}
 
 \fixme{Write}
 
-\section{Further work}
+\subsection{Motion Tracking}
 
-\fixme{
-Discuss further score analysis,
-tempo curves (considered harmful),
-further motion and gesture sutff...
-}
+\fixme{Write}
 
+\subsection{Score Analysis}
 
+\fixme{Write}
+
+\section{Conclusions}
+
+\fixme{Write}
