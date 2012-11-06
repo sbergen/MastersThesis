@@ -24,3 +24,15 @@
 \newcommand{\ocinterval}[1]{\interval{]}{#1}{]}}
 \newcommand{\cointerval}[1]{\interval{[}{#1}{[}}
 
+% spelling out label references
+\newcounter{spell_label_counter}
+\newcommand{\spellRef}[1]{%
+\setcounterref{spell_label_counter}{#1}%
+\numberstring{spell_label_counter}%
+}
+
+\newcommand{\spellRefOrdinal}[1]{%
+\setcounterref{spell_label_counter}{#1}%
+\ordinalstring{spell_label_counter}%
+}
+
