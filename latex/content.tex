@@ -299,7 +299,7 @@ a set of continuously varying parameters,
 or a stream of discrete events based on detecting discrete gestures.
 Most systems combine both types of analysis methods.
 While it is possible to use
-rule heuristics to extract data \cite{},
+heuristics to extract data \cite{},
 also hidden Markov models (HMMs) \cite{} and
 artificial neural networks (ANNs) \cite{}
 have been used.
@@ -324,7 +324,7 @@ higher level features from the conductor's movement.
 While the output of the analysis differs from
 the lower level feature extraction,
 the methods used for analysis will be somewhat similar,
-using methods such as rule heuristics, HMMs or ANNs.
+using methods such as heuristics, HMMs or ANNs.
 The difference between these modes of control
 will be discussed in more depth in the next section.
 
@@ -387,46 +387,62 @@ and combining parts from several different performances \cite{}.
 
 If the real life interaction between a conductor and musicians
 were to be modelled as closely as possible,
-it would require providing a feedback channel,
+it would require providing a feedback channel
 equivalent to the verbal communication from conductor to musicians.
 This channel could then be used to teach the
 style of the specific conductor to the system.
 In other words, when the system misinterprets some gesture,
 the conductor could correct this interpretation by 
 providing the correct interpretation via the feedback channel.
-This way it would be possible for the system to
-learn the style of the conductor in question over time,
+This would make it possible for the system to
+learn the style of the conductor over time,
 using machine learning techniques.
 Implementing such a system would, however,
 be too large an effort for the scope of this project.
-Instead, a more general and static rule based system is
+Instead, a more static and general heuristics based system is
 considered and implemented.
 
-\fixme{Write more.}
+The main goals of the project can be
+summarized with the following statements:
+\begin{enumerate}
+\item The system should be usable without wearing or holding external equipment.
+\label{item:usable_without_equipment}
+\item The system should be usable by anyone familiar with conducting with minimal instruction.
+\item The system should react to conducting like a real orchestra.
+\label{item:sould_react_like_real_orchestra}
+\item The system should produce sound that resembles a real orchestra.
+\end{enumerate}
+Out of these goals,
+only the \spellRefOrdinal{item:usable_without_equipment}
+is easily evaluated,
+while the rest are more complex,
+at least point \ref{item:sould_react_like_real_orchestra}
+requiring expert evaluation.
 
 \section{System overview}
 
-The system can be broken down to four components:
-motion capture, score following, sound synthesis
+The system can be broken down to four functional components:
+motion tracking, score following, sound synthesis
 and visualization.
-The motion capture component
-takes depth sensor input,
-analyzes the body movements of the conductor,
-and produces a stream of events.
-These events describe those features of the conductor's movement,
-which are relevant to conductor following.
-
-The output of the motion capture is then analyzed
-for both tempo following and expressive synthesis purposes.
-The score following component classifies conducted beats,
-and modifies the tempo of the playback to match the conducting.
-\fixme{Write more}
+Since the synthesis is not implemented in this project,
+we need to communicate with the synthesis component
+via a third party application programming interface (API).
+For this reason, a plugin component is required.
+Since the plugin standard used in the project
+(discussed in more detail in section \ref{})
+provides a method of creating user interfaces (UIs),
+the visualization will be part of the plugin.
+This leaves us with three modules
+to be implemented:
+the \textit{Motion Tracker}, \textit{Score Follower} and \textit{Plugin}.
+A a data flow oriented overview of the architecture
+can be found in figure \ref{fig:architecture}.
 
 \begin{figure}
 \begin{center}
 \includestandalone{images/architecture}
 \caption{
-Data flow oriented module overview.
+Data flow oriented architecture overview.
 Sharp-cornered rectangles depict software modules and
 ellipses depict data sources.
 The round-cornered rectangle is reserved for the user.
@@ -436,6 +452,48 @@ implemented or specified in this project.
 \label{fig:architecture}
 \end{center}
 \end{figure}
+
+The \textit{Motion Tracker}
+takes depth sensor input,
+analyzes the body movements of the conductor,
+and produces a stream of events and
+a set of continuously varying motion parameters.
+These events and parameters describe
+those features of the conductor's movement,
+which are relevant to conductor following.
+
+The output of the Motion Tracker is then analyzed
+for both tempo following and expressive synthesis purposes
+by the \textit{Score Follower}.
+To do this, the Score Follower needs additional
+data, provided by the user via data files.
+This data includes
+score meta data, as well as
+information on the beat patterns and instruments used in synthesis.
+Since the score data format is closely related to the
+plugin standard used,
+the score data is provided by the Plugin,
+using an API provided by the Score Follower for abstraction.
+Once all the necessary data is available to the Score Follower,
+it can perform its actual task,
+which consists of three parts:
+following tempo,
+producing expressive synthesis parameters, and
+producing visualization data.
+The tempo following and expressive synthesis together
+produce a stream of score events,
+which are passed on to the Plugin,
+together with the visualization data.
+The Score Follower also exposes its status,
+and a set of options for the Plugin to use.
+
+Finally, the \textit{Plugin}
+passes on the score events and parameters
+to the synthesis component in the format required
+by the plugin API.
+It also produces the visualization and UI
+for adjusting the options
+and observing the status of the Score Follower.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Motion Capture}
@@ -741,7 +799,7 @@ This implies that
 \item Extra beats in "unexpected" positions will not be acted upon. \label{follow_point:unexpected}
 \item Sudden changes in tempo will not be immediately followed.
 \end{enumerate}
-Points \ref{follow_point:pattern} and \ref{follow_point:unexpected} require
+Items \ref{follow_point:pattern} and \ref{follow_point:unexpected} require
 that the tempo follower must have knowledge of all the possible
 conducting patterns for each time signature,
 and that it must be able to relate each beat to some beat in the pattern.
