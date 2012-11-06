@@ -6,10 +6,10 @@
 
 \IfStandalone {\input{tikz_common.tex}} {\input{images/tikz_common.tex}}
 
-\def\BoxWidth{3.3cm}
+\def\BoxWidth{3.5cm}
 \def\BoxHeight{0.8cm}
-\def\Spacing{1.3cm}
-\def\HSpacing{3.0cm}
+\def\Spacing{1.4cm}
+\def\HSpacing{3.4cm}
 
 % Styles
 \tikzstyle{box} =
@@ -28,7 +28,7 @@
 	{ User };
 	
 \path (User.south west) + (0, -\Spacing)
-	node (MotionTracker) [module, anchor=north west] {MotionTracker};
+	node (MotionTracker) [module, anchor=north west] {Motion Tracker};
 \node (ScoreFollower) [module, below=\Spacing of MotionTracker] {Score Follower};
 \node (DataFiles) [module, ellipse, below=\Spacing of ScoreFollower] {Data Files};
 
@@ -46,22 +46,26 @@
 
 \path[->, thick, data text, align=flush right, text width=\EdgeTextWidth]
 	(User.south -| MotionTracker) edge node[left] (MotionNode) {motion} (MotionTracker)
-	(MotionTracker) edge node[left] {motion events} (ScoreFollower)
+	(MotionTracker) edge node[left] {motion events and parameters} (ScoreFollower)
 	(DataFiles) edge
 		node[left] {score, pattern and instrument data}
 		(ScoreFollower);
 
 \path[->, thick, data text, align=flush left, text width=\EdgeTextWidth]
 	(MIDIFile) edge node[right] {score events} (Plugin)
-	(Plugin) edge node[right] {score events and keyswitches} (Synthesis)
+	(Plugin) edge node[right] {score events and parameters} (Synthesis)
 	(Synthesis) edge node[right] {sound} (User.south -| Synthesis);
 	
 \path[<->, thick, data text, align=center, text width=0.9*\HSpacing]
 	(ScoreFollower) edge
 	node[above] (SfPluginNode) {options, status, score events}
+	node[below] {visualization data}
 	(ScoreFollower -| Plugin.west);
 
-\coordinate (VisualizationCorner) at ($(SfPluginNode.north) + (1.0, 0.2) $);
+\path
+	let \p1 = (SfPluginNode.north),
+	    \p2 = (Synthesis.south) in
+	(\x1 + 1.0cm, {(\y1 + \y2) / 2}) node[coordinate] (VisualizationCorner) {};
 \path[->, thick, draw, data text]
 	let \p1 = (VisualizationCorner),
 	    \p2 = (User.south) in
