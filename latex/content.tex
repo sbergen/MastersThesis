@@ -246,13 +246,12 @@ can be roughly classified based on four features:
 the types of sensors used for capturing gestures,
 the methods used for analysing the gesture data,
 the level of control they provide, and
-the type of sound synthesis they use
-(modifying pre-recorded music or synthesizing from a score).
+the type of sound synthesis they use.
 
 This section provides a brief overview on how these four features
 have been implemented in previous systems.
 As more comprehensive overviews can be found elsewhere --
-one of the latest and most detailed being \cite{} --
+one of the latest and most detailed being \cite{Fabiani2012} --
 the overview here will be kept brief.
 
 \subsection{Sensors for Gesture Capture}
@@ -261,24 +260,27 @@ While the history of conductor following systems
 can be traced back to
 early computer performance control systems
 where score parameters could be modified during playback
-by using control interfaces which do not resemble a conductor's baton \cite{},
+by using control interfaces which do not resemble a conductor's baton \cite{Buxton1980},
 the first system that tracked a baton-like wand
-was developed in 1983 \cite{}.
+was developed in 1983 \cite{Haflich1983}.
 The system was able to analyze conducting gestures performed with the wand,
 and control the tempo and dynamics of a score.
 Since then, several similar systems have been developed,
 utilizing a multitude of tracking methods,
 including the following:
 \begin{itemize}
-\item systems that measure the capacitance between a baton and an "antenna" \cite{},
-\item accelerometer based systems \cite{},
-\item infra red reflection tracking systems \cite{},
-\item video analysis from a regular video stream \cite{}, and
+\item systems that measure the capacitance between a baton and an "antenna",
+\item accelerometer based systems,
+\item magnetic sensors,
+\item infra red based systems,
+\item video analysis from a regular video stream, and
 \item direct measurement of the conductor's body movements with
-sensors attached to the conductor \cite{}.
+sensors attached to the conductor.
 \end{itemize}
 In addition to tracking the movements of the baton or hands,
-breath and gaze sensors have also been used \cite{}.
+breath and gaze sensors have also been used.
+For examples of projects using each sensor type,
+the reader is asked to reference \cite{Fabiani2012}.
 
 Capturing the relevant data from the conductor's gestures
 provides the raw input to the system.
@@ -300,9 +302,9 @@ a set of continuously varying parameters,
 or a stream of discrete events based on detecting discrete gestures.
 Most systems combine both types of analysis methods.
 While it is possible to use
-heuristics to extract data \cite{},
-also hidden Markov models (HMMs) \cite{} and
-artificial neural networks (ANNs) \cite{}
+heuristics to extract data \cite{Ilmonen1999, Morita1991},
+also hidden Markov models (HMMs) \cite{Usa1998, Kolesnik2004, Lee2006} and
+artificial neural networks (ANNs) \cite{Ilmonen1999, Bruegge2007}
 have been used.
 All these methods can be used to produce both discrete events
 and continuous values for parameters.
@@ -331,7 +333,7 @@ will be discussed in more depth in the next section.
 
 \subsection{Performance Control}
 
-Fabiani et al. define three levels of performance control in \cite{}:
+Fabiani et al. define three levels of performance control in \cite{Fabiani2012}:
 direct control, model-based performance control,
 and high-level control via semantic descriptors.
 The distinction between these modes is necessarily fuzzy;
@@ -361,9 +363,9 @@ and performance features,
 which allows first translating motion features to
 descriptors and then applying relevant performance features
 based on the descriptors extracted.
-While the relation between semantic descriptors
-and musical and tonal qualities has been studied
-a lot \cite{},
+While studies have produced clear results for
+the relation between semantic descriptors
+and musical and tonal qualities \cite{moravec2005, juslin2000cue},
 the mapping of conducting gestures to semantic descriptors
 has not been studied as extensively.
 
@@ -374,15 +376,14 @@ based on the gestures of the user,
 they need to be applied to the score.
 The methods implemented in previous systems can be classified
 into two categories:
-synthesizing the output from a score file (e.g. MIDI or MusicXML)
-using a synthesizer,
+synthesizing the output from a score file using a synthesizer,
 or applying modifications to a pre-recorded performance.
 While the former can obviously be implemented very flexibly
 using any synthesis method available,
 the number of options for implementing the latter is more restricted.
 The methods used for modifying pre-recorded performances
-include time-frequency manipulation \cite{},
-and combining parts from several different performances \cite{}.
+include time-frequency manipulation
+and mixing different recordings \cite{Borchers2004}.
 
 \section{Design Rationale}
 
@@ -430,7 +431,7 @@ we need to communicate with the synthesis component
 via a third party application programming interface (API).
 For this reason, a plugin component is required.
 Since the plugin standard used in the project
-(discussed in more detail in section \ref{})
+(discussed in more detail in section \ref{sec:vst})
 provides a method of creating user interfaces (UIs),
 the visualization will be part of the plugin.
 This leaves us with three modules
@@ -842,8 +843,7 @@ $ \mathcal{M}^{-1} : P \rightarrow T. $
 The mapping operator (as well as its inverse)
 requires knowledge of
 the realized playback speed,
-and can thus be applied reliably to
-past events.
+and can thus be applied reliably only to past events.
 It is also possible to use the mapping operator for
 estimating future events.
 These estimates, however,
@@ -918,8 +918,8 @@ producing a correct estimate.
 \label{sec:beat_classification_op}
 
 The classification operation $\mathcal{C}$,
-uses the positions of beats in a beat pattern, $\mathbf{p}$,
-and the history of the latest beats, $\mathbf{h}$,
+uses the positions of beats in a beat \textit{pattern} ($\mathbf{p}$),
+and the \textit{history} of the latest beats ($\mathbf{h}$),
 to classify the detected beats.
 To keep all the relevant beats in $\mathbf{h}$,
 the current bar is tracked continuously.
@@ -1001,13 +1001,15 @@ and should thus also maximize the probability of a correct estimate.
 \item The first and second beats in a bar do not usually
 provide enough information about the beat pattern used in that bar.
 Therefore the second beat in a bar is only given an estimate if
-it scores better than its neighbouring beats in the winning beat pattern,
-i.e.
+it scores better than its neighbouring beats in the winning beat pattern
+by a given factor, i.e.
 \begin{equation}
-q(\beta,\gamma) > q(\beta, \gamma \pm 1),
+q(\beta,\gamma) > a \, q(\beta, \gamma \pm 1),
 \end{equation}
 where $\beta$ is the beat being classified,
-and $\gamma$ the best estimate.
+$\gamma$ the best estimate,
+and $a$ the factor determining how much better the
+estimate has to be compared to its neighbours.
 \item Considering the number of beats in most beat patterns,
 three or more beats should give a good enough estimate
 (or else there will be no hope of ever getting one).
@@ -1024,7 +1026,10 @@ Based on these estimates,
 changes to the playback tempo are made,
 that attempt to correct the offsets
 so that the playback matches the conducting
-as closely as possible.
+as well as possible.
+The change in tempo is realized as adjusting
+the warp factor $w$ for each audio block
+(see section \ref{sec:time_handling} for details).
 
 \subsection{Tempo Estimation}
 
@@ -1046,7 +1051,7 @@ Instead, a linearly decaying time dependent filter is used.
 The filter is defined by its cut-off time $t_{co}$,
 which forms the limit for how old tempo estimates
 are taken into account.
-Each tempo estimate not older than $t_{co}$ is given a weight coefficient
+Each tempo estimate ($v_i$) not older than $t_{co}$ is given a weight coefficient
 \begin{equation}
 c_i(\Delta t) = 1 - \frac{\Delta t}{t_{co}},
 \end{equation}
@@ -1256,7 +1261,7 @@ the adjustment should be fully completed
 or very near completion
 at the time the next beat occurs.
 A very short time, however,
-would cause very abrupt temporary changes in tempo.
+would cause very abrupt changes in tempo.
 Thus $t_c$ is selected as the time between
 the current and previous beat,
 which should predict the time to the next
@@ -1280,7 +1285,7 @@ for the offset is directly affected by
 the tempo adjustment function.
 Doing so would cause feedback in the system,
 with hard to predict results.
-Instead, only part of the beat offset may be compensated for.
+Instead, only part of the beat offset is compensated for.
 This adjustment does not apply to
 the offset caused by the tempo change
 (equation \ref{eq:linear_tempo_change_pos_diff}),
@@ -1367,6 +1372,7 @@ MIR includes impulse response data for the Vienna Konzerthaus,
 and allows placing the virtual microphones at the conductor's podium.
 
 \subsection{Virtual Studio Technology}
+\label{sec:vst}
 
 Virtual Studio Technology (VST) \cite{vst} is
 a virtual instrument and effect plugin architecture created by Steinberg GmbH.
@@ -1725,6 +1731,7 @@ the reading and writing states.
 
 
 \section{Time Handling}
+\label{sec:time_handling}
 
 Handling time in a multirate, multi-threaded system,
 is not a trivial task.
