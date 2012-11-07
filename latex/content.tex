@@ -1523,55 +1523,101 @@ in identifying and possibly correcting these problems.
 \chapter{Implementation Details}
 \label{chapter:implementation_details}
 
-Since the synthesis environment is a
-Virtual Studio Technology (VST) plugin,
-implementing the conductor follower as a VST plugin was a logical choice.
+This chapter describes details and implementation choices
+which have been left out from the previous parts of
+this document,
+as they are not at the core of solving the problems at hand:
+The architecture is discussed from an implementation centric view,
+the timing and threading constraints
+of the implementation are discussed,
+time handling and motion capture implementation details are described,
+and the data file formats used by the system are specified.
+
+\section{Architectural overview}
+
+Since the synthesis environment is a VST plugin,
+implementing the conductor follower as a VST plugin as well,
+was a logical choice.
 The input for the plugin is read from a MIDI file
 and the output is MIDI events via the VST interface.
 These implementation details are, however, hidden behind
 carefully designed interfaces,
 separating the core functionality from the input/output functionality.
+The module division which allows this abstraction,
+along with the libraries used to implement the features,
+are described in this section.
 
-One of the most important considerations of the implementation
-is its real-time (RT) constraints.
-A RT system is defined as a system where calculations
-need to be completed before a given deadline,
-and can be classified into three categories:
-\begin{description}
-\item[Hard]
-Missing a deadline is a total system failure.
-\item[Firm]
-The usefulness of a result is zero after its deadline.
-\item[Soft]
-The usefulness of a result degrades after its deadline.
-\end{description}
-An audio plugin has firm real-time constraints,
-since the result for each block of audio needs to be delivered in time.
-Missing a deadline means that block will not be played back,
-causing a glitch in the sound output.
+\subsection{Modules}
 
-It is important to understand the difference between
-deadline based real time constraints
-and throughoutput based constraints.
-Throughoutput based real time constraints have
-more to do with with the algorithmic complexity
-of the methods used,
-while deadline based constraints
-require special programming techniques on the implementation level.
-All further references to RT constraints in this thesis
-refer to the deadline based definition.
+To achieve good abstraction and loose coupling
+between the different parts of the system,
+the implementation is divided into \spellRef{item:last_implementation_module}
+well defined and loosely coupled modules:
+\begin{enumerate}
+\item Common utilities
+\item Data file parsers
+\item Motion capture
+\item Expression to synthesis parameter mapper
+\item Score Follower (the core functionality)
+\item The VST plugin \label{item:last_implementation_module}
+\end{enumerate}
+The common utilities module contains components
+that are not specific to conductor following.
+These include utilities for
+lock-free programming,
+mathematical operations and algorithms,
+time and geometry handling,
+logging, and debugging.
 
-In addition to having RT constraints,
-the 30Hz frame rate of the motion capture system
-makes it a multirate, multithreaded application.
-Working in such an environment requires using
-lock-free programming techniques,
-such as atomic variables and lock-free ringbuffers.
-The multirate nature also requires having robust timestamping and synchronization mechanisms.
+The data file parser module
+contains all the parser definitions
+and supporting data structures
+for all the input files used by the system.
+Its main purpose is to hide the implementation
+of parsing behind a concise API.
+The format of the data files is discussed in more detail
+in section \ref{sec:data_file_formats}.
 
-\fixme{chapter overview}
+The motion capture module provides a simple
+event-based API for motion related data.
+It includes the logic for extracting relevant events from motion data.
+The methods used are described in
+chapter \ref{chapter:motion_capture},
+and the most important implementation details in
+section \ref{sec:motion_capture_implementation}.
 
-\section{Supporting Libraries}
+The expression to synthesis parameter mapper
+maps expression parameters to synthesis parameters.
+The methods used are discussed in section
+\ref{sec:patch_switching}.
+
+The score follower module provides most of the core functionality,
+not including motion capture.
+This includes
+beat classification, tempo and score following, jitter correction,
+and instrument patch switching among other things.
+It also provides abstract interfaces for 
+hiding the implementation details of the score format.
+The methods used in this module are discussed
+in chapter \ref{chapter:score_following},
+and some of the implementation details
+in section \ref{sec:time_handling}.
+
+The VST plugin module's main purpose is to
+separate as much plugin implementation detail from the rest of the system.
+It implements the VST interface,
+provides the plugin UI,
+and the visualization.
+It also implements the score related interfaces,
+defined in the score follower module.
+
+In addition to these
+\spellRef{item:last_implementation_module} modules,
+the project contains four unit test modules.
+These modules are not significant regarding the functionality,
+but merely had a supporting role during system development.
+
+\subsection{Supporting Libraries}
 \label{sec:supporting_libraries}
 
 The implementation makes heavy use of several of the Boost C++ libraries \cite{boost}.
@@ -1597,73 +1643,77 @@ middleware package called NITE,
 which works with the OpenNI API,
 providing higher level functionality such as skeletal and hand tracking.
 NITE is used via the OpenNI APIs for hand tracking.
+The motion tracking module contains
+all the code that uses the OpenNI APIs,
+so that the rest of the system has no dependencies on OpenNI.
 
 Juce \cite{juce} is an open source,
 multimedia oriented cross-platform C++ library.
 It was used for its
-VST plugin wrapper, MIDI file I/O,
+Virtual Studio Technology (VST) plugin wrapper,
+MIDI file I/O,
 and user interface (UI) functionality.
+Juce is only used in the plugin,
+and the rest of the system has no dependencies on it.
 
-\section{Architectural overview}
+\section{Real-time Computing and Threading}
 
-The implementation is divided into
-six well defined and loosely coupled modules:
-\begin{itemize}
-\item Common utilities
-\item Data file parsers
-\item Motion capture
-\item Expression to synthesis parameter mapper
-\item Score Follower (the core functionality)
-\item The VST plugin
-\end{itemize}
+A real-time audio plugin
+which uses motion tracking hardware
+and has a user interface (UI)
+imposes certain restraints on how it may be implemented
+to achieve acceptable performance.
+These restraints and the patterns used for solving them
+are discussed in this section.
 
-The common utilities module contains components
-that are not specific to conductor following.
-These include utilities for
-lock-free programming,
-mathematical operations and algorithms,
-time and geometry handling,
-logging, and debugging.
+\subsection{Real-time Computing}
 
-The data file parser module
-contains all the parser definitions
-and supporting data structures
-for all the input files used by the system.
-Its main purpose is to hide the implementation
-of parsing behind a concise API.
+A real-time (RT) system is defined as a system where calculations
+need to be completed before a given deadline,
+and can be classified into three categories:
+\begin{description}
+\item[Hard]
+Missing a deadline is a total system failure.
+\item[Firm]
+The usefulness of a result is zero after its deadline.
+\item[Soft]
+The usefulness of a result degrades after its deadline.
+\end{description}
+An audio plugin has firm real-time constraints,
+since the result for each block of audio needs to be delivered in time.
+Missing a deadline means that the missed block will not be played back,
+causing a glitch in the sound output.
 
-The motion capture module provides a simple
-event-based API for motion related data.
-It includes the logic for extracting relevant events from motion data.
-It also contains all the code that uses the OpenNI APIs,
-so that the rest of the system has no dependencies on OpenNI.
-
-The expression to synthesis parameter mapper
-maps expression parameters to synthesis parameters.
-\fixme{Write more}
-
-The score follower module provides most of the core functionality,
-not including motion capture.
-This includes
-beat classification, tempo and score following, jitter correction,
-and instrument patch switching among other things.
-It also provides abstract interfaces for 
-hiding the implementation details of the score format.
-
-The VST plugin modules main purpose is to
-separate as much plugin implementation detail from the rest of the system.
-It implements the VST interface and provides the plugin UI,
-both using Juce.
-It also implements the score related interfaces,
-defined in the score follower module,
-using Juce MIDI functionality.
-
-In addition to these six modules,
-the project contains four unit test modules.
-These modules are not significant regarding the functionality,
-but merely had a supporting role during system development.
+It is important to understand the difference between
+deadline based real-time constraints
+and throughput based constraints.
+Sometimes a calculation is called real-time
+if the throughput is high enough to complete
+a large calculation in a given time.
+For example, if one minute of audio is
+processed in (or under) one minute,
+it might be said that the calculation happens in real time.
+This does not, however, mean that the same
+implementation is capable of repeatedly processing smaller
+blocks of the audio and produce the output for each block
+given a deadline equal to the block length.
+Throughput based real-time constraints have
+more to do with with the algorithmic complexity
+of the methods used,
+while deadline based constraints
+require special programming techniques on the implementation level.
+All further references to RT constraints in this thesis
+refer to the deadline based definition.
 
 \subsection{Thread model}
+
+In addition to having RT constraints,
+the 30Hz frame rate of the motion capture system
+makes it a multirate, multithreaded application.
+Working in such an environment requires using
+lock-free programming techniques,
+such as atomic variables and lock-free ringbuffers.
+The multirate nature also requires having robust timestamping and synchronization mechanisms.
 
 The VST architecture implies using at least two threads:
 one for audio and/or MIDI processing,
@@ -1702,58 +1752,6 @@ To summarize, the threads are:
 \end{itemize}
 
 \end{enumerate}
-
-\subsection{Essential Common Utilities}
-
-A number of utilities are widely used across the application,
-and reserve a mention.
-These are mostly related to lockfree programming techniques.
-
-\subsubsection*{Event Buffer}
-
-The event buffer is probably the most used utility in the implementation.
-It is a container for storing timestamp-event-pairs.
-It allows specifying the internal storage depending on the use case.
-For data which is collected when loading the score,
-a dynamically resizeable container (such as std::vector) can be used,
-while buffers used during playback mostly use a statically sized ringbuffer
-to guarantee allocation free operation.
-Utilities for accessing timestamp-based ranges,
-with all valid combinations of
-bounded, left-bounded, left-open and left-closed are available.
-
-\subsubsection*{The Butler Thread}
-
-The butler thread is used for asynchronously running
-tasks that can not be run in an RT-thread.
-The butler thread is configured with a maximum execution interval,
-and will check for new tasks and execute them repeatedly,
-until terminated.
-The thread will block as necessary to not exceed the
-maximum execution interval.
-
-\subsubsection*{Lockfree Ringbuffer}
-
-The lockfree ringbuffer provided by the Boost.Lockfree library \cite{required?}
-is used for most of the lockfree inter-thread communication.
-This includes passing events from the motion capture thread
-to the MIDI thread, and logging from RT threads using the Butler thread.
-It is an essential utility for lockfree multi-threaded programming.
-
-\subsubsection*{Chen \& Burns Buffer}
-
-While the lockfree ringbuffer is a good solution
-for event-like data,
-better mechanisms exist for sharing a a single
-instance of data, e.g. a state. 
-For this use, a fully asynchronous reader-writer mechanism
-as described by Chen and Burns \cite{Chen97} was implemented.
-The mechanism allows lockfree access for
-a single writer and a fixed number of readers.
-It uses a number of copies of the data,
-and a set of atomic variables to track
-the reading and writing states.
-
 
 \section{Time Handling}
 \label{sec:time_handling}
@@ -1887,7 +1885,61 @@ speed change & fractions per second & Fraction here is a dimensionless unit. A d
 \end{center}
 \end{table}
 
+\section{Essential Common Utilities}
+
+A number of utilities are widely used across the application,
+and reserve a mention.
+These are mostly related to lockfree programming techniques.
+
+\subsection{Event Buffer}
+
+The event buffer is probably the most used utility in the implementation.
+It is a container for storing timestamp-event-pairs.
+It allows specifying the internal storage depending on the use case.
+For data which is collected when loading the score,
+a dynamically resizeable container (such as std::vector) can be used,
+while buffers used during playback mostly use a statically sized ringbuffer
+to guarantee allocation free operation.
+Utilities for accessing timestamp-based ranges,
+with all valid combinations of
+bounded, left-bounded, left-open and left-closed are available.
+
+\subsection{The Butler Thread}
+
+The butler thread is used for asynchronously running
+tasks that can not be run in an RT-thread.
+The butler thread is configured with a maximum execution interval,
+and will check for new tasks and execute them repeatedly,
+until terminated.
+The thread will block as necessary to not exceed the
+maximum execution interval.
+
+\subsection{Lockfree Ringbuffer}
+
+The lockfree ringbuffer provided by the Boost.Lockfree library \cite{required?}
+is used for most of the lockfree inter-thread communication.
+This includes passing events from the motion capture thread
+to the MIDI thread, and logging from RT threads using the Butler thread.
+It is an essential utility for lockfree multi-threaded programming.
+
+\subsection{Chen \& Burns Buffer}
+
+While the lockfree ringbuffer is a good solution
+for event-like data,
+better mechanisms exist for sharing a a single
+instance of data, e.g. a state. 
+For this use, a fully asynchronous reader-writer mechanism
+as described by Chen and Burns \cite{Chen97} was implemented.
+The mechanism allows lockfree access for
+a single writer and a fixed number of readers.
+It uses a number of copies of the data,
+and a set of atomic variables to track
+the reading and writing states.
+
 \section{Motion Capture}
+\label{sec:motion_capture_implementation}
+
+\fixme{Write some}.
 
 \subsection{The Polynomial Regression Filter}
 
@@ -1952,6 +2004,7 @@ This change requires a correction to equation \ref{eq:sg_coefs},
 which is reversing the observation values $\mathbf{y}$.
 
 \section{Data File Formats}
+\label{sec:data_file_formats}
 
 For additional data needed by the system,
 a number of JSON-like \cite{JSON} DSLs were developed.
