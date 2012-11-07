@@ -1939,7 +1939,12 @@ the reading and writing states.
 \section{Motion Capture}
 \label{sec:motion_capture_implementation}
 
-\fixme{Write some}.
+Since most of the hard work related to motion capture
+is done by NITE --
+the implementation of which is proprietary --
+there is not much to discuss in this section.
+However, a quick overview on the implementation of the
+polynomial regression filter will be provided.
 
 \subsection{The Polynomial Regression Filter}
 
@@ -2007,7 +2012,8 @@ which is reversing the observation values $\mathbf{y}$.
 \label{sec:data_file_formats}
 
 For additional data needed by the system,
-a number of JSON-like \cite{JSON} DSLs were developed.
+a number of JSON-like \cite{JSON}
+domain specific languages (DSLs) were developed.
 The syntax in all of them is similar,
 only the contained data varying between different formats.
 The formats will be described here briefly.
@@ -2045,8 +2051,6 @@ as described in section \ref{sec:tempo_function},
 to be adjusted to provide a different level of sensitivity in tempo following.
 A low sensitivity will lead to a long $t_c$,
 whereas a high sensitivity translates to a short $t_c$.
-
-\fixme{If no more events are implemented, change the formatting}
 
 \subsection{Instrument Definition Files}
 \label{sec:instrument_definition_format}
