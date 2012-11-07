@@ -1442,17 +1442,26 @@ the most appropriate patch for each note.
 \chapter{Visualization}
 \label{chapter:visualization}
 
-\fixme{Write overview, mention possible use in pedagogical purposes.}
+During the development of the conductor follower,
+a good mechanism for observing the state of the system
+in real time was lacking,
+which eventually lead to developing a real time visualization.
+While the visualization provided its greatest benefits
+during the development of the system,
+it can also provide valuable feedback to users of the system.
+This chapter discusses the functionality
+and motivation behind each visualization feature separately.
 
 \section{Movement Tracing}
 
 When conducting a pattern,
 it is very difficult for the conductor himself to
 perceive the actual shape of the hand movement.
-Conventionally conducting students have
-videotaped their rehearsals in order to better see how they perform.
-However, this method does not provide an immediate form of feedback 
-already during the rehearsal.
+These days it is common practice to 
+videotape the rehearsals of conducting students \cite{?}
+for the students to better see how they perform.
+However, this method does not provide an
+immediate form of feedback during the rehearsal.
 
 By visualizing both the current position of the hand,
 and a trace of the movement history,
@@ -1465,14 +1474,15 @@ with the opacity of the segment decreasing the older the samples are.
 
 The visualization can show the spatial position
 of the detected beats,
-which are somewhere along the traced hand trajectory.
-Due to the nature of the beat detection algorithm,
+which occur along the traced hand trajectory.
+Due to the nature of the beat detection algorithm --
+which does not represent an absolute truth about
+how beats should be detected --
 the usefulness of this visualization for
 pedagogical purposes is questionable.
 However, the visualization was a good aid
 during the development of the system,
 and could be a good aid if the system is to be developed further.
-
 
 \section{Beat Offset Visualization}
 
@@ -1492,6 +1502,21 @@ and beats that happened late in red.
 Similarly to the movement tracing,
 the opacity of the old beats decreases
 and they eventually disappear as time progresses.
+
+\section{Depth Sensor Output}
+
+In addition to visualizations which describe
+the state of the conductor follower,
+the raw output of the depth sensor can be displayed
+as a grayscale video.
+This is mainly useful for solving possible issues
+related to the way the depth sensor works:
+In some situations infra red sources,
+such as the sun,
+or certain hand positions
+can cause problems with the hand tracking algorithm.
+The depth sensor output can in some situations help
+in identifying and possibly correcting these problems.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
