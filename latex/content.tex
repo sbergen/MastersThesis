@@ -626,6 +626,17 @@ and $n$ the length of the peak holder.
 High values of $n$ will provide a smoother output,
 but will not react to sudden decreases in magnitude as fast.
 
+\subsection{Standard Deviation of the Sample}
+
+The windowed standard deviation of the sample
+\begin{equation}
+S_N = \sqrt{\frac{1}{N} \sum_{i=1}^N (x_i - \overline{x})^2 },
+\end{equation}
+where $x_1 \ldots x_N$ are the $N$ latest observed values,
+and $\overline{x}$ is the mean value of these observations.
+The output of the operation expresses the
+variability of the input values over a window of $N$ samples.
+
 \section{Beat Detection}
 \label{sec:beat_detection}
 
@@ -763,8 +774,10 @@ A point-light representation of two conductors' movements
 was presented to subjects, who rated the expressiveness
 on a continuous scale in both time and magnitude.
 The study showed correlations between kinematic features
-such as position, velocity, acceleration and jerk,
-and the afore mentioned expressions.
+such as position, velocity, acceleration, and jerk%
+\footnote{Jerk is the third derivative of position,
+i.e. the derivative of acceleration.}
+and the aforementioned expressions.
 However, the final conclusions of the study stated that
 the findings should probably not be applied as such,
 but that the most essential findings were that observers
@@ -773,10 +786,73 @@ and that increased amplitude, greater variance and higher speed of movement
 convey higher levels of expressivity.
 
 Based on the results by Luck and Toiviainen \cite{luck2010},
-and Sousa \cite{sousa1988},
+Sousa \cite{sousa1988},
+and experimentation,
 a set of kinematic features were selected for extracting
 expressive features out of the motion data.
-\fixme{This paragraph should be revised later (write more).}
+These features are described in this section.
+
+\subsection{Velocity Based Features}
+
+When analyzing the velocity of the conductor's hand,
+its dimensionality is reduced to two dimensions.
+This ignores backward and forward movements,
+some of which are caused by changes in the shape of the hand.
+Once the dimensionality has been reduced,
+two features are extracted from the values:
+peak velocity and windowed standard deviation.
+Both values are calculated over an averaging time ($t_a$)
+of about 700ms.
+This value causes averaging over single beat gestures.
+\fixme{Make times dynamic, describe this better?}
+
+\fixme{Find references to the following paragraphs?}
+
+The first feature is a filtered peak velocity.
+The absolute velocity is first filtered with a short EMA filter,
+applying a small amount of smoothing on the value.
+The smoothed value is then fed to a peak holder,
+who's length is derived from $t_a$.
+The following findings acted as
+motivation for using the peak velocity as an expressive feature:
+The velocity of the right hand showed a
+high correlation with \textit{power}
+in \cite{luck2010},
+and the size of the conducting pattern
+was shown to be a good indicator of dynamics in \cite{sousa1988}.
+The size of the conducting pattern is linked
+to the peak velocity,
+as the only way to conduct a larger pattern in the same time
+is to use a greater velocity.
+
+The second velocity based parameter is the
+windowed standard deviation of the velocity ($S_N(v)$).
+As calculating the standard deviation
+already provides a lot of "smoothing",
+no additional filtering is required here.
+The window size for the calculation
+is derived from $t_a$.
+While \cite{luck2010} doesn't include any results
+to back up using $S_N(v)$ as an expressive feature,
+\cite{sousa1988} describes several conducting emblems
+related to the playing style on the staccato--legato axis,
+which include the variability of velocity as an integral component.
+
+\subsection{Jerk Based Features}
+
+As in the velocity based features,
+the dimensionality of the measured jerk
+is reduced to two dimensions.
+The absolute value of the two dimensional jerk
+is then filtered with an EMA
+and fed to a peak holder.
+Due to the high variability of the values,
+more smoothing in both the EMA and the peak holder is required,
+compared to the respective filters used in calculating the peak velocity,
+the filter lengths being about twice as long.
+The filtered peak jerk is the only jerk based feature used
+for expressive feature purposes.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Score Following}
@@ -1059,7 +1135,7 @@ where $\Delta t$ is the absolute offset to the current time.
 The target tempo is then the
 weighted and normalized sum of all the estimates:
 \begin{equation}
-v_t = \frac{\Sigma c_i v_i}{\Sigma c_i}.
+v_t = \frac{\sum c_i v_i}{\sum c_i}.
 \end{equation}
 
 
