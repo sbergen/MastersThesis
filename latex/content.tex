@@ -190,7 +190,8 @@ is deriving the emotional descriptors from the
 gestures of the conductor. 
 
 The majority of motion based expressive sound synthesis implementations
-have been novel approaches which do not model any existing form of musical expression.
+have been novel approaches,
+which do not model any existing form of musical expression.
 Some have concentrated on using emotional data
 extracted from the motion of the user,
 to control music in a way that the
@@ -260,7 +261,7 @@ While the history of conductor following systems
 can be traced back to
 early computer performance control systems
 where score parameters could be modified during playback
-by using control interfaces which do not resemble a conductor's baton \cite{Buxton1980},
+using control interfaces which do not resemble a conductor's baton \cite{Buxton1980},
 the first system that tracked a baton-like wand
 was developed in 1983 \cite{Haflich1983}.
 The system was able to analyze conducting gestures performed with the wand,
@@ -699,7 +700,7 @@ with the fact that musicians react to conducted beats with a lag.
 Once a vertical minimum is found in the hand movement
 (based on change of sign in $v_y$),
 its timestamp and location are recorded.
-Each new position which is not a new local minimum
+Each new position that is not a new local minimum
 is checked for two criteria,
 using two different thresholds for the vertical position --
 the reset threshold and beat threshold:
@@ -896,7 +897,7 @@ beat classification, tempo adjustment and start tempo estimation.
 \label{sec:meth:read_and_score_time}
 
 When modifying the playback speed of a musical score
-which has tempo variations already build into it,
+that has tempo variations already build into it,
 it is important to precisely define the concepts of time used.
 Wall-clock time is the monotonically progressing concept of time
 most familiar to humans.
@@ -1006,7 +1007,7 @@ To keep all the relevant beats in $\mathbf{h}$,
 the current bar is tracked continuously.
 When a new beat is to be classified,
 it is added to the end of $\mathbf{h}$,
-and all beats which have been classified
+and all beats that have been classified
 as being in prior bars are removed.
 Next, the match quality for each beat pattern is assessed:
 \begin{enumerate}
@@ -1410,15 +1411,15 @@ also the sound synthesis system should be able to
 provide realistic synthesis of an entire orchestra.
 It should be able to reproduce a musical composition
 at varying tempi and articulations.
-To support these requirements,
-the most straightforward approach is to use
-a score defined as a set of score events
-(notes, tempo events, etc.),
-which function as the input to a synthesis engine,
-which produces the final output sound in real time.
-The score event format needs to be in,
-or convertible to a format that is understood by the synthesis engine.
-This means the score format is most tightly
+The most straightforward approach to supporting these requirements
+is feeding score events --
+notes, tempo events, etc. --
+to a synthesis engine,
+which produces the final output in real time.
+The score event format needs to be in
+(or convertible to)
+a format that is understood by the synthesis engine.
+This means the score format is tightly
 coupled to the synthesis engine,
 while the coupling to the rest of the system is rather loose.
 The synthesis engine and score format selected for the system
@@ -1586,7 +1587,7 @@ and they eventually disappear as time progresses.
 
 \section{Depth Sensor Output}
 
-In addition to visualizations which describe
+In addition to visualizations that describe
 the state of the conductor follower,
 the raw output of the depth sensor can be displayed
 as a grayscale video.
@@ -1605,7 +1606,7 @@ in identifying and possibly correcting these problems.
 \label{chapter:implementation_details}
 
 This chapter describes details and implementation choices
-which have been left out from the previous parts of
+that have been left out from the previous parts of
 this document,
 as they are not at the core of solving the problems at hand:
 The architecture is discussed from an implementation centric view,
@@ -1624,7 +1625,7 @@ and the output is MIDI events via the VST interface.
 These implementation details are, however, hidden behind
 carefully designed interfaces,
 separating the core functionality from the input/output functionality.
-The module division which allows this abstraction,
+The module division that allows this abstraction,
 along with the libraries used to implement the features,
 are described in this section.
 
@@ -1739,9 +1740,9 @@ and the rest of the system has no dependencies on it.
 
 \section{Real-time Computing and Threading}
 
-A real-time audio plugin
+A real-time audio plugin,
 which uses motion tracking hardware
-and has a user interface (UI)
+and has a user interface (UI),
 imposes certain restraints on how it may be implemented
 to achieve acceptable performance.
 These restraints and the patterns used for solving them
@@ -1948,18 +1949,19 @@ needed to convert between these two dimensions.
 
 \begin{table}
 \begin{center}
-\begin{tabular}{ | l  l  p{5.5cm} |}
-\hline
-Dimension & Base Unit & Notes \\ \hline
+\begin{tabular}{ l  l  l }
+\toprule
+Dimension & Unit & Notes \\
+\midrule
 beats & beat & Base for musical time \\
 bars & bar & See bar duration. \\
-samples & sample & See sample rate\\
-time & second & Base for physical time \\
+samples & sample & See sample rate.\\
+time & second & Base for physical time. \\
+sample rate & samples per second & Derived dimension. \\
 bar duration & beats per bar & Derived dimension. \\
 tempo & beats per second & Derived dimension. \\
-sample rate & samples per second & Derived dimension. \\
-speed change & fractions per second & Fraction here is a dimensionless unit. A derived dimension. \\
-\hline
+tempo change & beats per second squared & Derived dimension. \\
+\bottomrule
 \end{tabular}
 \caption{Overview of custom unit system for time.}
 \label{tab:score_units}
@@ -1977,7 +1979,7 @@ These are mostly related to lockfree programming techniques.
 The event buffer is probably the most used utility in the implementation.
 It is a container for storing timestamp-event-pairs.
 It allows specifying the internal storage depending on the use case.
-For data which is collected when loading the score,
+For data that is collected when loading the score,
 a dynamically resizeable container (such as std::vector) can be used,
 while buffers used during playback mostly use a statically sized ringbuffer
 to guarantee allocation free operation.
@@ -2086,8 +2088,8 @@ for the \nth derivative.
 To make $\mathbf{X}^T \mathbf{X}$ invertible,
 it is also necessary to reverse the values $x_1 \ldots x_n$
 used in equation \ref{eq:sg_design_matrix}.
-This change requires a correction to equation \ref{eq:sg_coefs},
-which is reversing the observation values $\mathbf{y}$.
+This change requires a correction to equation \ref{eq:sg_coefs}:
+the observation values $\mathbf{y}$ need to be reversed also.
 
 \section{Data File Formats}
 \label{sec:data_file_formats}
@@ -2140,6 +2142,12 @@ The purpose of instrument definition files,
 is to provide the necessary data for
 mapping expressive parameters to different
 instrument patches.
+It also defines the MIDI channel configuration
+used in the synthesis environment.
+The format allows several instruments of the same type
+to be used at the same time,
+whose count is limited
+to the number of MIDI channels reserved to it.
 The file is a list of instrument definitions,
 which include patch definitions.
 A patch definition includes the following information:
@@ -2152,11 +2160,12 @@ This is a relative value in the range \ocinterval{0, 1}.
 \item[Weight] Weight of patch, as described in section \ref{sec:patch_switching}.
 \end{description}
 Each patch is unique to an instrument,
-the instrument definition including the following information:
+each instrument also including the following information:
 \begin{description}[leftmargin=24ex]
 \item[Name] A human readable name for the instrument.
 \item[Shortest note] The length for the relative note length of 0.
 \item[Longest note] The length for the relative note length of 1.
+\item[Channels] A list of MIDI channels to use for instances of this instrument.
 \item[Patches] List of patches.
 \end{description}
 An example of an instrument definition file can be found from Appendix
