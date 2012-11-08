@@ -579,7 +579,10 @@ all derivatives up to $2n$ at $t_i$.
 
 As the polynomial regression filter provides the first derivative,
 it can be easily used to detect the presence of local minima and maxima
-\tupledef{M}{\mathrm{None}, \mathrm{Dip}, \mathrm{Peak}}.
+\[
+\setdef{M}{\mathrm{None}, \, \mathrm{Dip}, \, \mathrm{Peak}}.
+\]
+%$M \in \{ \mathrm{None}, \mathrm{Dip}, \mathrm{Peak} \}.$
 A change in direction can be detected as a change of sign in the first derivative:
 \begin{equation}
 m_i =
@@ -1281,7 +1284,7 @@ the current offset can be estimated as
 To get the best beat classifications,
 $ \mathcal{C} $ is used with the relative beat position
 \begin{equation}
-b' = \mathcal{M} [ t ] - p_B - \Delta b(t),
+b' = \mathcal{M} \left ( t \right ) - p_B - \Delta b(t),
 \end{equation}
 where $t$ is the time of the beat,
 and $p_B$ the beginning of the current bar.

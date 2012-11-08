@@ -210,24 +210,24 @@
 \vskip 5mm
 \noindent\AUTHOR
 
-% Acronyms
-% ------------------------------------------------------------------
-% Use \cleardoublepage so that IF two-sided printing is used 
-% (which is not often for masters theses), then the pages will still
-% start correctly on the right-hand side.
-\cleardoublepage
-% Example acronyms are placed in a separate file, acronyms.tex
-\input{acronyms}
-
 % Table of contents
 % ------------------------------------------------------------------
-\cleardoublepage
 % This command adds a PDF bookmark that links to the contents.
 % You can use \addcontentsline{} as well, but that also adds contents
 % entry to the table of contents, which is kind of redundant.
 % The text ``Contents'' is shown in the PDF bookmark. 
+\cleardoublepage
 \pdfbookmark[0]{Contents}{bookmark.0.contents}
 \tableofcontents
+
+\renewcommand{\arraystretch}{1.5}
+
+% Acronyms
+% ------------------------------------------------------------------
+\clearpage
+\addcontentsline{toc}{chapter}{Abbreviations and Acronyms}
+\chapter*{Abbreviations and Acronyms}
+\input{acronyms}
 
 % List of tables
 % ------------------------------------------------------------------
@@ -242,6 +242,14 @@
 % many figures. If you do, uncomment the following two lines.
 % \cleardoublepage
 % \listoffigures
+
+% Notation
+\clearpage
+\addcontentsline{toc}{chapter}{Notation}
+\chapter*{Notation}
+\input{notation}
+
+\renewcommand{\arraystretch}{1.0}
 
 % The following label is used for counting the prelude pages
 \label{pages-prelude}
