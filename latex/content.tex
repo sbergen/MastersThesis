@@ -806,8 +806,6 @@ of about 700ms.
 This value causes averaging over single beat gestures.
 \fixme{Make times dynamic, describe this better?}
 
-\fixme{Find references to the following paragraphs?}
-
 The first feature is a filtered peak velocity.
 The absolute velocity is first filtered with a short EMA filter,
 applying a small amount of smoothing on the value.
@@ -850,8 +848,15 @@ Due to the high variability of the values,
 more smoothing in both the EMA and the peak holder is required,
 compared to the respective filters used in calculating the peak velocity,
 the filter lengths being about twice as long.
+
 The filtered peak jerk is the only jerk based feature used
 for expressive feature purposes.
+Right hand jerk was shown to have a
+strong correlation with \textit{power} in \cite{luck2010}.
+Also,
+wen making \textit{forceful} movements with the hands,
+as some conducting styles were described in \cite{sousa1988},
+the filtered peak jerk has large values.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
