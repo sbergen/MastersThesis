@@ -553,6 +553,7 @@ ability to react to fast changes
 and the amount of averaging provided.
 
 \subsection{The Polynomial Regression Filter}
+\label{sec:polynomial_regression_filter}
 
 Luck and Toiviainen have studied the gestures of conductors
 both from a beat synchronization \cite{luck2006}
@@ -1742,6 +1743,7 @@ Juce is only used in the plugin,
 and the rest of the system has no dependencies on it.
 
 \section{Real-time Computing and Threading}
+\label{sec:real_time_and_threading}
 
 A real-time audio plugin,
 which uses motion tracking hardware
@@ -2192,13 +2194,83 @@ An example of a beat pattern definition file can be found from Appendix
 \chapter{Discussion and Conclusions}
 \label{chapter:discussion}
 
-\fixme{Summarize}
+\fixme{Introduce and summarize chapter}
 
 \section{Evaluation of Results}
 
-\fixme{Write}
+The conductor follower system implemented
+tracks the motions of the user,
+analyses them,
+and plays back a modified score
+via a synthesis engine.
+The system will be evaluated from
+\spellRef{item:last_evaluation_perspective}
+different perspectives:
+\begin{enumerate}
+\item The overall architecture.
+\item The implemented feature set.
+\item The quality of the implemented features.
+\label{item:last_evaluation_perspective}
+\end{enumerate}
 
-\section{Further work}
+\subsection{Architecture}
+
+The architecture was designed largely
+based on the the
+real-time computing and threading
+restrictions discussed
+in section \ref{sec:real_time_and_threading}.
+Also the selected synthesis environment
+(chapter \ref{chapter:sound_synthesis})
+and supporting libraries
+(section \ref{sec:supporting_libraries})
+had some influence on the architecture.
+These implementation specific
+design motives lead to designing an architecture
+with a rather large amount of clearly defined,
+minimal interfaces.
+While having loose coupling between
+implementation modules is
+usually a good thing,
+inserting an abstraction layer
+in the wrong place can be detrimental
+to the clarity of the related interface.
+
+While the data file interfaces
+and the main score follower interface
+(depicted in figure \ref{fig:architecture})
+worked out very well,
+the motion tracker interface
+was more implementation detail driven,
+and thus not quite as elegant.
+This is due to the fact that the
+motion data processing is done
+in the motion tracking thread,
+in order to keep the MIDI thread load
+as low as possible.
+This design choice can be justified
+by taking into account the
+timing constraints for each thread.
+The coupling between the motion tracker
+and score follower is tighter than it should,
+because it is only feasible to extract
+the motion features needed by the score follower
+from the motion data.
+This means that the score follower needs to be
+aware of exactly which events the motion tracker is producing
+and the motion tracker aware of what events the score follower
+expects to receive.
+Only passing the raw motion data
+and the polynomial regression filter results
+(speed, acceleration, and jerk, see section
+\ref{sec:polynomial_regression_filter})
+would loosen the coupling between the modules.
+
+\subsection{Implemented Features}
+
+\subsection{Feature Quality}
+
+\section{Future work}
 
 \fixme{Write}
 
