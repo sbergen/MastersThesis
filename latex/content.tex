@@ -1295,7 +1295,7 @@ The offset approaches zero as $t$ approaches $t' + t_c$.
 
 \subsection{Tempo Changes}
 
-\fixme{Revise once the method use is final!}
+\fixme{Revise once the method use is final, current text is obsolete!}
 
 Tempo changes in the score are taken into account
 by changing the tempo function accordingly.
@@ -1519,12 +1519,130 @@ The parameters used for describing the patches are:
 \item[Attack] The sharpness of the attack portion of the notes.
 \item[Weight] The \textit{musical weight} of the note, i.e. an accented note would have a large weight.
 \end{description}
-By using this information,
-together with the current motion capture and score state,
-the system is capable of selecting
-the most appropriate patch for each note.
 
-\fixme{Write more on patch selection (e.g. distance function)}
+In addition to the instrument context described above,
+the patch selection uses a note and conductor context
+to select the most appropriate patch for each note.
+The note context includes
+the length of the note,
+the current relative tempo,
+the time to the next note,
+and the velocity of the note.
+Furthermore, the conductor context includes
+all the motion based expressive features,
+as described in section \ref{sec:expressive_feature_extraction}.
+
+When a new note is to be played back,
+the best patch is selected in three stages:
+First a set of instrument patch parameters is
+synthesized from the note and conductor contexts.
+Second, a distance between the synthesized parameters
+and each instrument patch is calculated.
+Finally, the closest match is selected,
+causing the instrument patch to be changed
+if it differs from the patch currently in use.
+The patch parameter synthesis and distance function
+will be described in the following sections.
+
+\subsection{Patch Parameter Synthesis}
+
+Synthesizing instrument patch parameters
+from the note and conductor contexts,
+consists of applying mapping functions --
+one for each patch parameter --
+to the contexts.
+The length of the note is
+scaled by the relative tempo,
+and used as the \textit{length} parameter.
+Also, the \textit{weight} is a direct mapping
+from the normalized \textit{jerk peak}
+in the conductor context.
+
+\textit{Attack}, however,
+is synthesized from a combination
+of the time to the next note
+and the \textit{velocity dynamic range}
+in the conductor context.
+The velocity dynamic range is used as the basis
+for the attack.
+Additionally, if the time to the next note is below a given threshold,
+a reduction to the attack is applied.
+This tries to prevent playing in a staccato style in fast passages,
+if the notes are short, but not separated from each other in the score.
+This relies on the fact that most MIDI scores are written
+with some separation between notes in staccato passages.
+
+An addition parameter, which does not affect the patch selection,
+but is related to the conductor context,
+is \textit{velocity}.
+The reason this is an exception,
+is that some patches are \textit{layered},
+which means that the synthesis engine
+uses different samples,
+based on the velocity of the notes played.
+The \textit{velocity peak} in the conductor context
+is used to calculate the final velocity
+\begin{equation}
+v = \alpha \, v_c + \beta \, v_s,
+\end{equation}
+where $\alpha$ is the weight given to the conductor context,
+$v_c$ the velocity in the conductor context,
+$\beta$ the weight given to the score,
+$v_s$ the velocity in the score,
+and $\alpha + \beta = 1$.
+Finally, $v$ is limited to be in the range
+\ccinterval{v_{min}, v_{max}}, where $v_{min} > 0$,
+in order to not be muted or exceed the maximum velocity.
+
+It is worth noting,
+that the values for all the parameters
+in the conductor context,
+have already been scaled and clamped
+to be in the range \ccinterval{0, 1}.
+Adjusting the values used for the scaling operation
+will also adjust the sensitivity of the system.
+The values used in the implementation were
+adjusted based on informal testing.
+
+\subsection{Patch Distance Function}
+
+Initially a simple euclidean distance function
+was used to measure the patch distance.
+This did not, however, produce satisfactory results,
+so a more sophisticated method was
+produced from a mostly empirical basis.
+The basis of the distance function is applying
+different weights to the parameters,
+to emphasize the perceptually more important parameters:
+\begin{equation}
+d = \sum w_i \left \vert p_{i_t} - p_i \right \vert,
+\label{eq:patch_distance}
+\end{equation}
+where $d$ is the distance,
+$w_i$ the weight of the \nth[i] parameter,
+$p_{i_t}$ the target for the \nth[i] parameter,
+and $p_i$ the \nth[i] parameter.
+Ultimately, \textit{weight} and \textit{attack}
+were given equal weight,
+while \textit{length} was emphasized.
+As the length parameter described the
+longest possible note,
+the distance function for the weight had to also be adjusted
+to give a larger penalty for too short notes:
+\begin{equation}
+d_l =
+\begin{cases}
+w_l \left \vert l_t - l \right \vert & \text{if } l_t - l > 0 \\
+\alpha \, w_l \left \vert l_t - l \right \vert & \text{otherwise},
+\end{cases}
+\end{equation}
+where $d_l$ is the contributing factor of length
+to the sum in equation \ref{eq:patch_distance},
+$w_l > 1$ the weight given to length,
+$l_t$ the target length,
+$l$ the length,
+and $\alpha < 1$ the distance reduction factor for too long notes.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Visualization}
