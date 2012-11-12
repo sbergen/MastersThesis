@@ -387,6 +387,7 @@ include time-frequency manipulation
 and mixing different recordings \cite{Borchers2004}.
 
 \section{Design Rationale}
+\label{sec:design_rationale}
 
 If the real life interaction between a conductor and musicians
 were to be modelled as closely as possible,
@@ -769,6 +770,7 @@ gesture time ($\Delta t_g$).
 \end{figure}
 
 \section{Expressive Feature Extraction}
+\label{sec:expressive_feature_extraction}
 
 Luck and Toiviainen \cite{luck2010}
 studied the correlation between the kinematic features of conductors' hands
@@ -2267,20 +2269,212 @@ and the polynomial regression filter results
 would loosen the coupling between the modules.
 
 \subsection{Implemented Features}
+\label{sec:implemented_features}
+
+Since the communication modeled in
+a conductor follower system
+happens between people --
+the conductor and the musicians --
+having a "complete" solution to it
+would essentially require passing
+the \textit{Turing test} \cite{Turing1950}
+in a conducting situation.
+Examined from this perspective,
+the most significant feature
+lacking from the system
+is a communication channel outside
+of conducting gestures,
+as discussed in section \ref{sec:design_rationale}.
+A practical viewpoint will, however,
+reveal that this feature is only
+complementary to other features,
+as it can only be used to adjust
+features that are already present in the system.
+Implementing a system that could actually
+learn new features based on conductor feedback
+is unfeasible with current technology.
+
+Sousa lists eight different
+conducting emblem categories in \cite{sousa1988}:
+beat patterns, dynamics, styles,
+preparations, releases, fermatas/holds,
+tempo changes, and phrasings.
+Out of these,
+beat patterns, dynamics, styles,
+tempo changes, and phrasings are supported at some level,
+and will be discussed in more detail in
+the next section. % \ref{sec:feature_quality}.
+Looking at the remaining features,
+the biggest shortcoming of the system
+is the lack of support for
+holds and grand pauses (fermatas).
+Missing a fermata will cause the system
+to drift off badly,
+and will be a much more severe problem
+than missing almost any other expressive feature.
+Also, depending on the style and timing of a release gesture,
+it might disrupt tempo following.
+Supporting preparations, on the other hand,
+would only serve a pedagogical or entertainment value,
+as the system will not miss notes
+unless such behavior is explicitly implemented.
+
 
 \subsection{Feature Quality}
+\label{sec:feature_quality}
+
+Utilizing the category division by Sousa \cite{sousa1988},
+referred to in the previous section,
+the following conducting emblem categories are
+supported at some level:
+beat patterns, dynamics, styles,
+tempo changes, and phrasings.
+Dynamics, styles, and phrasings
+are not directly interpreted,
+but are indirectly supported by the
+expressive feature extraction
+(section \ref{sec:expressive_feature_extraction})
+and synthesis patch switching mechanisms
+(section \ref{sec:patch_switching}).
+The mechanism is somewhat limited,
+but gives some level of freedom to modifying
+the expressive features of the score.
+
+Beat patterns are supported on the timing level,
+i.e. the system understands that the beat timing
+can vary between different conducting patterns
+in the same time signatures.
+It does not, however,
+try to use the directional information of the pattern
+to make the following more robust.
+This is partly a design choice,
+as conductors will often not beat
+the "textbook" patterns very precisely,
+but instead use more freedom in their movements
+to convey expressive features \cite{try to find a cite}.
+Thus, the directional information
+can not be relied on too much
+in beat classification,
+but should rather be used as a complementary data source.
+
+Tempo change support is the most tested feature in the system.
+It was evaluated by a professional conductor,
+and based on this very informal evaluation,
+it was concluded to perform very well with
+moderate tempo changes.
+Abrupt changes did, however,
+sometimes cause classification problems,
+causing the follower to lose synchronization with the conductor.
+Also, if the score file contained tempo changes,
+which the conductor did not follow,
+it made the situation even worse,
+as the expectations of the system differed
+largely from the conducted tempo.
 
 \section{Future work}
+\label{sec:future_work}
 
-\fixme{Write}
+As discussed in section \ref{sec:implemented_features},
+creating the "perfect" conductor follower
+is something that is not going to be achieved
+in the foreseeable future.
+This means that there will always be
+something to improve in the system.
+However, some features and improvements
+will be more beneficial than others,
+and this section attempts to address
+the most relevant ones.
+
+\subsection{Machine Learning}
+
+Machine learning was not used in this system,
+mostly because it would have implied having
+to train the system for each user separately,
+or having to collect a large amount of training data.
+However, if this approach would be taken,
+it would definitely be possible to improve
+many of the features implemented.
+Due to the modular approach taken
+in designing the overall architecture of the system,
+incorporating machine learning methods into the system
+should be feasible without introducing too much technical debt.
+
+Based on previous work,
+on of the most likely parts of the system
+to use machine learning in,
+would be gesture detection \cite{Fabiani2012}.
+Also, expressive score manipulation 
+is a subject where machine learning
+has been used before \cite{Kirke2012}.
 
 \subsection{Motion Tracking}
 
-\fixme{Write}
+Improvements in the motion tracking methods
+could both improve existing features,
+and introduce new features to the system.
+As all of the continuous user input to the system 
+is provided via the motion tracking interface,
+limited capabilities in motion tracking
+will cause a bottleneck to the capabilities of the whole system.
+
+From existing features,
+the beat tracking method is one of the most
+simplified ones with regards to motion tracking.
+This is due to the fact that it only uses
+the times of detected beats,
+and dismisses all other information
+related to the beat pattern trajectory.
+However, using the directional information
+for beat classification is not a very simple problem,
+as discussed in section \ref{sec:feature_quality}.
+While other methods could most probably provide
+improvements to the system,
+using machine learning and conductor specific training
+is probably the most feasible way to improve beat tracking.
+
+As for supporting very specific gestures,
+such as holds or preparations,
+there is almost no support present in the system.
+While implementing such features requires
+having methods for detecting the gestures
+from the motion input,
+they also require work in other parts of the section.
+As the system does not include anything
+closely related to the problem at hand,
+future implementations of such features
+are free to use any applicable methods available.
 
 \subsection{Score Analysis}
 
-\fixme{Write}
+Several methods for applying expressive features
+to musical scores and performances
+have been developed over the years \cite{Kirke2012}.
+They all analyze the score,
+and produce \textit{expressive} modifications to it,
+based on the results of the analysis.
+Using such analysis in tandem with
+the input from the conductor,
+could possibly lead to much improved and
+more human like expressiveness.
+
+The current system largely uses expressive features
+built into the MIDI score,
+while the aforementioned systems analyze "raw" scores,
+with no dynamic or timing variations built in.
+While the expressive feature in the MIDI score
+work well when the tempo is constant --
+the quality of the MIDI file setting the baseline for the quality --
+changes in tempo can produce unsatisfactory results.
+The problem is mostly caused by the
+non-linear part of the tempo function
+(see section \ref{sec:tempo_function}),
+which does not present a musically
+satisfactory result \cite{Kirke2012, Desain1993}.
+Also, the absolute tempo of the piece has an effect
+on expressive timing \cite{Desain1994},
+which is not taken into account in the current system.
+Using a more "intelligent" system to make tempo adjustments,
+would definitely be an improvement.
 
 \section{Conclusions}
 
