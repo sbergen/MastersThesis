@@ -7,6 +7,8 @@
 		shortest_note_threshold: 0.05,
 		longest_note_threshold: 1.0,
 		
+		channels: [ 1, 2 ],
+		
 		patches: [
 			patch {
 				name: "perf-rep staccato"
@@ -76,6 +78,9 @@
 	
 	instrument {
 		name: "piano",
+		
+		channels: [ 3, 4 ],		
+		
 		patches: [
 			patch {
 				name: "regular"

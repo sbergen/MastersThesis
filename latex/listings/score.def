@@ -21,9 +21,6 @@ score {
       instrument: "piano"
     },
     track {
-      instrument: "ignore"
-    },
-    track {
       name: "piano left hand",
       instrument: "piano"
     }
