@@ -1,3 +1,30 @@
+\chapter{Source Code Availability and Compatibility}
+
+At the time of publishing,
+the source code for the implementation is freely
+available on \textit{GitHub},
+at \url{https://github.com/sbergen/ConductorFollower}.
+The Project was developed using
+\textit{Microsoft Visual Studio 2010} (VS2010)
+on \textit{Windows 7}.
+The implementation uses some of the C++11 features
+available in VS2010, but does not by default use any
+Windows specific features.
+Thus it should be rather trivial to port
+the code to any other platform with:
+\begin{itemize}
+\item A compiler that supports the used C++11 features,
+\item support for OpenNI,
+\item support for Juce, and
+\item support for Boost.
+\end{itemize}
+Porting will, however,
+require creating a build script for the given platform.
+Feasible platforms include at least
+\textit{OS X} and \textit{Linux}.
+Pull requests for compatibility fixes for different platforms
+are highly welcome.
+
 \chapter{DSL Examples}
 \label{appendix:dsl_samples}
 
