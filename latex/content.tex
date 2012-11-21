@@ -795,76 +795,77 @@ convey higher levels of expressivity.
 Based on the results by Luck and Toiviainen \cite{luck2010},
 Sousa \cite{sousa1988},
 and experimentation,
-a set of kinematic features were selected for extracting
+a set of kinematic features was selected for extracting
 expressive features out of the motion data.
 These features are described in this section.
+When analyzing the motion features,
+the dimensionality of all variables
+(position, speed, acceleration, and jerk)
+is reduced to two dimensions,
+ignoring backward and forward movements.
+The reason for this can be found from the
+hand tracking algorithm,
+which will often interpret changes in
+the shape and angle of the hand
+as forward or backward movements.
+These "false" movements produced unexpected
+results if included in the analysis.
 
-\subsection{Velocity Based Features}
+\subsection*{Windowed Trajectory Length}
 
-When analyzing the velocity of the conductor's hand,
-its dimensionality is reduced to two dimensions.
-This ignores backward and forward movements,
-some of which are caused by changes in the shape of the hand.
-Once the dimensionality has been reduced,
-two features are extracted from the values:
-peak velocity and windowed standard deviation.
-Both values are calculated over an averaging time ($t_a$)
-of about 700ms.
-This value causes averaging over single beat gestures.
-\fixme{Make times dynamic, describe this better?}
-
-The first feature is a filtered peak velocity.
-The absolute velocity is first filtered with a short EMA filter,
-applying a small amount of smoothing on the value.
-The smoothed value is then fed to a peak holder,
-who's length is derived from $t_a$.
-The following findings acted as
-motivation for using the peak velocity as an expressive feature:
-The velocity of the right hand showed a
+The windowed trajectory length measures
+the overall amplitude of the hand movement over a
+given time window.
+The length of the window is set to one second,
+in order to give sufficient averaging
+over beat gestures.
+The trajectory length over a given time
+can also be interpreted as the average absolute speed
+over the same time window.
+However, using the positional information
+to derive this metric produces more accurate results,
+as the results of the polynomial regression analysis
+are more sensitive to noise in the data.
+In addition to the size of the conducting pattern
+being shown to be a good indicator of dynamics in \cite{sousa1988},
+the velocity of the right hand showed a
 high correlation with \textit{power}
-in \cite{luck2010},
-and the size of the conducting pattern
-was shown to be a good indicator of dynamics in \cite{sousa1988}.
-The size of the conducting pattern is linked
-to the peak velocity,
-as the only way to conduct a larger pattern in the same time
-is to use a greater velocity.
+in \cite{luck2010}.
+Therefore, using the windowed trajectory length
+as an expressive feature is well justified.
 
-The second velocity based parameter is the
-windowed standard deviation of the velocity ($S_N(v)$).
-As calculating the standard deviation
-already provides a lot of "smoothing",
-no additional filtering is required here.
-The window size for the calculation
-is derived from $t_a$.
+\subsection*{Windowed Standard Deviation of Velocity}
+
+The windowed standard deviation of the absolute velocity ($S_N(v)$)
+measures how continuous the movement of the hand is.
+The value for $N$ defines the measurement period,
+and is derived from an analysis time
+that provides sufficient averaging over beat gestures:
+about 700 milliseconds.
 While \cite{luck2010} doesn't include any results
 to back up using $S_N(v)$ as an expressive feature,
 \cite{sousa1988} describes several conducting emblems
 related to the playing style on the staccato--legato axis,
 which include the variability of velocity as an integral component.
 
-\subsection{Jerk Based Features}
+\subsection*{Filtered Peak Jerk}
 
-As in the velocity based features,
-the dimensionality of the measured jerk
-is reduced to two dimensions.
+The values for jerk produced by
+the polynomial regression filter
+are rather sensitive to noise,
+and thus need more filtering than the other features.
 The absolute value of the two dimensional jerk
-is then filtered with an EMA
-and fed to a peak holder.
-Due to the high variability of the values,
-more smoothing in both the EMA and the peak holder is required,
-compared to the respective filters used in calculating the peak velocity,
-the filter lengths being about twice as long.
-
-The filtered peak jerk is the only jerk based feature used
-for expressive feature purposes.
+is first filtered with an
+exponential moving average filter
+and subsequently fed to a peak holder.
+Due to the large variability in the absolute jerk,
+the hold time of the peak holder has to be large:
+around 1300 milliseconds.
 Right hand jerk was shown to have a
 strong correlation with \textit{power} in \cite{luck2010}.
-Also,
-wen making \textit{forceful} movements with the hands,
+Also, wen making \textit{forceful} movements with the hands,
 as some conducting styles were described in \cite{sousa1988},
 the filtered peak jerk has large values.
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Score Following}
@@ -1560,11 +1561,28 @@ in the conductor context.
 
 \textit{Attack}, however,
 is synthesized from a combination
-of the time to the next note
-and the \textit{velocity dynamic range}
+of the time to the next note,
+and the \textit{standard deviation of velocity}
+and \textit{windowed trajectory length}
 in the conductor context.
-The velocity dynamic range is used as the basis
-for the attack.
+Experimentation showed that
+the standard deviation of velocity
+strongly correlated with
+the windowed trajectory length,
+and to achieve more control over the system,
+this correlation was taken into account:
+The basis for attack
+\begin{equation}
+a = \frac{S_N(v)}{(1 - \alpha) + \alpha \, l_t},
+\end{equation}
+where $S_N(v)$ is the standard deviation of velocity,
+$\alpha$ the level of correlation desired,
+and $l_t$ the windowed trajectory length.
+All variables except $a$
+have values within \ccinterval{0, 1},
+a larger $\alpha$ causing $l_t$ to have
+greater effect on $a$.
+
 Additionally, if the time to the next note is below a given threshold,
 a reduction to the attack is applied.
 This tries to prevent playing in a staccato style in fast passages,
@@ -1572,7 +1590,7 @@ if the notes are short, but not separated from each other in the score.
 This relies on the fact that most MIDI scores are written
 with some separation between notes in staccato passages.
 
-An addition parameter, which does not affect the patch selection,
+An additional parameter, which does not affect the patch selection,
 but is related to the conductor context,
 is \textit{velocity}.
 The reason this is an exception,
@@ -1580,16 +1598,15 @@ is that some patches are \textit{layered},
 which means that the synthesis engine
 uses different samples,
 based on the velocity of the notes played.
-The \textit{velocity peak} in the conductor context
+The \textit{windowed trajectory length} in the conductor context
 is used to calculate the final velocity
 \begin{equation}
-v = \alpha \, v_c + \beta \, v_s,
+v = \alpha \, v_c + (1 - \alpha) \, v_s,
+\label{eq:veclocity_construction}
 \end{equation}
 where $\alpha$ is the weight given to the conductor context,
 $v_c$ the velocity in the conductor context,
-$\beta$ the weight given to the score,
-$v_s$ the velocity in the score,
-and $\alpha + \beta = 1$.
+and $v_s$ the velocity in the score.
 Finally, $v$ is limited to be in the range
 \ccinterval{v_{min}, v_{max}}, where $v_{min} > 0$,
 in order to not be muted or exceed the maximum velocity.
@@ -1599,9 +1616,19 @@ that the values for all the parameters
 in the conductor context,
 have already been scaled and clamped
 to be in the range \ccinterval{0, 1}.
-Adjusting the values used for the scaling operation
-will also adjust the sensitivity of the system.
-The values used in the implementation were
+The sensitivity of the system
+can be adjusted by adjusting all parameters
+except velocity using the equation
+\begin{equation}
+p' = \dfrac{1}{2} + \alpha \left ( p - \dfrac{1}{2} \right ),
+\end{equation}
+where $p'$ is the scaled parameter,
+$\alpha \in \ccinterval{0, 1}$ the sensitivity,
+and $p$ the original value of the parameter.
+The sensitivity of velocity can be adjusted
+by changing the value of $\alpha$
+in equation \ref{eq:veclocity_construction} instead.
+All values used in the implementation were
 adjusted based on informal testing.
 
 \subsection{Patch Distance Function}
