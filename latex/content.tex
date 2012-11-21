@@ -1296,21 +1296,20 @@ The offset approaches zero as $t$ approaches $t' + t_c$.
 
 \subsection{Tempo Changes}
 
-\fixme{Revise once the method use is final, current text is obsolete!}
-
 Tempo changes in the score are taken into account
 by changing the tempo function accordingly.
 When the tempo changes by a factor $a$,
 new values for $\Delta v$ and $\Delta b$ are calculated,
 and the tempo function is reset.
-The new change in tempo
+The new value for the required change in tempo
 \begin{equation}
 \Delta v = a \left( v_i' + \Delta v' \right) - v'(t),
+\label{eq:tempo_change_change}
 \end{equation}
 where $v_i'$ is the previous initial tempo,
 $\Delta v'$ the previous tempo change,
 and $v'(t)$ the current tempo.
-The new offset
+The new value for the offset
 \begin{equation}
 \Delta b = \Delta b'(t),
 \end{equation}
@@ -1339,6 +1338,26 @@ as $t$ approaches $t_c'$:
 \end{equation}
 Thus it is not feasible to use equation \ref{eq:tempo_change_bad_tc},
 but we instead define $t_c = t_c'$.
+
+In some situations tempo changes can be very difficult
+for the conductor to follow,
+causing unexpected results when the tempo in the score changes.
+An example of this could be a gradual decrease in tempo
+followed by an instant return to the original tempo.
+If the conductor were to conduct the decelerando
+without changing conducting tempo,
+the return to the original tempo would cause
+a sudden increase in tempo.
+Since this issue is highly dependent on the score used,
+a user adjustable parameter is provided,
+which scales the change factor $a$ in equation
+\ref{eq:tempo_change_change}:
+\begin{equation}
+a' = 1 + \alpha \left( a - 1 \right),
+\end{equation}
+where $a'$ is the new value for $a$,
+and $\alpha \in \ccinterval{0, 1}$
+the desired fraction of tempo changes to follow.
 
 \subsection{Relaxed Tempo Following}
 
