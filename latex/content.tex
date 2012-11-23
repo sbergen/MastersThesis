@@ -1143,6 +1143,7 @@ are taken into account.
 Each tempo estimate ($v_i$) not older than $t_{co}$ is given a weight coefficient
 \begin{equation}
 c_i(\Delta t) = 1 - \frac{\Delta t}{t_{co}},
+\label{eq:tempo_filter_weight_coef}
 \end{equation}
 where $\Delta t$ is the absolute offset to the current time.
 The target tempo is then the
@@ -1403,6 +1404,14 @@ only a fraction of the beat offset $\Delta b$ is corrected,
 modifying the coefficient for the non-linear 
 part of the tempo function, defined in equation
 \ref{eq:non_linear_coef}.
+
+The fraction discussed above,
+together with the tempo filter cutoff time
+presented in equation \ref{eq:tempo_filter_weight_coef},
+mostly define the sensitivity of the tempo following method.
+These two are made user-adjustable parameters,
+so they can be adjusted based on both the score
+and the user's preferences.
 
 \section{Start Tempo Estimation}
 \label{sec:meth:start_tempo_estimation}
