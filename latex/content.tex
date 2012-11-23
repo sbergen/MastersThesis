@@ -901,7 +901,7 @@ three different tasks:
 beat classification, tempo adjustment and start tempo estimation.
 
 \section{Physical Time and Score Positions}
-\label{sec:meth:read_and_score_time}
+\label{sec:meth:real_and_score_time}
 
 When modifying the playback speed of a musical score
 that has tempo variations already build into it,
@@ -2105,11 +2105,13 @@ this can be simplified to
 \subsection{Dimensional Analysis}
 
 Because of the various time bases and units used
-(see section \ref{sec:meth:read_and_score_time}),
-using compile time dimensional analysis using Boost.Units \cite{needed?}
+(see section \ref{sec:meth:real_and_score_time}),
+using compile time dimensional analysis using Boost.Units
+\cite{BoostUnits}
 eased the development process.
-Boost.Units uses zero runtime overhead C++ template metaprogramming \cite{abrahams?}
-techniques to check during compile time,
+Boost.Units uses zero runtime overhead
+C++ template metaprogramming techniques \cite{Abrahams2004}
+to check during compile time,
 that all calculations have the proper dimensions.
 This does not guarantee dimensionally proper calculations all the time
 (e.g. dimensionless units may cause errors),
@@ -2179,7 +2181,8 @@ maximum execution interval.
 
 \subsection{Lockfree Ringbuffer}
 
-The lockfree ringbuffer provided by the Boost.Lockfree library \cite{required?}
+The lockfree ringbuffer provided by
+the Boost.Lockfree library \cite{BoostLockfree}
 is used for most of the lockfree inter-thread communication.
 This includes passing events from the motion capture thread
 to the MIDI thread, and logging from RT threads using the Butler thread.
