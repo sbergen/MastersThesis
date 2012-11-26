@@ -4,7 +4,7 @@ At the time of publishing,
 the source code for the implementation is freely
 available on \textit{GitHub},
 at \url{https://github.com/sbergen/ConductorFollower}.
-The Project was developed using
+The project was developed using
 \textit{Microsoft Visual Studio 2010} (VS2010)
 on \textit{Windows 7}.
 The implementation uses some of the C++11 features
@@ -19,11 +19,21 @@ the code to any other platform with:
 \item support for Boost.
 \end{itemize}
 Porting will, however,
-require creating a build script for the given platform.
+require creating a build script for the given environment,
+as only VS2010 project files are included.
 Feasible platforms include at least
 \textit{OS X} and \textit{Linux}.
 Pull requests for compatibility fixes for different platforms
 are highly welcome.
+
+Sample instrument patches for VSL and their
+respective instrument definition files,
+along with a beat pattern definition file
+can be found from the \texttt{data\_content}
+directory in the repository.
+The instrument patches require
+the \textit{Vienna Special Edition}
+volumes 1, 1+, 2, and 2+.
 
 \chapter{DSL Examples}
 \label{appendix:dsl_samples}
