@@ -331,32 +331,35 @@
 \end{minipage}\\
 \end{tabularx}\\
 % Now we start the main abstract table
+\setlength{\bigstrutjot}{4pt}
 \noindent
 \begin{tabularx}{\textwidth}{|p{3cm}Xlp{2cm}|}
 \hline
-\textbf{\ATAUTHORNAME:} & \multicolumn{3}{l|}{\AUTHOR} \\
+\textbf{\ATAUTHORNAME:} & \multicolumn{3}{l|}{\AUTHOR} \bigstrut[t] \\
 \multicolumn{4}{|l|}{\allowlinebreaks{14.5cm}{\textbf{\ATTITLENAME:}\\
-\ATTITLE\ \ATSUBTITLE}}\\
+\ATTITLE\ \ATSUBTITLE \bigstrut[b] }} \\
 \hline
-\textbf{\ATDATENAME:} & \ATDATE & \textbf{\ATPAGESNAME:} & \PAGES\\
+\textbf{\ATDATENAME:} & \ATDATE & \textbf{\ATPAGESNAME:} & \PAGES \bigstrut \\
 \hline
 \textbf{\ATPROFSHIPNAME:} & \ATPROFSHIP & 
-\textbf{\ATPROFCODENAME:} & \PROFCODE\\
+\textbf{\ATPROFCODENAME:} & \PROFCODE \bigstrut \\
 \hline
 \textbf{\ATSUPERVISORNAME:} &
-\multicolumn{3}{l|}{\allowlinebreaks{11cm}{\ATSUPERVISOR}}\\
+\multicolumn{3}{l|}{\allowlinebreaks{11cm}{\ATSUPERVISOR}} \bigstrut[t] \\
 \textbf{\ATINSTRUCTORNAME:} & 
-\multicolumn{3}{l|}{\allowlinebreaks{11cm}{\ATINSTRUCTOR}}\\
+\multicolumn{3}{l|}{\allowlinebreaks{11cm}{\ATINSTRUCTOR}} \bigstrut[b] \\
 \hline
 \multicolumn{4}{|l|}{\allowlinebreaks{14.5cm}{%
 % The abstract text is here
 \setlength{\parskip}{1ex}%
+\vspace{-0.6\baselineskip} % vspace causes par break
 #2%
-}}\\
+\vspace{0.4\baselineskip}
+}} \\
 \hline
-\textbf{\ATKEYWORDSNAME:} & \multicolumn{3}{p{11cm}|}{\ATKEYWORDS}\\
+\textbf{\ATKEYWORDSNAME:} & \multicolumn{3}{p{11cm}|}{\ATKEYWORDS} \bigstrut \\
 \hline
-\textbf{\ATLANGUAGENAME:} & \multicolumn{3}{l|}{\ATLANGUAGE}\\
+\textbf{\ATLANGUAGENAME:} & \multicolumn{3}{l|}{\ATLANGUAGE} \bigstrut \\
 \hline
 \end{tabularx}
 \end{textblock}}
