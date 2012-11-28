@@ -16,6 +16,7 @@
 % Examples of valid language codes: english (or USenglish), british, 
 % finnish, swedish; and so on.
 \usepackage[finnish,swedish,english]{babel}
+\usepackage{csquotes}
 
 
 % Font selection
@@ -180,6 +181,11 @@ showstringspaces=false,
 showspaces=false,
 showtabs=false,
 }
+
+% left aligned chapter titles
+\usepackage{sectsty}
+\chapterfont{\raggedright}
+\allsectionsfont{\raggedright}
 
 % Spelling out numbers
 \usepackage{fmtcount}
