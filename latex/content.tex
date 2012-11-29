@@ -1491,14 +1491,12 @@ and allows placing the virtual microphones at the conductor's podium.
 \subsection{Virtual Studio Technology}
 \label{sec:vst}
 
-Virtual Studio Technology (VST) is
+Virtual Studio Technology (VST) \cite{VST} is
 a virtual instrument and effect plugin architecture created by Steinberg GmbH.
 It is one of the plugin formats that VSL is available in.
 While the plugin API should be considered an implementation detail,
 it can not be completely ignored in the design phase,
 because of the vast effect design choices can have on implementation complexity.
-VST will be referred to in later parts of this document,
-and is thus introduced here.
 
 \section{Score Event Format}
 
@@ -1519,7 +1517,7 @@ the Musical Instrument Digital Interface (MIDI)
 is still one of the most used standards
 for the digital representation of musical events.
 MIDI is also the built-in way to communicate musical events
-in the Virtual Studio Technology (VST) plugin format.
+in the VST plugin format.
 Thus using MIDI as the score format is a natural choice.
 
 A MIDI score contains note, time signature and tempo information.
