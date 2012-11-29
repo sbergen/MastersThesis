@@ -146,7 +146,7 @@ differences in timing that occur over phrases.
 These changes are used by the musician as a means of expression.
 While the average tempo may be steady across a piece of music,
 the length of a transcribed note duration (e.g. quarter note)
-will differ depending on its position in the score.
+differs depending on its position in the score.
 This minute variance in timing has been studied,
 and many studies have concluded,
 that simple parabolic \textit{tempo curves} are not sufficient
@@ -253,7 +253,7 @@ This section provides a brief overview on how these four features
 have been implemented in previous systems.
 As more comprehensive overviews can be found elsewhere --
 one of the latest and most detailed being \cite{Fabiani2012} --
-the overview here will be kept brief.
+the overview here is kept brief.
 
 \subsection{Sensors for Gesture Capture}
 
@@ -327,14 +327,14 @@ However, it is possible to also extract
 higher level features from the conductor's movement.
 While the output of the analysis differs from
 the lower level feature extraction,
-the methods used for analysis will be somewhat similar,
+the methods used for analysis are somewhat similar,
 using methods such as heuristics, HMMs or ANNs.
 The difference between these modes of control
-will be discussed in more depth in the next section.
+is discussed in more depth in the next section.
 
 \subsection{Performance Control}
 
-Fabiani et al. define three levels of performance control in \cite{Fabiani2012}:
+Fabiani et al. \cite{Fabiani2012} define three levels of performance control:
 direct control, model-based performance control,
 and high-level control via semantic descriptors.
 The distinction between these modes is necessarily fuzzy;
@@ -350,7 +350,7 @@ for achieving expressive phrasing.
 In model-based systems
 there is always a trade-off between stability and sensitivity --
 i.e. if much weight is put on the model,
-the system will not be very sensitive to the input,
+the system is not very sensitive to the input,
 while too much weight on the input
 can cause very large deviations from the model.
 Most of the previously implemented conductor following systems
@@ -417,7 +417,7 @@ summarized with the following statements:
 \item The system should produce sound that resembles a real orchestra.
 \end{enumerate}
 Out of these goals,
-only the \spellRefOrdinal{item:usable_without_equipment}
+only the \spellRefOrdinal{item:usable_without_equipment} one
 is easily evaluated,
 while the rest are more complex,
 at least point \ref{item:sould_react_like_real_orchestra}
@@ -435,12 +435,12 @@ For this reason, a plugin component is required.
 Since the plugin standard used in the project
 (discussed in more detail in section \ref{sec:vst})
 provides a method of creating user interfaces (UIs),
-the visualization will be part of the plugin.
+the visualization is part of the plugin.
 This leaves us with three modules
 to be implemented:
 the \textit{Motion Tracker}, \textit{Score Follower} and \textit{Plugin}.
-A a data flow oriented overview of the architecture
-can be found in figure \ref{fig:architecture}.
+A data flow oriented overview of the architecture
+is presented in figure \ref{fig:architecture}.
 
 \begin{figure}
 \begin{center}
@@ -457,7 +457,7 @@ implemented or specified in this project.
 \end{center}
 \end{figure}
 
-The \textit{Motion Tracker}
+The Motion Tracker
 takes depth sensor input,
 analyzes the body movements of the conductor,
 and produces a stream of events and
@@ -468,7 +468,7 @@ which are relevant to conductor following.
 
 The output of the Motion Tracker is then analyzed
 for both tempo following and expressive synthesis purposes
-by the \textit{Score Follower}.
+by the Score Follower.
 To do this, the Score Follower needs additional
 data, provided by the user via data files.
 This data includes
@@ -491,7 +491,7 @@ together with the visualization data.
 The Score Follower also exposes its status,
 and a set of options for the Plugin to use.
 
-Finally, the \textit{Plugin}
+Finally, the Plugin
 passes on the score events and parameters
 to the synthesis component in the format required
 by the plugin API.
@@ -594,7 +594,7 @@ m_i =
 \mathrm{Peak} & \text{if } \sgn{y_{i-1}} > \sgn{y_{i}} ,
 \end{cases}
 \end{equation}
-where $y_i$ the value of the function at time $i$.
+where $y_i$ is the value of the function at time $i$.
 
 \subsection{Exponential Moving Average}
 
@@ -603,7 +603,7 @@ the exponential moving average (EMA)
 gives two benefits in our use case:
 \begin{itemize}
 \item The EMA reacts to sudden changes faster than a SMA,
-while sill offering good averaging.
+while still offering good averaging.
 \item An EMA filter with a large amount smoothing is computationally much
 lighter compared to a SMA filter providing a similar amount of smoothing,
 as seen below.
@@ -629,8 +629,8 @@ P_i = \max \left( y_i \ldots y_{i - n} \right),
 \end{equation}
 where $y_i$ is the \nth[i] observation,
 and $n$ the length of the peak holder.
-High values of $n$ will provide a smoother output,
-but will not react to sudden decreases in magnitude as fast.
+High values of $n$ provide a smoother output,
+but do not react to sudden decreases in magnitude as fast.
 
 \subsection{Standard Deviation of the Sample}
 
@@ -648,7 +648,7 @@ variability of the input values over a window of $N$ samples.
 
 The aim of the beat detection system is
 to work with as many conducting styles as possible.
-The approach taken here will thus not be
+The approach taken here is thus not
 based on specific beat patterns or gestures.
 Many previous systems have been based on
 using machine learning techniques with
@@ -805,10 +805,10 @@ is reduced to two dimensions,
 ignoring backward and forward movements.
 The reason for this can be found from the
 hand tracking algorithm,
-which will often interpret changes in
+which often interprets changes in
 the shape and angle of the hand
 as forward or backward movements.
-These "false" movements produced unexpected
+These "false" movements produce unexpected
 results if included in the analysis.
 
 \subsection*{Windowed Trajectory Length}
@@ -878,7 +878,7 @@ based on the \textit{beat events} extracted
 from motion data.
 In essence, the task consists of establishing a mapping between
 wall clock time and the relative timestamps of score events.
-This mapping is based the conducted tempo of the piece,
+This mapping is based on the conducted tempo of the piece,
 which is formed based on score data and beat events.
 
 The aim of the score following system
@@ -887,15 +887,15 @@ when reacting to a conductor.
 This implies that
 \begin{enumerate}
 \item The orchestra should not be confused by changes in the conducting pattern. \label{follow_point:pattern}
-\item Extra beats in "unexpected" positions will not be acted upon. \label{follow_point:unexpected}
-\item Sudden changes in tempo will not be immediately followed.
+\item Extra beats in "unexpected" positions are not acted upon. \label{follow_point:unexpected}
+\item Sudden changes in tempo are not immediately followed.
 \end{enumerate}
 Items \ref{follow_point:pattern} and \ref{follow_point:unexpected} require
 that the tempo follower must have knowledge of all the possible
 conducting patterns for each time signature,
 and that it must be able to relate each beat to some beat in the pattern.
 In this chapter,
-we will first formalize the different time bases used,
+we first formalize the different time bases used,
 and then deconstruct score following into
 three different tasks:
 beat classification, tempo adjustment and start tempo estimation.
@@ -909,21 +909,21 @@ it is important to precisely define the concepts of time used.
 Wall-clock time is the monotonically progressing concept of time
 most familiar to humans.
 It is the time counted by a regular clock,
-and will be referred to as physical time,
+and is referred to as physical time,
 its dimension denoted by $T$ and quantities with $t$.
 
 Score positions, on the other hand,
 are slightly more complex.
 Musical events in a fully defined score have two time bases:
 \begin{enumerate}
-\item Musical time has the base unit of beats, but also includes a time varying derived unit of bars. Any position in the score can thus be expressed as either a beat offset, or a combination of bars and beats. Its dimension is denoted with $B$ and quantities with $b$.
+\item Musical time has the base unit of beats, but it also includes a time varying derived unit of bars. Any position in the score can thus be expressed as either a beat offset, or a combination of bars and beats. Its dimension is denoted with $B$ and quantities with $b$.
 \item Score time has the base unit of seconds. This is an offset from the beginning of the score if the original tempo is followed. Its dimension is denoted with $\Phi$ and quantities with $\varphi$.
 \end{enumerate}
 A score position is thus defined as
 $ \tupledef{P}{b, \varphi}, $
-and variables will be denoted with a $p$.
+and variables are denoted with a $p$.
 
-Mapping between physical time and score positions will be denoted with
+Mapping between physical time and score positions is denoted with
 the mapping operator
 $ \mathcal{M} : T \rightarrow P, $
 and it's inverse
@@ -936,7 +936,7 @@ and can thus be applied reliably only to past events.
 It is also possible to use the mapping operator for
 estimating future events.
 These estimates, however,
-may produce results that differ from
+may produce results that differ
 from future mapping operations,
 and may only be used in special cases.
 
@@ -1019,7 +1019,7 @@ as being in prior bars are removed.
 Next, the match quality for each beat pattern is assessed:
 \begin{enumerate}
 \item Let the quality of a match between a detected beat
-and a beat in a pattern
+and a beat in a pattern be
 \begin{equation}
 q(i, j) = -\vert \mathbf{h}_i - \mathbf{p}_j \vert.
 \end{equation}
@@ -1101,7 +1101,7 @@ and $a$ the factor determining how much better the
 estimate has to be compared to its neighbours.
 \item Considering the number of beats in most beat patterns,
 three or more beats should give a good enough estimate
-(or else there will be no hope of ever getting one).
+(or else there is no hope of ever getting one).
 Therefore all beats after the second are always classified.
 \end{itemize}
 
@@ -1159,7 +1159,7 @@ v_t = \frac{\sum c_i v_i}{\sum c_i}.
 The parameters $\Delta b$ and $v_t$
 form the basis for tempo adjustment.
 The target of the adjustment is to be
-at the the tempo $v_t$,
+at the tempo $v_t$,
 and having made a position adjustment of $\Delta b$
 after a catchup time $t_c$.
 As can be seen,
@@ -1176,7 +1176,7 @@ contributing to the total tempo change,
 and $v_b(t)$ a non-linear function contributing
 to the gross position change
 without affecting the final tempo.
-A visualization of the tempo function can be found
+A visualization of the tempo function is presented
 in figure \ref{fig:tempo_function}.
 The values of $t$ in the following functions are relative to the
 beat classification time,
@@ -1213,7 +1213,7 @@ v_t(t) =
 \end{cases}
 \end{equation}
 Since the tempo is changed gradually,
-it will not immediately match the target tempo.
+it does not immediately match the target tempo.
 The difference to the target tempo causes
 a cumulative difference in position,
 which can be simply solved by integrating over time:
@@ -1231,7 +1231,7 @@ causing a gross difference of
 \int_t^{t + t_c} v_t - \Delta v \, \mathrm{d}t =
 -\frac{\Delta v \, t_c }{2}.
 \end{equation}
-This difference in position will need to be taken into account
+This difference in position needs to be taken into account
 when defining $v_b(t)$,
 which should compensate for the position difference.
 
@@ -1264,7 +1264,7 @@ the gross difference in position caused by $v_b$ over $t_c$
 \frac{2 \, a \, t_c}{\pi}.
 \end{equation}
 To completely correct the position after $t_c$,
-$v_b$ will need to both compensate for
+$v_b$ needs to both compensate for
 $\Delta b$ and counter the positional change caused by $v_t$,
 giving the equation
 \begin{equation}
@@ -1328,10 +1328,10 @@ t_c = t_c' - t,
 \end{equation}
 where $t_c'$ is the previous value of $t_c$,
 and $t$ the time since the function was last reset.
-However, since $\Delta v$ will be finite in most cases,
+However, since $\Delta v$ is finite in most cases,
 we can see that the coefficient $\frac{\Delta v}{t_c}$
 in equation \ref{eq:tempo_function_tempo_correction}
-will approach infinity,
+approaches infinity,
 as $t$ approaches $t_c'$:
 \begin{equation}
 \lim_{t \to t_c'} \frac{\Delta v}{t_c' - t} = \pm \infty,
@@ -1363,7 +1363,7 @@ the desired fraction of tempo changes to follow.
 \subsection{Relaxed Tempo Following}
 
 Since the tempo adjustment function defined in
-\ref{sec:tempo_function} is non-linear,
+section \ref{sec:tempo_function} is non-linear,
 selecting the catchup time $t_c$ properly is critical.
 To have a consistent state for each beat estimation,
 the adjustment should be fully completed
@@ -1380,13 +1380,13 @@ The tempo adjustment method described above is very strict,
 as it attempts to do a full tempo and position correction
 between each beat.
 In a real life situation
-the timing of the detected beats will often have some
+the timing of the detected beats often have some
 fluctuation over time,
 causing large beat offsets.
 When such an offset is present,
 the non-linear part of the tempo function,
 trying to correct the offset,
-will cause a large temporary change in tempo.
+causes a large temporary change in tempo.
 
 It is not viable to filter the beat offset values,
 as is done with the instantaneous tempi,
@@ -1502,8 +1502,7 @@ because of the vast effect design choices can have on implementation complexity.
 
 In order to play a score,
 the score events need to be provided to the system in some format.
-The objective was to be able to use existing material as much as possible,
-with minimal effort.
+The objective was to be able to use existing material as much as possible.
 The format used in the system combines
 a MIDI score, discussed in section \ref{sec:midi} and
 a terse domain specific language (DSL) based score description format,
@@ -1532,7 +1531,6 @@ Often scores would use the
 even though the string instruments were separated to individual tracks.
 In cases like this it is necessary to be able to manually
 define the instrument to be used with each track.
-See section \ref{sec:score_description_file}.
 
 \section{Patch Switching}
 \label{sec:patch_switching}
@@ -1569,7 +1567,7 @@ Finally, the closest match is selected,
 causing the instrument patch to be changed
 if it differs from the patch currently in use.
 The patch parameter synthesis and distance function
-will be described in the following sections.
+is described in the following sections.
 
 \subsection{Patch Parameter Synthesis}
 
@@ -1676,11 +1674,11 @@ $w_i$ the weight of the \nth[i] parameter,
 $p_{i_t}$ the target for the \nth[i] parameter,
 and $p_i$ the \nth[i] parameter.
 Ultimately, \textit{weight} and \textit{attack}
-were given equal weight,
-while \textit{length} was emphasized.
-As the length parameter described the
+are given equal weight,
+while \textit{length} is emphasized.
+As the length parameter describes the
 longest possible note,
-the distance function for the weight had to also be adjusted
+the distance function for the weight also has to be adjusted
 to give a larger penalty for too short notes:
 \begin{equation}
 d_l =
@@ -1941,7 +1939,7 @@ The usefulness of a result degrades after its deadline.
 \end{description}
 An audio plugin has firm real-time constraints,
 since the result for each block of audio needs to be delivered in time.
-Missing a deadline means that the missed block will not be played back,
+Missing a deadline means that the missed block is not played back,
 causing a glitch in the sound output.
 
 It is important to understand the difference between
@@ -1958,7 +1956,7 @@ implementation is capable of repeatedly processing smaller
 blocks of the audio and produce the output for each block
 given a deadline equal to the block length.
 Throughput based real-time constraints have
-more to do with with the algorithmic complexity
+more to do with the algorithmic complexity
 of the methods used,
 while deadline based constraints
 require special programming techniques on the implementation level.
@@ -1981,7 +1979,7 @@ and another for the UI.
 In addition to these two threads,
 motion capture needs it's own thread,
 and one additional thread is needed for some
-lockfree programming techniques.
+lock-free programming techniques.
 To summarize, the threads are:
 \begin{enumerate}
 
@@ -2018,9 +2016,9 @@ To summarize, the threads are:
 
 Handling time in a multirate, multi-threaded system,
 is not a trivial task.
-The motion capture thread will be in
+The motion capture thread is in
 a blocking state most of the time,
-waking up at a 30Hz frequency to process data
+waking up at a 30 Hz frequency to process data
 provided by the motion capture system.
 The plugin, however, needs to provide MIDI data
 based on the host's audio settings,
@@ -2047,8 +2045,8 @@ events happening in the motion capture and plugin threads.
 Timestamping events in the motion capture thread is straightforward,
 each event simply being timestamped with
 the current timestamp returned by the system.
-The plugin thread will, however,
-require jitter correction to prevent timing problems.
+The plugin thread, however,
+requires jitter correction to prevent timing problems.
 
 \subsection{Jitter Correction}
 
@@ -2087,14 +2085,15 @@ As the actual block length
 \begin{equation}
 \Delta \tau = \tau_e - \tau_b
 \end{equation}
-will differ from the theoretical block length
+differs from the theoretical block length
 $\Delta \tau'$ most of the time,
-this difference will need to be taken into consideration
+this difference needs to be taken into consideration
 when calculating the event sample offset
 \begin{equation}
 \Delta n_e = \frac{\Delta \tau'}{\Delta \tau} (t_e - \tau_b) f_s,
 \end{equation}
-where $t_e$ is the event time. By using equation \ref{eq:theoretical_block_len},
+where $t_e$ is the event time.
+Using equation \ref{eq:theoretical_block_len},
 this can be simplified to
 \begin{equation}
 \Delta n_e = n_b \frac{t_e - \tau_b}{\Delta \tau}.
@@ -2152,7 +2151,7 @@ tempo change & beats per second squared & Derived dimension. \\
 
 A number of utilities are widely used across the application,
 and reserve a mention.
-These are mostly related to lockfree programming techniques.
+These are mostly related to lock-free programming techniques.
 
 \subsection{Event Buffer}
 
@@ -2160,9 +2159,9 @@ The event buffer is probably the most used utility in the implementation.
 It is a container for storing timestamp-event-pairs.
 It allows specifying the internal storage depending on the use case.
 For data that is collected when loading the score,
-a dynamically resizeable container (such as std::vector) can be used,
+a dynamically resizable container (such as std::vector) can be used,
 while buffers used during playback mostly use a statically sized ringbuffer
-to guarantee allocation free operation.
+to guarantee memory allocation free operation.
 Utilities for accessing timestamp-based ranges,
 with all valid combinations of
 bounded, left-bounded, left-open and left-closed are available.
@@ -2170,31 +2169,31 @@ bounded, left-bounded, left-open and left-closed are available.
 \subsection{The Butler Thread}
 
 The butler thread is used for asynchronously running
-tasks that can not be run in an RT-thread.
+tasks that can not be run in an RT thread.
 The butler thread is configured with a maximum execution interval,
-and will check for new tasks and execute them repeatedly,
+and checks for new tasks and executes them repeatedly,
 until terminated.
-The thread will block as necessary to not exceed the
+The thread blocks as necessary to not exceed the
 maximum execution interval.
 
-\subsection{Lockfree Ringbuffer}
+\subsection{Lock-free Ringbuffer}
 
-The lockfree ringbuffer provided by
+The lock-free ringbuffer provided by
 the Boost.Lockfree library \cite{BoostLockfree}
-is used for most of the lockfree inter-thread communication.
+is used for most of the lock-free inter-thread communication.
 This includes passing events from the motion capture thread
 to the MIDI thread, and logging from RT threads using the Butler thread.
-It is an essential utility for lockfree multi-threaded programming.
+It is an essential utility for lock-free multi-threaded programming.
 
 \subsection{Chen \& Burns Buffer}
 
-While the lockfree ringbuffer is a good solution
+While the lock-free ringbuffer is a good solution
 for event-like data,
-better mechanisms exist for sharing a a single
+better mechanisms exist for sharing a single
 instance of data, e.g. a state. 
 For this use, a fully asynchronous reader-writer mechanism
 as described by Chen and Burns \cite{Chen97} was implemented.
-The mechanism allows lockfree access for
+The mechanism allows lock-free access for
 a single writer and a fixed number of readers.
 It uses a number of copies of the data,
 and a set of atomic variables to track
@@ -2208,7 +2207,7 @@ is done by NITE --
 the implementation of which is proprietary --
 there is not much to discuss in this section.
 However, a quick overview on the implementation of the
-polynomial regression filter will be provided.
+polynomial regression filter is provided.
 
 \subsection{The Polynomial Regression Filter}
 
@@ -2280,7 +2279,7 @@ a number of JSON-like \cite{JSON}
 domain specific languages (DSLs) were developed.
 The syntax in all of them is similar,
 only the contained data varying between different formats.
-The formats will be described here briefly.
+The formats are described here briefly.
 
 \subsection{Score Description Files}
 \label{sec:score_description_file}
@@ -2300,7 +2299,7 @@ A score definition file includes the following information:
 An example of a score description file can be found from Appendix \ref{appendix:dsl_samples}.
 For more information on instrument definitions,
 see section \ref{sec:instrument_definition_format},
-and for beat patterns section \ref{sec:instrument_definition_format}.
+and for beat patterns section \ref{sec:beat_pattern_definition_format}.
 The different types of score events are described in detail below.
 
 \subsubsection*{Tempo Sensitivity Events}
@@ -2310,16 +2309,16 @@ A tempo sensitivity event contains the following information:
 \item[Position] The score position to which this sensitivity change applies.
 \item[Sensitivity] A sensitivity value in the range $0 \ldots 1$.
 \end{description}
-The event will cause the catchup time $t_c$,
+The event causes the catchup time $t_c$,
 as described in section \ref{sec:tempo_function},
 to be adjusted to provide a different level of sensitivity in tempo following.
-A low sensitivity will lead to a long $t_c$,
+A low sensitivity leads to a long $t_c$,
 whereas a high sensitivity translates to a short $t_c$.
 
 \subsection{Instrument Definition Files}
 \label{sec:instrument_definition_format}
 
-The purpose of instrument definition files,
+The purpose of instrument definition files
 is to provide the necessary data for
 mapping expressive parameters to different
 instrument patches.
@@ -2387,7 +2386,7 @@ tracks the motions of the user,
 analyses them,
 and plays back a modified score
 via a synthesis engine.
-The system will be evaluated from
+The system is evaluated from
 \spellRef{item:last_evaluation_perspective}
 different perspectives:
 \begin{enumerate}
@@ -2399,8 +2398,7 @@ different perspectives:
 
 \subsection{Architecture}
 
-The architecture was designed largely
-based on the the
+The architecture was designed largely based on the
 real-time computing and threading
 restrictions discussed
 in section \ref{sec:real_time_and_threading}.
@@ -2484,7 +2482,7 @@ tempo changes, and phrasings.
 Out of these,
 beat patterns, dynamics, styles,
 tempo changes, and phrasings are supported at some level,
-and will be discussed in more detail in
+and are discussed in more detail in
 the next section. % \ref{sec:feature_quality}.
 Looking at the remaining features,
 the biggest shortcoming of the system
@@ -2492,13 +2490,13 @@ is the lack of support for
 holds and grand pauses (fermatas).
 Missing a fermata will cause the system
 to drift off badly,
-and will be a much more severe problem
+and is a much more severe problem
 than missing almost any other expressive feature.
 Also, depending on the style and timing of a release gesture,
 it might disrupt tempo following.
 Supporting preparations, on the other hand,
 would only serve a pedagogical or entertainment value,
-as the system will not miss notes
+as the system does not miss notes
 unless such behavior is explicitly implemented.
 
 
@@ -2506,7 +2504,6 @@ unless such behavior is explicitly implemented.
 \label{sec:feature_quality}
 
 Utilizing the category division by Sousa \cite{sousa1988},
-referred to in the previous section,
 the following conducting emblem categories are
 supported at some level:
 beat patterns, dynamics, styles,
@@ -2530,7 +2527,7 @@ It does not, however,
 try to use the directional information of the pattern
 to make the following more robust.
 This is partly a design choice,
-as conductors will often not beat
+as conductors often do not follow
 the "textbook" patterns very precisely,
 but instead use more freedom in their movements
 to convey expressive features,
@@ -2588,7 +2585,7 @@ to use machine learning in,
 would be gesture detection \cite{Fabiani2012}.
 Also, expressive score manipulation 
 is a subject where machine learning
-has been used before \cite{Kirke2012}.
+has been used earlier \cite{Kirke2012}.
 
 \subsection{Motion Tracking}
 
@@ -2598,7 +2595,7 @@ and introduce new features to the system.
 As all of the continuous user input to the system 
 is provided via the motion tracking interface,
 limited capabilities in motion tracking
-will cause a bottleneck to the capabilities of the whole system.
+cause a bottleneck to the capabilities of the whole system.
 
 From existing features,
 the beat tracking method is one of the most
@@ -2621,7 +2618,7 @@ there is almost no support present in the system.
 While implementing such features requires
 having methods for detecting the gestures
 from the motion input,
-they also require work in other parts of the section.
+they also require work in other parts of the system.
 As the system does not include anything
 closely related to the problem at hand,
 future implementations of such features
