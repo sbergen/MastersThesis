@@ -1270,7 +1270,7 @@ giving the equation
 \begin{equation}
 \Delta b_{v_b} = - \left( \Delta b + \Delta b_{v_t} \right) .
 \end{equation}
-Thus, applying equation \ref{eq:non-linear_tempo_func_total},
+Thus, applying equation \eqref{eq:non-linear_tempo_func_total},
 we can solve $a$ as
 \begin{equation}
 \label{eq:non_linear_coef}
@@ -1315,7 +1315,7 @@ The new value for the offset
 \Delta b = \Delta b'(t),
 \end{equation}
 where $\Delta b'(t)$ is the previous offset function
-as defined in equation \ref{eq:tempo_function_offset_function},
+as defined in equation \eqref{eq:tempo_function_offset_function},
 is expressed in beats,
 and is thus not affected by the tempo change.
 
@@ -1330,14 +1330,14 @@ where $t_c'$ is the previous value of $t_c$,
 and $t$ the time since the function was last reset.
 However, since $\Delta v$ is finite in most cases,
 we can see that the coefficient $\frac{\Delta v}{t_c}$
-in equation \ref{eq:tempo_function_tempo_correction}
+in equation \eqref{eq:tempo_function_tempo_correction}
 approaches infinity,
 as $t$ approaches $t_c'$:
 \begin{equation}
 \lim_{t \to t_c'} \frac{\Delta v}{t_c' - t} = \pm \infty,
 \, \Delta v \neq 0.
 \end{equation}
-Thus it is not feasible to use equation \ref{eq:tempo_change_bad_tc},
+Thus it is not feasible to use equation \eqref{eq:tempo_change_bad_tc},
 but we instead define $t_c = t_c'$.
 
 In some situations tempo changes can be very difficult
@@ -1352,7 +1352,7 @@ a sudden increase in tempo.
 Since this issue is highly dependent on the score used,
 a user adjustable parameter is provided,
 which scales the change factor $a$ in equation
-\ref{eq:tempo_change_change}:
+\eqref{eq:tempo_change_change}:
 \begin{equation}
 a' = 1 + \alpha \left( a - 1 \right),
 \end{equation}
@@ -1397,17 +1397,17 @@ with hard to predict results.
 Instead, only part of the beat offset is compensated for.
 This adjustment does not apply to
 the offset caused by the tempo change
-(equation \ref{eq:linear_tempo_change_pos_diff}),
+(equation \eqref{eq:linear_tempo_change_pos_diff}),
 but only the offset of the latest beat.
 To relax the tempo following,
 only a fraction of the beat offset $\Delta b$ is corrected,
 modifying the coefficient for the non-linear 
 part of the tempo function, defined in equation
-\ref{eq:non_linear_coef}.
+\eqref{eq:non_linear_coef}.
 
 The fraction discussed above,
 together with the tempo filter cutoff time
-presented in equation \ref{eq:tempo_filter_weight_coef},
+presented in equation \eqref{eq:tempo_filter_weight_coef},
 mostly define the sensitivity of the tempo following method.
 These two are made user-adjustable parameters,
 so they can be adjusted based on both the score
@@ -1651,7 +1651,7 @@ $\alpha \in \ccinterval{0, 1}$ the sensitivity,
 and $p$ the original value of the parameter.
 The sensitivity of velocity can be adjusted
 by changing the value of $\alpha$
-in equation \ref{eq:veclocity_construction} instead.
+in equation \eqref{eq:veclocity_construction} instead.
 All values used in the implementation were
 adjusted based on informal testing.
 
@@ -1688,7 +1688,7 @@ w_l \left \vert l_t - l \right \vert & \text{if } l_t - l > 0 \\
 \end{cases}
 \end{equation}
 where $d_l$ is the contributing factor of length
-to the sum in equation \ref{eq:patch_distance},
+to the sum in equation \eqref{eq:patch_distance},
 $w_l > 1$ the weight given to length,
 $l_t$ the target length,
 $l$ the length,
@@ -2093,7 +2093,7 @@ when calculating the event sample offset
 \Delta n_e = \frac{\Delta \tau'}{\Delta \tau} (t_e - \tau_b) f_s,
 \end{equation}
 where $t_e$ is the event time.
-Using equation \ref{eq:theoretical_block_len},
+Using equation \eqref{eq:theoretical_block_len},
 this can be simplified to
 \begin{equation}
 \Delta n_e = n_b \frac{t_e - \tau_b}{\Delta \tau}.
@@ -2267,8 +2267,8 @@ for the \nth derivative.
 
 To make $\mathbf{X}^T \mathbf{X}$ invertible,
 it is also necessary to reverse the values $x_1 \ldots x_n$
-used in equation \ref{eq:sg_design_matrix}.
-This change requires a correction to equation \ref{eq:sg_coefs}:
+used in equation \eqref{eq:sg_design_matrix}.
+This change requires a correction to equation \eqref{eq:sg_coefs}:
 the observation values $\mathbf{y}$ need to be reversed also.
 
 \section{Data File Formats}
