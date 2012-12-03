@@ -208,6 +208,17 @@ This thesis is based on the development of
 a conductor follower system,
 which uses motion capture and sound synthesis techniques
 to provide an interactive experience of conducting a virtual orchestra.
+Previous conductor follower systems,
+motion tracking methods,
+score following methods,
+and expressive synthesis methods
+are studied and analyzed,
+and a set of methods for an implementation
+is devised based on the study.
+These methods are used to implement the system,
+and further details emerging from the implementation
+are described and rationalized.
+
 In this chapter the central concepts behind
 the work in this thesis are discussed.
 Chapter \ref{chapter:conductor_following} discusses
@@ -811,7 +822,7 @@ as forward or backward movements.
 These "false" movements produce unexpected
 results if included in the analysis.
 
-\subsection*{Windowed Trajectory Length}
+\subsection{Windowed Trajectory Length}
 
 The windowed trajectory length measures
 the overall amplitude of the hand movement over a
@@ -834,7 +845,7 @@ in \cite{luck2010}.
 Therefore, using the windowed trajectory length
 as an expressive feature is well justified.
 
-\subsection*{Windowed Standard Deviation of Velocity}
+\subsection{Windowed Standard Deviation of Velocity}
 
 The windowed standard deviation of the absolute velocity ($S_N(v)$)
 measures how continuous the movement of the hand is.
@@ -848,7 +859,7 @@ to back up using $S_N(v)$ as an expressive feature,
 related to the playing style on the staccato--legato axis,
 which include the variability of velocity as an integral component.
 
-\subsection*{Filtered Peak Jerk}
+\subsection{Filtered Peak Jerk}
 
 The values for jerk produced by
 the polynomial regression filter
@@ -2415,8 +2426,7 @@ design motives lead to designing an architecture
 with a rather large amount of clearly defined,
 minimal interfaces.
 While having loose coupling between
-implementation modules is
-usually a good thing,
+implementation modules is usually good,
 inserting an abstraction layer
 in the wrong place can be detrimental
 to the clarity of the related interface.
@@ -2477,8 +2487,8 @@ Implementing a system that could actually
 learn new features based on conductor feedback
 is unfeasible with current technology.
 
-Sousa lists eight different
-conducting emblem categories in \cite{sousa1988}:
+Sousa \cite{sousa1988} lists eight different
+conducting emblem categories:
 beat patterns, dynamics, styles,
 preparations, releases, fermatas/holds,
 tempo changes, and phrasings.
@@ -2567,6 +2577,9 @@ However, some features and improvements
 will be more beneficial than others,
 and this section attempts to address
 the most relevant ones.
+Potential modifications based on
+alternative use cases
+are also considered.
 
 \subsection{Machine Learning}
 
@@ -2658,6 +2671,54 @@ on expressive timing \cite{Desain1994},
 which is not taken into account in the current system.
 Using a more "intelligent" system to make tempo adjustments,
 would definitely be an improvement.
+
+\subsection{Potential Modifications}
+
+In its current form,
+the use cases for the system are somewhat limited,
+due to the purely academic nature of the implementation.
+However, there are other potential use cases for the system,
+which would require some modifications or extensions to the system.
+Some of them are discussed in this section.
+Others, such as use in conducting classes,
+would require more research into what features would
+actually be useful.
+
+\paragraph*{Conduct your own recordings}
+One use case for the system is being able to
+record the result of your conducting,
+for the purpose of listening to it later on.
+Given a well made score and high quality synthesis environment,
+the recordings can reach a high quality.
+Listening to the resulting recordings could be beneficial
+for conductors or composers evaluating different interpretations,
+or for plain entertainment purposes.
+Extending the idea to the internet,
+these recordings could also be shared among friends,
+or one could even hold virtual conducting competitions
+where the recordings are shared and judged online.
+Since currently the audio is output from a VST plugin,
+recording it with a third party software is possible.
+However, it would be possible to make this task
+a lot easier by building the functionality into the system.
+Especially if the recording is to be shared,
+having one application for the whole task
+would be a crucial improvement to the user experience.
+
+\paragraph*{"Conductor Hero"}
+Given the popularity of games like \textit{Guitar Hero},
+where the player uses an instrument like controller
+to simulate playing along with a band,
+modifying the system to behave like a similar game
+for conducting is a use case easily come up with.
+However, the setting in such games is quite the opposite
+of the current functionality of the conductor follower system --
+where in the game, the user has to keep up with the system,
+in the conductor follower, the system has to keep up with the user.
+Nevertheless, there are several components in the system,
+which could be reused in a game;
+the required development effort would be very large though.
+
 
 \section{Conclusions}
 
