@@ -7,7 +7,7 @@ is a sophisticated form of non-verbal communication.
 While the expressions used in conducting have no strict rules,
 most gestures performed by experienced conductors are understood by
 adequately experienced musicians.
-Modelling this complex conductor-musician interaction
+Modeling this complex conductor-musician interaction
 requires understanding the fundamental principles behind the communication.
 Once the relevant features are identified,
 it is possible to implement a system that
@@ -42,11 +42,11 @@ to study which gestures could be classified as conducting emblems,
 non-verbal acts with precise meaning and
 a common interpretation among instrumental performers.
 He concluded that 38 out of the 55 studied gestures
-were recognised by over 70\% of the subjects,
+were recognized by over 70\% of the subjects,
 with the recognition rate having a strong correlation
 with the experience level of the musicians.
 
-While some conducting gestures can be easily analysed,
+While some conducting gestures can be easily analyzed,
 and do have a commonly recognized meaning,
 to really understand how the communication between
 conductors and musicians works,
@@ -256,7 +256,7 @@ and introduces the system to be implemented together with its design rationale.
 Conductor following systems implemented in the past
 can be roughly classified based on four features:
 the types of sensors used for capturing gestures,
-the methods used for analysing the gesture data,
+the methods used for analyzing the gesture data,
 the level of control they provide, and
 the type of sound synthesis they use.
 
@@ -304,7 +304,7 @@ is very loosely coupled to the rest of the system.
 
 \subsection{Methods for Gesture Analysis}
 
-The methods used for analysing the raw data
+The methods used for analyzing the raw data
 provided by the sensors define the
 mode of interaction between the conductor and the system.
 The most fundamental differentiation between different systems
@@ -401,7 +401,7 @@ and mixing different recordings \cite{Borchers2004}.
 \label{sec:design_rationale}
 
 If the real life interaction between a conductor and musicians
-were to be modelled as closely as possible,
+were to be modeled as closely as possible,
 it would require providing a feedback channel
 equivalent to the verbal communication from conductor to musicians.
 This channel could then be used to teach the
@@ -582,7 +582,7 @@ as a polynomial at each point,
 using a least squares method.
 This approximation is applied to each spatial axis separately,
 using the points at times $t_{i-n} \ldots t_{i+n}$,
-for analysing the movement at time $t_i$,
+for analyzing the movement at time $t_i$,
 giving a filter length of $2n + 1$.
 Once the polynomial is approximated,
 it can be used for solving a smoothed value and
@@ -1101,7 +1101,7 @@ and should thus also maximize the probability of a correct estimate.
 \item The first and second beats in a bar do not usually
 provide enough information about the beat pattern used in that bar.
 Therefore the second beat in a bar is only given an estimate if
-it scores better than its neighbouring beats in the winning beat pattern
+it scores better than its neighboring beats in the winning beat pattern
 by a given factor, i.e.
 \begin{equation}
 q(\beta,\gamma) > a \, q(\beta, \gamma \pm 1),
@@ -1109,7 +1109,7 @@ q(\beta,\gamma) > a \, q(\beta, \gamma \pm 1),
 where $\beta$ is the beat being classified,
 $\gamma$ the best estimate,
 and $a$ the factor determining how much better the
-estimate has to be compared to its neighbours.
+estimate has to be compared to its neighbors.
 \item Considering the number of beats in most beat patterns,
 three or more beats should give a good enough estimate
 (or else there is no hope of ever getting one).
@@ -1235,7 +1235,7 @@ which can be simply solved by integrating over time:
 \end{equation}
 The difference in position
 caused by the difference between $v_t(t)$ and $\Delta v$
-cumulates over the catchup time $t_c$,
+accumulates over the catchup time $t_c$,
 causing a gross difference of
 \begin{equation}
 \Delta b_{v_t} =
@@ -1776,7 +1776,7 @@ and they eventually disappear as time progresses.
 In addition to visualizations that describe
 the state of the conductor follower,
 the raw output of the depth sensor can be displayed
-as a grayscale video.
+as a gryscale video.
 This is mainly useful for solving possible issues
 related to the way the depth sensor works:
 In some situations infra red sources,
@@ -2028,7 +2028,7 @@ To summarize, the threads are:
 \section{Time Handling}
 \label{sec:time_handling}
 
-Handling time in a multirate, multi-threaded system,
+Handling time in a multirate, multithreaded system,
 is not a trivial task.
 The motion capture thread is in
 a blocking state most of the time,
@@ -2197,7 +2197,7 @@ the Boost.Lockfree library \cite{BoostLockfree}
 is used for most of the lock-free inter-thread communication.
 This includes passing events from the motion capture thread
 to the MIDI thread, and logging from RT threads using the Butler thread.
-It is an essential utility for lock-free multi-threaded programming.
+It is an essential utility for lock-free multithreaded programming.
 
 \subsection{Chen \& Burns Buffer}
 
