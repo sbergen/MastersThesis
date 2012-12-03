@@ -1719,6 +1719,22 @@ during the development of the system,
 it can also provide valuable feedback to users of the system.
 This chapter discusses the functionality
 and motivation behind each visualization feature separately.
+All the features are presented in figure \ref{fig:visualization}.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=\textwidth]{images/visualization}
+\end{center}
+\caption{
+Visualization screenshot, showing
+movement trace (red line),
+spatial beat position (green dot),
+current bar phase (turquoise segment),
+beat offsets (red and greed segments),
+and depth sensor data (grayscale).
+}
+\label{fig:visualization}
+\end{figure}
 
 \section{Movement Tracing}
 
@@ -2729,12 +2745,9 @@ and a high quality sample based synthesis environment.
 Also among the goals was
 keeping the mode of operation on a generalized level,
 so that the system works without the need for training.
-All in all, the main goals were met.
 Even though there is room for improvement --
 and always will be for systems of such complexity --
-the end result is able to produce
-a satisfying interactive experience,
-which resembles conducting a real orchestra.
+the end result met the main goals.
 
 While the methods applied
 do not contain anything especially novel,
@@ -2746,6 +2759,8 @@ Also, compared to previous similar projects,
 lots of effort was put into
 thoroughly documenting the underlying methods --
 especially ones related to tempo following.
-
-\fixme{write a nice ending (or edit the prev. paragraphs)}
-
+All in all,
+the system is able to model
+an essential subset of conductor-musician communication,
+and produce a satisfying interactive experience
+resembling conducting a real orchestra.
