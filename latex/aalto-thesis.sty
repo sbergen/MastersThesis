@@ -79,13 +79,20 @@
 }
 
 \DeclareOption{doublenumbering}{
+\newcounter{pages-prelude_counter}
 \renewcommand{\startcoverpage}{\pagenumbering{roman}}
-\renewcommand{\startfirstchapter}{\pagenumbering{arabic}}
+\renewcommand{\startfirstchapter}{%
+\immediate\write\@auxout{\string\setcounter{pages-prelude_counter}{\arabic{page}}}%
+\immediate\write\@auxout{\string\addtocounter{pages-prelude_counter}{-1}}%
+\pagenumbering{arabic}%
+}
 % The number of pages is counted based on the labels.
 % Pages-prelude is placed manually, and the lastpage package calculates
 % the position of the LastPage label. A plain label may not work if last
 % pages contain floats that are placed after text.
-\renewcommand{\PAGES}{\pageref{pages-prelude}~$+$~\pageref{LastPage}}
+%\setcounterpageref{pages-prelude_counter}{pages-prelude}%
+\renewcommand{\PAGES}{%
+\arabic{pages-prelude_counter}~$+$~\pageref{LastPage}}
 }
 \ProcessOptions
 
@@ -146,6 +153,7 @@
 \newcommand{\ATPROFSHIPNAME}{}
 \newcommand{\ATPROFCODENAME}{}
 \newcommand{\ATPROFSHIP}{}
+\newcommand{\ATDEPARTMENT}{}
 
 % Default language terms (in English)
 % ------------------------------------------------------------------
@@ -181,6 +189,7 @@
   \renewcommand{\ATPROFSHIPNAME}{Professorship}
   \renewcommand{\ATPROFCODENAME}{Code}
   \renewcommand{\ATPROFSHIP}{\PROFESSORSHIP}
+  \renewcommand{\ATDEPARTMENT}{Department of Signal Processing and Acoustics}
 }
 % Terms in Finnish
 % ------------------------------------------------------------------
@@ -215,6 +224,7 @@
   \renewcommand{\ATPROFSHIPNAME}{Professuuri}
   \renewcommand{\ATPROFCODENAME}{Koodi}
   \renewcommand{\ATPROFSHIP}{\FPROFESSORSHIP}
+  \renewcommand{\ATDEPARTMENT}{Signaalinkäsittelyn ja akustiikan laitos}
 }
 % Terms in Swedish
 % ------------------------------------------------------------------
@@ -262,8 +272,7 @@
 \selectlanguage{#1}
 \selectterms{#1}
 \noindent{\small\ATUNIV\\
-\ATSCHOOL\\
-\ATDEGREEPROG}
+\ATSCHOOL}
 \vskip 30mm
 
 \noindent{\small \AUTHOR}
@@ -316,14 +325,13 @@
 \end{textblock}
 % Before the main abstract table there is the school name
 % and abstract title (ABSTRACT OF THE MASTER'S THESIS etc.) 
-\begin{textblock}{15}(3.2,3)
+\begin{textblock}{15}(3.2,3.5)
 \setlength{\extrarowheight}{0.5ex}
 \noindent
 \begin{tabularx}{\textwidth}{@{}X@{}r@{}}
 \begin{minipage}[b]{11cm}
 \ATUNIV\\
-\ATSCHOOL\\
-\ATDEGREEPROG
+\ATSCHOOL
 \end{minipage} & 
 \begin{minipage}[b]{4cm}
 \raggedleft
@@ -333,7 +341,7 @@
 % Now we start the main abstract table
 \setlength{\bigstrutjot}{4pt}
 \noindent
-\begin{tabularx}{\textwidth}{|p{3cm}Xlp{2cm}|}
+\begin{tabularx}{\textwidth}{|p{3cm}Xlp{1.25cm}|}
 \hline
 \textbf{\ATAUTHORNAME:} & \multicolumn{3}{l|}{\AUTHOR} \bigstrut[t] \\
 \multicolumn{4}{|l|}{\allowlinebreaks{14.5cm}{\textbf{\ATTITLENAME:}\\
@@ -341,8 +349,9 @@
 \hline
 \textbf{\ATDATENAME:} & \ATDATE & \textbf{\ATPAGESNAME:} & \PAGES \bigstrut \\
 \hline
+\multicolumn{4}{|l|}{\textbf{\ATDEPARTMENT}} \bigstrut[t] \\
 \textbf{\ATPROFSHIPNAME:} & \ATPROFSHIP & 
-\textbf{\ATPROFCODENAME:} & \PROFCODE \bigstrut \\
+\textbf{\ATPROFCODENAME:} & \PROFCODE \bigstrut[b] \\
 \hline
 \textbf{\ATSUPERVISORNAME:} &
 \multicolumn{3}{l|}{\allowlinebreaks{11cm}{\ATSUPERVISOR}} \bigstrut[t] \\
