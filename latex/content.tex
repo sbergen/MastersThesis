@@ -107,8 +107,8 @@ that presents the user with rather abstract data,
 with no established set of gestures for operating on it available.
 A conductor follower, however,
 is quite the opposite of the usual case,
-as it is based on an already defined --
-albeit somewhat varying -- set of gestures.
+as it is based on an already defined,
+albeit somewhat varying, set of gestures.
 
 \section{Tempo Following}
 
@@ -208,6 +208,8 @@ This thesis is based on the development of
 a conductor follower system,
 which uses motion capture and sound synthesis techniques
 to provide an interactive experience of conducting a virtual orchestra.
+An example setup of the final result is displayed
+in figure \ref{fig:setup} for reference.
 Previous conductor follower systems,
 motion tracking methods,
 score following methods,
@@ -218,6 +220,17 @@ is devised based on the study.
 These methods are used to implement the system,
 and further details emerging from the implementation
 are described and rationalized.
+
+\begin{figure}
+\begin{center}
+\includegraphics{images/setup}
+\caption{An example setup,
+including a set of speakers, a Microsoft Kinect,
+and a PC running Conductor Follower along with
+a synthesis environment, Vienna Ensemble \cite{vsl}.}
+\label{fig:setup}
+\end{center}
+\end{figure}
 
 In this chapter the central concepts behind
 the work in this thesis are discussed.
@@ -232,10 +245,13 @@ and defines the methods used for following the musical score.
 Chapter \ref{chapter:sound_synthesis}
 discusses sound synthesis related design and
 implementation choices.
+Chapter \ref{chapter:visualization}
+describes the visualization methods
+used in the system.
 Chapter \ref{chapter:implementation_details}
 highlights the most relevant details
 in the implementation of the system.
-Chapter \ref{chapter:discussion}
+Finally, chapter \ref{chapter:discussion}
 evaluates the results of the project,
 discusses recommended further work on the subject,
 and provides a conclusion of the thesis.
@@ -292,7 +308,7 @@ sensors attached to the conductor.
 In addition to tracking the movements of the baton or hands,
 breath and gaze sensors have also been used.
 For examples of projects using each sensor type,
-the reader is asked to reference \cite{Fabiani2012}.
+the reader is asked to refer to \cite{Fabiani2012}.
 
 Capturing the relevant data from the conductor's gestures
 provides the raw input to the system.
@@ -339,7 +355,7 @@ higher level features from the conductor's movement.
 While the output of the analysis differs from
 the lower level feature extraction,
 the methods used for analysis are somewhat similar,
-using methods such as heuristics, HMMs or ANNs.
+using methods such as simple heuristics, HMMs or ANNs.
 The difference between these modes of control
 is discussed in more depth in the next section.
 
@@ -550,7 +566,8 @@ requires using many time related analysis methods.
 Features such as velocity and acceleration
 require inspecting the movement at a single point in time,
 while the cyclic nature of conducting requires
-averaging over time, to extract features that apply
+averaging over time,
+in order to extract features that apply
 at the beat or bar level.
 
 For the analysis at a single point,
@@ -600,12 +617,13 @@ A change in direction can be detected as a change of sign in the first derivativ
 \begin{equation}
 m_i =
 \begin{cases}
-\mathrm{None} & \text{if } \sgn{y_{i-1}} = \sgn{y_{i}} \\
-\mathrm{Dip} & \text{if } \sgn{y_{i-1}} < \sgn{y_{i}} \\
-\mathrm{Peak} & \text{if } \sgn{y_{i-1}} > \sgn{y_{i}} ,
+\mathrm{None} & \text{if } \sgn{f'_{i-1}} = \sgn{f'_{i}} \\
+\mathrm{Dip} & \text{if } \sgn{f'_{i-1}} < \sgn{f'_{i}} \\
+\mathrm{Peak} & \text{if } \sgn{f'_{i-1}} > \sgn{f'_{i}} ,
 \end{cases}
 \end{equation}
-where $y_i$ is the value of the function at time $i$.
+where $f'_i$ is the first derivative of the
+observed function at time $i$.
 
 \subsection{Exponential Moving Average}
 
@@ -668,7 +686,7 @@ but such systems would easily get confused with
 the large variance present in the style of
 many orchestral conductors.
 Instead, the approach is based on beat induction
-from the motion features of the conductors hands.
+from the motion features of the conductor's hands.
 
 Luck and Toiviainen \cite{luck2006}
 conducted a beat synchronization study,
@@ -703,13 +721,13 @@ $a_t$ on the other hand, was found to have local minima
 around the beat, but also elsewhere.
 The timing of the local minima also changes along with the conducting style.
 If a system based on machine learning were to be made,
-our experimentation would suggest that $v_y$ and $a_t$
+the conducted experimentation would suggest that $v_y$ and $a_t$
 would most likely be good input for the system.
 
 Based on experiences with a trained conductor --
 both motion capture data analysis and discussions --
 a very simple solution for beat detection
-using only the vertical position was finally chosen.
+using only the vertical position of the hand was finally chosen.
 The method combines the theoretical position of the beat
 in any beat pattern, the vertical bottom,
 with the fact that musicians react to conducted beats with a lag.
@@ -753,11 +771,10 @@ the hand is required to make a vertical move,
 indicating the starting tempo with the 
 vertical minimum and maximum of that move.
 The criteria for start gesture detection
-are conclude in figure \ref{fig:start_gesture}
+are concluded in figure \ref{fig:start_gesture}
 and in the list below:
 \begin{itemize}
-\item A long enough ($\Delta t_i$ greater than threshold)
-immobile state has been detected not too long ago.
+\item A long enough immobile state ($\Delta t_i$ greater than threshold) has been detected not too long ago.
 \item A local minimum for the vertical position ($y_{min}$) has been detected after the immobile state.
 \item A local maximum for the vertical position ($y_{max}$) has been detected after the local minimum.
 \item The distance between the minimum and maximum ($\Delta y_g$) is large enough.
@@ -817,7 +834,7 @@ ignoring backward and forward movements.
 The reason for this can be found from the
 hand tracking algorithm,
 which often interprets changes in
-the shape and angle of the hand
+the shape or angle of the hand
 as forward or backward movements.
 These "false" movements produce unexpected
 results if included in the analysis.
@@ -927,8 +944,8 @@ Score positions, on the other hand,
 are slightly more complex.
 Musical events in a fully defined score have two time bases:
 \begin{enumerate}
-\item Musical time has the base unit of beats, but it also includes a time varying derived unit of bars. Any position in the score can thus be expressed as either a beat offset, or a combination of bars and beats. Its dimension is denoted with $B$ and quantities with $b$.
-\item Score time has the base unit of seconds. This is an offset from the beginning of the score if the original tempo is followed. Its dimension is denoted with $\Phi$ and quantities with $\varphi$.
+\item Musical time has the base unit of \textit{beats}, but it also includes a time varying derived unit of \textit{bars}. Any position in the score can thus be expressed as either a beat offset, or a combination of bars and beats. Its dimension is denoted with $B$ and quantities with $b$.
+\item Score time has the base unit of \textit{seconds}. This is an offset from the beginning of the score if the original tempo is followed. Its dimension is denoted with $\Phi$ and quantities with $\varphi$.
 \end{enumerate}
 A score position is thus defined as
 $ \tupledef{P}{b, \varphi}, $
@@ -1035,7 +1052,7 @@ and a beat in a pattern be
 q(i, j) = -\vert \mathbf{h}_i - \mathbf{p}_j \vert.
 \end{equation}
 
-\item Let $\alpha$ be such that $q(0, \alpha)$ is maximized,
+\item Let $\alpha$ be such that $q(1, \alpha)$ is maximized,
 i.e. the best match for the first beat.
 
 \item For all other beats $\mathbf{h}_k$,
@@ -1077,7 +1094,7 @@ using a range of stretch factors.
 The positions in $\mathbf{h}$ are
 adjusted with respect to the first beat in the array:
 \begin{equation}
-\mathbf{h}'_i = \mathbf{h}_i + s(\mathbf{h}_i - \mathbf{h}_0),
+\mathbf{h}'_i = \mathbf{h}_i + s(\mathbf{h}_i - \mathbf{h}_1),
 \end{equation}
 where $\mathbf{h}'$ is the corrected array,
 and $s$ the stretch factor.
@@ -1124,10 +1141,10 @@ the current position and tempo offsets
 are estimated.
 Based on these estimates,
 changes to the playback tempo are made,
-that attempt to correct the offsets
+which attempt to correct the offsets
 so that the playback matches the conducting
 as well as possible.
-The change in tempo is realized as adjusting
+The change in tempo is realized by adjusting
 the warp factor $w$ for each audio block
 (see section \ref{sec:time_handling} for details).
 
@@ -1185,7 +1202,7 @@ where $v_i$ is the initial tempo,
 $v_t(t)$ is a linear function
 contributing to the total tempo change,
 and $v_b(t)$ a non-linear function contributing
-to the gross position change
+to the position change
 without affecting the final tempo.
 A visualization of the tempo function is presented
 in figure \ref{fig:tempo_function}.
@@ -1538,7 +1555,7 @@ However, practical experience with MIDI files showed,
 that using program changes to deduce the instrument to use,
 was not sufficient.
 Often scores would use the
-\textit{String ensemble} patch for all strings,
+\textit{string ensemble} patch for all strings,
 even though the string instruments were separated to individual tracks.
 In cases like this it is necessary to be able to manually
 define the instrument to be used with each track.
@@ -1584,8 +1601,8 @@ is described in the following sections.
 
 Synthesizing instrument patch parameters
 from the note and conductor contexts,
-consists of applying mapping functions --
-one for each patch parameter --
+consists of applying mapping functions,
+one for each patch parameter,
 to the contexts.
 The length of the note is
 scaled by the relative tempo,
@@ -1644,7 +1661,7 @@ $v_c$ the velocity in the conductor context,
 and $v_s$ the velocity in the score.
 Finally, $v$ is limited to be in the range
 \ccinterval{v_{min}, v_{max}}, where $v_{min} > 0$,
-in order to not be muted or exceed the maximum velocity.
+in order to neither mute notes nor exceed the maximum velocity.
 
 It is worth noting,
 that the values for all the parameters
@@ -1777,7 +1794,7 @@ The progress of the current bar
 is visualized with a segment of a circle,
 alternately growing to a full circle,
 and shrinking to zero length,
-as the bar progress to their ends.
+as the bars progress to their ends.
 The detected beats are visualized outside this circle,
 as a segment from the detected position
 to the position of the respective classification.
@@ -1809,7 +1826,7 @@ in identifying and possibly correcting these problems.
 
 This chapter describes details and implementation choices
 that have been left out from the previous parts of
-this document,
+this thesis,
 as they are not at the core of solving the problems at hand:
 The architecture is discussed from an implementation centric view,
 the timing and threading constraints
@@ -1820,7 +1837,7 @@ Further details regarding the source code
 availability and compatibility can be found
 in appendix \ref{app:source_code_availability}.
 
-\section{Architectural overview}
+\section{Architectural Overview}
 
 Since the synthesis environment is a VST plugin,
 implementing the conductor follower as a VST plugin as well,
@@ -1936,8 +1953,7 @@ so that the rest of the system has no dependencies on OpenNI.
 
 Juce \cite{juce} is an open source,
 multimedia oriented cross-platform C++ library.
-It was used for its
-Virtual Studio Technology (VST) plugin wrapper,
+It was used for its VST plugin wrapper,
 MIDI file I/O,
 and user interface (UI) functionality.
 Juce is only used in the plugin,
@@ -1948,7 +1964,7 @@ and the rest of the system has no dependencies on it.
 
 A real-time audio plugin,
 which uses motion tracking hardware
-and has a user interface (UI),
+and has a user interface,
 imposes certain restraints on how it may be implemented
 to achieve acceptable performance.
 These restraints and the patterns used for solving them
@@ -1997,7 +2013,7 @@ refer to the deadline based definition.
 
 In addition to having RT constraints,
 the 30Hz frame rate of the motion capture system
-makes it a multirate, multithreaded application.
+makes the application a multirate, multithreaded system.
 Working in such an environment requires using
 lock-free programming techniques,
 such as atomic variables and lock-free ringbuffers.
@@ -2030,7 +2046,7 @@ To summarize, the threads are:
 \item Motion Capture
 \begin{itemize}
 \item Runs the motion capture device.
-\item Has firm RT requirements.
+\item Has soft RT requirements.
 \item Higher latencies allowed compared to the MIDI thread (30 Hz).
 \end{itemize}
 
@@ -2270,7 +2286,7 @@ and $m$ the order of the resulting polynomial.
 It is required that $n > m$.
 Smoothing and differentiation is implemented by
 selecting an odd value for $n$
-and evaluation the polynomial at the center value
+and evaluating the polynomial at the center value
 $x_{\lfloor \frac{n}{2} \rfloor}$.
 An optimization that is easy to implement for equally sampled data,
 is to pre-calculate $\left( \mathbf{X}^T \mathbf{X} \right)^{-1} \mathbf{X}^T$,
@@ -2324,13 +2340,16 @@ A score definition file includes the following information:
 \item[Instrument file] The path of the related instrument definition file.
 \item[Beat pattern file] The path of the related beat pattern file.
 \item[Track information] A list of track to instrument mappings.
-\item[Score events] A list of score event.
+\item[Score events] A list of score events.
 \end{description}
 An example of a score description file can be found from Appendix \ref{appendix:dsl_samples}.
 For more information on instrument definitions,
 see section \ref{sec:instrument_definition_format},
 and for beat patterns section \ref{sec:beat_pattern_definition_format}.
-The different types of score events are described in detail below.
+While the format supports having
+different types of score events,
+only one type of score event was implemented.
+This event type is described in detail below.
 
 \subsubsection*{Tempo Sensitivity Events}
 
@@ -2406,7 +2425,7 @@ no formal evaluation was performed for
 the system implemented.
 The content in this chapter is mostly based
 on testing during development,
-and a couple of informal testing sessions with 
+and a few informal testing sessions with 
 a professional conductor.
 
 \section{Evaluation of Results}
@@ -2420,9 +2439,9 @@ The system is evaluated from
 \spellRef{item:last_evaluation_perspective}
 different perspectives:
 \begin{enumerate}
-\item The overall architecture.
-\item The implemented feature set.
-\item The quality of the implemented features.
+\item The overall architecture,
+\item the implemented feature set, and
+\item the quality of the implemented features.
 \label{item:last_evaluation_perspective}
 \end{enumerate}
 
@@ -2612,7 +2631,7 @@ incorporating machine learning methods into the system
 should be feasible without introducing too much technical debt.
 
 Based on previous work,
-on of the most likely parts of the system
+one of the most likely parts of the system
 to use machine learning in,
 would be gesture detection \cite{Fabiani2012}.
 Also, expressive score manipulation 
